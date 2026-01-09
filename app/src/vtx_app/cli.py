@@ -78,14 +78,19 @@ def story_shotlist(slug: str) -> None:
 
 
 @story_app.command("clips")
-def story_clips(slug: str) -> None:
+def story_clips(
+    slug: str,
+    act: int | None = typer.Option(None, "--act"),
+    scene: int | None = typer.Option(None, "--scene"),
+    overwrite: bool = typer.Option(False, "--overwrite"),
+) -> None:
     """Generate per-clip specs under prompts/clips/ using OpenAI (optional)."""
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)
     proj = loader.load(slug)
 
     builder = StoryBuilder(project=proj)
-    builder.generate_clip_specs()
+    builder.generate_clip_specs(overwrite=overwrite, act=act, scene=scene)
     print("[green]Generated[/green] prompts/clips/*.yaml")
 
 
