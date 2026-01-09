@@ -13,7 +13,7 @@ def load_env(*, project_env_path: Path | None = None) -> None:
       3) config/models.env
       4) project.env (overrides)
     """
-    app_root = Path(__file__).resolve().parents[3]  # .../packages/app
+    app_root = Path(__file__).resolve().parents[3]  # .../app
     global_env = app_root / "config" / "global.env"
     models_env = app_root / "config" / "models.env"
 

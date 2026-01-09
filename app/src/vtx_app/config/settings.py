@@ -38,8 +38,9 @@ class Settings:
 
     @staticmethod
     def from_env() -> "Settings":
-        app_home = Path(os.getenv("VTX_APP_HOME", "packages/app/_global"))
-        projects_root = Path(os.getenv("VTX_PROJECTS_ROOT", "packages/app/projects"))
+        app_root = Path(__file__).resolve().parents[3]
+        app_home = Path(os.getenv("VTX_APP_HOME", str(app_root / "_global")))
+        projects_root = Path(os.getenv("VTX_PROJECTS_ROOT", str(app_root / "projects")))
 
         return Settings(
             app_home=app_home,
