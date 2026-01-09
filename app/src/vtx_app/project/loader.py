@@ -25,6 +25,38 @@ class ProjectLoader:
     def _template_root(self) -> Path:
         return self._app_root() / "_global" / "templates" / "project_template"
 
+    def _sync_project_clips(self, *, project_path: Path, project_id: str) -> None:
+        """
+        Scan prompts/clips/*.yaml and ensure they exist in the global registry.
+        This is what makes 'render resume' work across multiple projects.
+        """
+        clips_dir = project_path / "prompts" / "clips"
+        if not clips_dir.exists():
+            return
+
+        for yml in sorted(clips_dir.glob("*.yaml")):
+            try:
+                clip = yaml.safe_load(yml.read_text()) or {}
+                clip_id = str(clip.get("clip_id") or "").strip()
+                if not clip_id:
+                    # fall back to filename prefix before '__'
+                    clip_id = yml.stem.split("__")[0]
+                status = clip.get("status") or {}
+                state = str(status.get("state") or "planned")
+                outputs = clip.get("outputs") or {}
+                out_path = outputs.get("mp4")
+                self.registry.upsert_clip(
+                    project_id=project_id,
+                    clip_id=clip_id,
+                    state=state,
+                    output_path=str(out_path) if out_path else None,
+                    render_hash=None,
+                    updated_at=now_iso(),
+                    last_error=status.get("last_error"),
+                )
+            except Exception as e:
+                print(f"[yellow]Skip clip[/yellow] {yml}: {e}")
+
     def sync_all_projects(self) -> None:
         load_env(project_env_path=None)
         s = Settings.from_env()
@@ -38,13 +70,16 @@ class ProjectLoader:
                 continue
             try:
                 data = yaml.safe_load(meta.read_text()) or {}
+                project_id = str(data.get("project_id"))
                 self.registry.upsert_project(
-                    project_id=str(data.get("project_id")),
+                    project_id=project_id,
                     slug=str(data.get("slug")),
                     title=str(data.get("title")),
                     path=str(p),
                     updated_at=str(data.get("updated_at", "")),
                 )
+                if project_id:
+                    self._sync_project_clips(project_path=p, project_id=project_id)
             except Exception as e:
                 print(f"[yellow]Skip[/yellow] {p}: {e}")
 
