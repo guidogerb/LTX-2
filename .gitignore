@@ -39,3 +39,4 @@ tmp
 *.png
 *.wav
 *.webp
+/app/projects/project_slug/prompts/clips/...

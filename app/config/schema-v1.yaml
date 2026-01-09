@@ -1,0 +1,51 @@
+version: 1
+clip_id: A01_S03_SH005
+title: "Plaque close-up"
+act: 1
+scene: 3
+shot: 5
+
+continuity:
+  shared_prompt_profile: "default"
+  shared_loras_profile: "core"
+
+story_beats:
+  - "Camera settles on the brass plate."
+  - "Hold long enough to read the inscription."
+
+prompt:
+  positive: |
+    (clip-specific text here; no repeated style boilerplate)
+  negative: |
+    (optional clip-specific negatives)
+
+render:
+  pipeline: "ti2vid_two_stages"
+  duration:
+    mode: "auto"          # auto | fixed
+    max_seconds: 15
+    min_seconds: 2
+  fps: 16
+  width: 1920
+  height: 800
+  seed: 123456
+  guidance_scale: 4.0
+  notes: "As short as possible while covering content well."
+
+inputs:
+  type: "t2v"             # t2v | i2v | v2v | keyframe_interpolation
+  reference_image: null
+  input_video: null
+  keyframes: []
+
+loras:
+  - env_path: "LTX_DISTILLED_LORA_PATH"
+    weight: 0.8
+
+outputs:
+  mp4: "renders/clips/A01_S03_SH005__bro_able_plaque_closeup.mp4"
+  json: "renders/clips/A01_S03_SH005__...render.json"
+
+status:
+  state: "planned"        # planned | queued | rendering | rendered | approved | rejected
+  last_error: null
