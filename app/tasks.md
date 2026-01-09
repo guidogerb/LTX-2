@@ -694,6 +694,7 @@ Tests:
 
 ---
 
+
 ## 6) Deliverables checklist (final)
 - [ ] All milestones A → N complete
 - [ ] `pytest --cov=vtx_app --cov-fail-under=100` passes
