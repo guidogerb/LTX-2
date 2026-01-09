@@ -1,0 +1,23 @@
+[project]
+name = "vtx-app"
+version = "0.1.0"
+description = "Longform orchestration app for LTX-2/VTX-2 pipelines"
+requires-python = ">=3.12"
+dependencies = [
+  "typer>=0.12.0",
+  "rich>=13.0.0",
+  "pydantic>=2.0.0",
+  "python-dotenv>=1.0.0",
+  "PyYAML>=6.0.0",
+  "openai>=1.0.0",
+]
+
+[project.scripts]
+vtx = "vtx_app.cli:app"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}

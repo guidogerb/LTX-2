@@ -1,0 +1,14 @@
+version: 1
+global_prefix: |
+  Cinematic, coherent, consistent character design across shots, realistic lighting, stable identities.
+  Camera language: clear shot type + motion, no chaotic camera unless specified.
+global_negative: |
+  low quality, blurry, unstable identity, face warping, inconsistent outfit, extra limbs, illegible text.
+audio_prefix: |
+  Synchronized audio matching the scene: ambience + foley + dialogue when specified.
+profiles:
+  default:
+    prefix: |
+      35mm film look, shallow depth of field, natural skin texture, soft film grain.
+    negative: |
+      over-sharpened, plastic skin, posterization

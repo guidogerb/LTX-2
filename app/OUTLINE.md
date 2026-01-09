@@ -569,3 +569,304 @@ If you want one optional enhancement (no questions required): I can also propose
 [1]: https://platform.openai.com/docs/quickstart?utm_source=chatgpt.com "Developer quickstart - OpenAI API"
 [2]: https://platform.openai.com/docs/guides/structured-outputs?utm_source=chatgpt.com "Structured model outputs | OpenAI API"
 [3]: https://platform.openai.com/docs/overview?lang=python&utm_source=chatgpt.com "Overview | OpenAI Platform"
+
+Continuing with the **concrete spec + fixed schemas + OpenAI builder format + a working skeleton you can drop into `LTX-2/packages/app`**.
+
+## Downloadable starter scaffold
+
+I generated a ready-to-copy folder skeleton (code + docs + template project + schemas):
+
+[Download the skeleton zip](sandbox:/mnt/data/vtx_app_skeleton.zip)
+
+Unzip it into your repo at:
+
+```text
+LTX-2/packages/app/
+```
+
+It includes:
+
+* `src/vtx_app/` (Typer CLI, registry, prompt compiler, render controller)
+* `config/models.env.example` + `config/global.env.example`
+* `_global/templates/project_template/` (canonical project layout)
+* `story/schemas/*.json` (fixed formats)
+* `README.md` + `tasks.md`
+
+---
+
+## Non-negotiable constraints baked into the design
+
+### Python/CUDA compatibility
+
+LTX docs indicate the codebase was tested with **Python >= 3.12** and **CUDA > 12.7**, and PyTorch ~= 2.7.
+(Your RTX 4090 is a great fit for this.)
+
+### Frame budget and clip duration
+
+LTX Text-to-Video guidance calls out:
+
+* **Max ~257 frames**
+* **Recommended 121–161 frames** for balanced quality/memory
+* FPS examples (24/25/30) and the importance of matching FPS across nodes
+
+Your requirement “**clips up to 15 seconds**” is compatible if your default FPS stays reasonable (e.g., **16fps → 240 frames** for 15s, under 257). The app therefore defaults to **16fps**, and clamps to both `max_seconds` and `LTX_MAX_FRAMES`.
+
+### Continuity via shared language + shared LoRA bundles
+
+LTX’s LoRA docs explicitly frame LoRAs as a mechanism to enforce style/subject consistency and even motion/camera behavior.
+So the app enforces:
+
+* every clip references a `shared_prompt_profile` (style bible profile)
+* every clip references a `shared_loras_profile` (bundle name)
+* final prompt is compiled from the same “bible + inserts” system
+
+---
+
+## The “fixed format” contract across all movie projects
+
+This is the most important part for multi-project automation and OpenAI generation.
+
+### 1) Canonical project layout
+
+Every project **must** have these (the template enforces it):
+
+```text
+metadata.yaml
+project.env
+env/requirements.txt
+
+story/
+  00_brief.md
+  01_outline.yaml
+  02_treatment.md
+  03_screenplay/
+  04_shotlist.yaml
+
+prompts/
+  style_bible.yaml
+  characters.yaml
+  locations.yaml
+  loras.yaml
+  clips/*.yaml
+
+renders/
+  clips/
+  acts/
+  final/
+```
+
+### 2) Temporal + descriptive naming rules
+
+**Screenplay files**
+
+* `A01_S01__opening.md`
+* `A02_S03__the_deal_goes_bad.md`
+
+**Clip specs**
+
+* `A01_S01_SH001__dawn_establishing.yaml`
+* `A01_S03_SH005__bro_able_plaque_closeup.yaml`
+
+Clip IDs follow:
+
+* `A{act:02d}_S{scene:02d}_SH{shot:03d}`
+
+### 3) Schemas (v1) that OpenAI must output
+
+The skeleton includes:
+
+* `src/vtx_app/story/schemas/story.schema.json`
+* `src/vtx_app/story/schemas/shotlist.schema.json`
+* `src/vtx_app/story/schemas/clip.schema.json`
+
+The idea is:
+
+* you can validate every YAML as JSON against these schemas
+* you can send these schemas directly to OpenAI Structured Outputs so generation cannot drift
+
+OpenAI Structured Outputs is designed to adhere to a provided JSON Schema (unlike older “JSON mode”).
+
+---
+
+## OpenAI integration design (how the app should generate story assets)
+
+### Environment variables
+
+OpenAI’s official docs recommend exporting `OPENAI_API_KEY`, and note the SDK reads it from the environment automatically.
+
+### API usage: Responses API + Structured Outputs
+
+The Responses API is OpenAI’s primary interface for generating text/JSON outputs.
+And Structured Outputs can be enabled with a `json_schema` format.
+
+**Recommended approach for your pipeline:**
+
+* Outline generation → enforce `story.schema.json`
+* Shotlist generation → enforce `shotlist.schema.json`
+* Clip spec generation → enforce `clip.schema.json` per clip (or as a list of clips)
+
+In the skeleton, `StoryBuilder.generate_outline()` demonstrates the core call pattern:
+
+* `client.responses.create(...)`
+* `text.format = {"type": "json_schema", "strict": true, ...}`
+
+> If you prefer even tighter typing, OpenAI’s structured outputs guide also shows a `responses.parse(...)` pattern (Pydantic-like parsing).
+
+### Fixed “handoff format” between stages
+
+To keep continuity stable across an entire feature:
+
+1. **Brief (`00_brief.md`)** – human-authored constraints & must-haves
+2. **Outline (`01_outline.yaml`)** – acts/scenes/beats
+3. **Screenplay (`03_screenplay/*.md`)** – dialogue + performance intent
+4. **Shotlist (`04_shotlist.yaml`)** – camera language + story function per shot
+5. **Clip specs (`prompts/clips/*.yaml`)** – renderable prompt + settings
+
+Your app should treat **clip specs as the single source of truth** for rendering.
+
+---
+
+## Prompt & LoRA consistency mechanism
+
+### `prompts/style_bible.yaml`
+
+Holds:
+
+* `global_prefix` (the shared descriptive language for the whole film)
+* `global_negative`
+* `profiles.<name>.prefix/negative` (e.g., “default”, “flashback”, “dream”)
+
+### `prompts/loras.yaml`
+
+Holds named bundles:
+
+* `core` continuity pack (character LoRAs + camera LoRAs + maybe motion LoRAs)
+* optional per-act/per-location bundles
+
+LTX’s docs list official camera-motion LoRAs (dolly/jib/static, etc.), which map cleanly into this bundle system.
+
+### Clip spec references (the enforcement point)
+
+Every `prompts/clips/*.yaml` contains:
+
+* `continuity.shared_prompt_profile`
+* `continuity.shared_loras_profile`
+
+So the compiler always produces:
+
+```text
+FINAL_POSITIVE = global_prefix + profile_prefix + inserts + clip_specific_positive
+FINAL_NEGATIVE = global_negative + profile_negative + clip_specific_negative
+FINAL_LORAS    = loras.bundle[shared_loras_profile] (+ optional clip overrides)
+```
+
+---
+
+## Duration & frame determination (“as short as possible” but content-driven)
+
+### Deterministic default (no LLM needed)
+
+Use `story_beats` count and shot type hints:
+
+Example heuristic:
+
+* establishing shot: 4–7 seconds
+* dialogue reaction shot: 2–4 seconds
+* action beat: 3–6 seconds
+* “readable prop text”: 3–5 seconds (hold time)
+
+Then:
+
+* `seconds = clamp(estimated, min_seconds, max_seconds)`
+* `frames = min(round(seconds * fps), LTX_MAX_FRAMES)`
+
+### Optional LLM refinement
+
+A second OpenAI call can output:
+
+* `recommended_seconds`
+* `camera_motion_summary`
+* `risk_flags` (identity drift, too much text, too many entities, etc.)
+
+But even then: you still clamp to the same constraints.
+
+---
+
+## Global registry behavior (multi-project resume)
+
+The central registry (`_global/registry.sqlite`) tracks:
+
+* projects discovered under `VTX_PROJECTS_ROOT`
+* clip render states (`planned/queued/rendering/rendered/approved/rejected`)
+* output paths and errors
+
+This enables:
+
+* `vtx render resume` to find unfinished clips across **all projects**
+* “pick up where you left off” after crashes or partial renders
+
+---
+
+## Pipeline module support (your list, made operational)
+
+The skeleton maps pipeline keys → module names:
+
+* `ti2vid_two_stages` → `ltx_pipelines.ti2vid_two_stages` (**recommended**)
+* `ti2vid_one_stage` → `ltx_pipelines.ti2vid_one_stage`
+* `distilled` → `ltx_pipelines.distilled`
+* `ic_lora` → `ltx_pipelines.ic_lora`
+* `keyframe_interpolation` → `ltx_pipelines.keyframe_interpolation`
+
+The renderer constructs:
+
+```bash
+python -m <module> ... --prompt "<compiled>" --output-path "<mp4>"
+```
+
+Model locations come from `config/models.env` (shared across all projects), and project overrides live in each `project.env`.
+
+---
+
+## “Acts mode” (musical play style)
+
+Two layers:
+
+* Global: `VTX_PRODUCE_IN_ACTS=true|false`
+* Project override: `PROJECT_PRODUCE_IN_ACTS=true|false`
+
+When enabled:
+
+* assembly outputs are grouped under:
+
+  * `renders/acts/A01.mp4`, `renders/acts/A02.mp4`, …
+* final cut can be concatenation of act renders into:
+
+  * `renders/final/<project>__final.mp4`
+
+---
+
+## What I would implement next (already aligned to your requirements)
+
+1. **Clip spec generator** (`StoryBuilder.generate_clip_specs`)
+
+* input: `01_outline.yaml`, `04_shotlist.yaml`, `style_bible.yaml`, `loras.yaml`
+* output: `prompts/clips/*.yaml` validated against `clip.schema.json`
+
+2. **LoRA bundle resolver**
+
+* convert `shared_loras_profile` → concrete `--distilled-lora path weight` args
+* support multiple LoRAs, weights, and pipeline-specific flags
+
+3. **Assembler**
+
+* ffmpeg concat lists per scene/act/final
+* respects acts mode automatically
+
+4. **Render caching**
+
+* compute a stable hash from:
+
+  * compiled prompt, negative, lora bundle, pipeline, seed, fps, frames, dims
+* skip rendering if identical output already exists
+
+---

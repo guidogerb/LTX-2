@@ -1,0 +1,13 @@
+project_id: "00000000-0000-0000-0000-000000000000"
+slug: "project_template"
+title: "Template Project"
+logline: "A one-sentence logline."
+acts_enabled: true
+
+defaults:
+  pipeline: "ti2vid_two_stages"
+  fps: 16
+  aspect: "2.39:1"
+  width: 1920
+  height: 800
+  max_seconds: 15
