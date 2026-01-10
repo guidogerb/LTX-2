@@ -42,5 +42,5 @@ This file tracks production steps and a lightweight development backlog for the 
 
 ## 1.0 Polish
 
-- [ ] Implement `vtx story treatment` (bridge between outline and screenplay).
-- [ ] Cleanup `utils/logging.py` and documentation TODOs.
+- [x] Implement `vtx story treatment` (bridge between outline and screenplay).
+- [x] Cleanup `utils/logging.py` and documentation TODOs.

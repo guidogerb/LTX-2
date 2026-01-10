@@ -131,6 +131,101 @@ def projects_new(
     print(f"[green]Created[/green] {slug} at {path}")
 
 
+@projects_app.command("propose")
+def projects_propose(
+    concept: str = typer.Argument(..., help="Concept text or path to text file"),
+    out: str = typer.Option("proposal.yaml", "--out", help="Output YAML file"),
+) -> None:
+    """Generate a project proposal with resource suggestions from CivitAI."""
+    import yaml
+    from pathlib import Path
+    from vtx_app.config.settings import Settings
+    from vtx_app.wizards.proposal import ProposalGenerator
+
+    # Load concept text
+    p = Path(concept)
+    if p.exists() and p.is_file():
+        text = p.read_text()
+    else:
+        text = concept
+
+    s = Settings.from_env()
+    gen = ProposalGenerator(settings=s)
+    proposal = gen.create_proposal(text)
+
+    Path(out).write_text(yaml.safe_dump(proposal, sort_keys=False))
+    print(f"[green]Proposal written to {out}[/green]")
+    print(f"Edit this file, then run: vtx projects create-from-plan {out}")
+
+
+@projects_app.command("create-from-plan")
+def projects_create_from_plan(
+    plan: str = typer.Argument(..., help="Path to proposal.yaml"),
+) -> None:
+    """Create a project and resources from a proposal file."""
+    import yaml
+    from pathlib import Path
+
+    p = Path(plan)
+    if not p.exists():
+        print(f"[red]Plan file not found: {plan}[/red]")
+        raise typer.Exit(1)
+
+    data = yaml.safe_load(p.read_text()) or {}
+    meta = data.get("meta", {})
+    slug = meta.get("slug")
+    title = meta.get("title")
+
+    if not slug:
+        print("[red]Missing meta.slug in plan[/red]")
+        raise typer.Exit(1)
+
+    # Create project
+    reg = Registry.load()
+    loader = ProjectLoader(registry=reg)
+    try:
+        path = loader.create_project(slug=slug, title=title or slug)
+        print(f"[green]Created project {slug}[/green] at {path}")
+    except FileExistsError:
+        print(f"[yellow]Project {slug} already exists, updating files...[/yellow]")
+        proj = loader.load(slug)
+        path = proj.root
+
+    # Write brief
+    brief = data.get("story", {}).get("brief")
+    if brief:
+        (path / "story" / "00_brief.md").write_text(brief)
+        print("Updated story/00_brief.md")
+
+    # Update resources/loras
+    suggested_loras = data.get("resources", {}).get("suggested_loras", [])
+    if suggested_loras:
+        loras_file = path / "prompts" / "loras.yaml"
+        current_loras = {}
+        if loras_file.exists():
+            current_loras = yaml.safe_load(loras_file.read_text()) or {}
+
+        # Add suggestions to loras.yaml
+        bundles = current_loras.get("bundles") or {}
+        candidates = []
+        for item in suggested_loras:
+            candidates.append({
+                "name": item["name"],
+                "url": item["url"],
+                "download_url": item["download_url"],
+                "trigger_word": "TODO"
+            })
+        bundles["civitai_candidates"] = candidates
+        current_loras["bundles"] = bundles
+
+        loras_file.write_text(yaml.safe_dump(current_loras, sort_keys=False))
+        print(f"Added {len(candidates)} LoRA candidates to prompts/loras.yaml")
+
+    print("\n[bold]Next steps:[/bold]")
+    print(f"1. cd projects/{slug}")
+    print("2. vtx story outline")
+
+
 @project_app.command("env-create")
 def project_env_create(slug: str) -> None:
     """Create a per-project virtualenv from that project's env/requirements.txt."""
@@ -326,6 +421,53 @@ def render_clip(
 
     controller = RenderController(project=proj, registry=reg)
     controller.render_clip(clip_id=clip_id, preset=preset)
+
+
+@render_app.command("approve")
+def render_approve(
+    slug: str,
+    clip_id: str,
+    strategy: str = typer.Option("t2v", help="Final strategy: t2v or v2v"),
+) -> None:
+    """Mark a clip as approved and plan its final render strategy."""
+    import yaml
+    reg = Registry.load()
+    loader = ProjectLoader(registry=reg)
+    proj = loader.load(slug)
+    
+    # Locate clip
+    clip_path = proj.root / "prompts" / "clips" / f"{clip_id}.yaml"
+    if not clip_path.exists():
+        matches = list((proj.root / "prompts" / "clips").glob(f"{clip_id}__*.yaml"))
+        if matches:
+            clip_path = matches[0]
+        else:
+            print(f"[red]Clip {clip_id} not found[/red]")
+            raise typer.Exit(1)
+            
+    data = yaml.safe_load(clip_path.read_text()) or {}
+    
+    # Check for draft output
+    out_mp4 = (data.get("outputs") or {}).get("mp4")
+    draft_exists = False
+    if out_mp4:
+        draft_exists = (proj.root / out_mp4).exists()
+    
+    if strategy == "v2v" and not draft_exists:
+        print(f"[yellow]Warning: Strategy is v2v but no draft render found at {out_mp4}[/yellow]")
+
+    # Update metadata
+    render_config = data.get("render") or {}
+    render_config["approved"] = True
+    render_config["final_strategy"] = strategy
+    
+    # If v2v, we might want to lock the input video path explicitly?
+    # Or rely on convention (input = the draft output).
+    # Let's rely on convention in renderer.
+    
+    data["render"] = render_config
+    clip_path.write_text(yaml.safe_dump(data, sort_keys=False))
+    print(f"[green]Approved[/green] {clip_id} for {strategy}")
 
 
 @render_app.command("resume")

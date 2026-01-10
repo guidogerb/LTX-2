@@ -64,6 +64,16 @@ class RenderController:
         out_path.parent.mkdir(parents=True, exist_ok=True)
 
         pipeline_key = (clip.get("render") or {}).get("pipeline") or s.default_pipeline
+        
+        # Strategy override handling (V2V)
+        # If finalizing with V2V, we need a V2V-capable pipeline (e.g. ic_lora) 
+        # unless current pipeline supports input video. 
+        final_strategy = (clip.get("render") or {}).get("final_strategy")
+        if preset == "final" and final_strategy == "v2v":
+             # Switch specific to V2V pipeline if not already
+             # For LTX, ic_lora is a good candidate for v2v style transfer/refinement
+             pipeline_key = "ic_lora" 
+
         if pipeline_key not in PIPELINE_MODULES:
             raise KeyError(f"Unknown pipeline key: {pipeline_key}")
         module = PIPELINE_MODULES[pipeline_key]
@@ -76,18 +86,32 @@ class RenderController:
             or os.getenv("PROJECT_FPS")
             or s.default_fps
         )
-        width = int(
-            preset_cfg.get("width")
-            or (clip.get("render") or {}).get("width")
+        base_width = int(
+            (clip.get("render") or {}).get("width")
             or os.getenv("PROJECT_WIDTH")
             or s.default_width
         )
-        height = int(
-            preset_cfg.get("height")
-            or (clip.get("render") or {}).get("height")
+        base_height = int(
+            (clip.get("render") or {}).get("height")
             or os.getenv("PROJECT_HEIGHT")
             or s.default_height
         )
+        
+        # Scaling logic
+        width = base_width
+        height = base_height
+        
+        if preset == "draft":
+            # "Exactly half of the target resolution"
+            width = base_width // 2
+            height = base_height // 2
+            # Draft writes to separate file to preserve as input for final
+            out_path = out_path.with_name(f"{out_path.stem}_draft{out_path.suffix}")
+        
+        elif preset == "final":
+             # Use full res
+             width = base_width
+             height = base_height
 
         # Duration -> frames (content-driven via story beats + prompt)
         seconds = estimate_seconds(clip)
@@ -112,6 +136,21 @@ class RenderController:
             args += ["--spatial-upsampler-path", s.spatial_upsampler_path]
         if s.gemma_root:
             args += ["--gemma-root", s.gemma_root]
+
+        # V2V Input
+        if preset == "final" and final_strategy == "v2v":
+            draft_input = out_path.with_name(f"{out_path.stem}_draft{out_path.suffix}")
+            if not draft_input.exists():
+                # Checking if maybe the user manually approved a non-_draft file?
+                # Fallback to standard convention?
+                pass
+            
+            # Add input video arg (ic_lora usually takes --input-video-path or similar)
+            iv_flag = first_supported(cap, "--input-video-path", "--input_video_path", "--input-video")
+            if iv_flag and draft_input.exists():
+                args += [iv_flag, str(draft_input)]
+                # Also likely need conditioning strength?
+                args += ["--conditioning-strength", "0.6"] # sane default
 
         # LoRAs: prefer explicit clip loras, else fallback to shared distilled lora env
         # Clip schema supports: loras: [{env: "LTX_DISTILLED_LORA_PATH", weight: 0.8}, ...]

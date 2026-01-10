@@ -74,6 +74,52 @@ vtx render clip my_movie A01_S01_SH001
 vtx render resume --max-jobs 1
 ```
 
+## Proposal & Review Workflow
+
+For a guided setup with drafts and V2V refinement, follow this workflow:
+
+1. **Propose a concept:**
+   ```bash
+   vtx projects propose "A cyberpunk noir set in 2099 rain..."
+   # or
+   vtx projects propose my_idea.txt
+   ```
+   This generates `proposal.yaml` with an AI-analyzed plan and CivitAI resource suggestions.
+
+2. **Create project from plan:**
+   Edit the proposal if needed, then run:
+   ```bash
+   vtx projects create-from-plan proposal.yaml
+   ```
+
+3. **Render Drafts (Half-Resolution):**
+   Render quick previews at 50% resolution to check composition and timing.
+   ```bash
+   # Render specific clip
+   vtx render clip my_movie A01_S01_SH001 --preset draft
+   ```
+
+4. **Review & Approve:**
+   Check the drafts. For each clip, decide if it's good enough to be upscaled (V2V) or needs a fresh high-res generation (T2V).
+   ```bash
+   # Mark for Video-to-Video refinement (uses draft as input)
+   vtx render approve my_movie A01_S01_SH001 --strategy v2v
+   
+   # Or mark for fresh Text-to-Video generation
+   vtx render approve my_movie A01_S02_SH001 --strategy t2v
+   ```
+
+5. **Render Finals:**
+   Run the final render pass. Clips approved for V2V will use the draft video as input.
+   ```bash
+   vtx render clip my_movie A01_S01_SH001 --preset final
+   ```
+
+6. **Assemble:**
+   ```bash
+   vtx render assemble my_movie
+   ```
+
 ## Core concepts
 
 ### Environment layering
@@ -99,5 +145,4 @@ paths. The renderer reads these files and updates the shared registry.
 
 ## Current limitations
 
-- Act/final assembly helpers are stubbed (`render/ffmpeg.py`, `render/assembler.py`).
 - Story CLI commands do not yet expose filtering or overwrite options.
