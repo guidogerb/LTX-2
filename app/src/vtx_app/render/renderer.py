@@ -15,6 +15,7 @@ from vtx_app.registry.db import Registry
 from vtx_app.story.duration_estimator import estimate_seconds
 from vtx_app.story.prompt_compiler import compile_prompt
 from vtx_app.utils.timecode import now_iso
+from vtx_app.utils.validation import validate_clip_spec
 
 PIPELINE_MODULES = {
     "ti2vid_two_stages": "ltx_pipelines.ti2vid_two_stages",
@@ -47,6 +48,10 @@ class RenderController:
                 raise FileNotFoundError(f"No clip spec found for {clip_id}")
 
         clip = yaml.safe_load(clip_path.read_text()) or {}
+
+        # Validation
+        validate_clip_spec(clip)
+
         pack = compile_prompt(project_root=proj.root, clip_spec=clip)
 
         out_rel = (clip.get("outputs") or {}).get("mp4")
@@ -141,6 +146,42 @@ class RenderController:
         nflag = first_supported(cap, "--negative-prompt", "--negative_prompt")
         if nflag and pack.negative:
             args += [nflag, pack.negative]
+
+        # Inputs (images/video)
+        inputs = clip.get("inputs", {})
+
+        # Reference image
+        ref_img = inputs.get("reference_image")
+        if ref_img:
+            fpath = Path(ref_img)
+            if not fpath.is_absolute():
+                fpath = proj.root / ref_img
+
+            # Warn if missing?
+            if not fpath.exists():
+                print(f"[yellow]Warning: Input image not found: {fpath}[/yellow]")
+
+            img_flag = first_supported(cap, "--image")
+            if img_flag:
+                # Default: frame 0, strength 1.0
+                args += [img_flag, str(fpath), "0", "1.0"]
+
+        # Input video (video-to-video / ICLora)
+        inp_vid = inputs.get("input_video")
+        if inp_vid:
+            fpath = Path(inp_vid)
+            if not fpath.is_absolute():
+                fpath = proj.root / inp_vid
+
+            if not fpath.exists():
+                print(f"[yellow]Warning: Input video not found: {fpath}[/yellow]")
+
+            vid_flag = first_supported(
+                cap, "--video-conditioning", "--video_conditioning"
+            )
+            if vid_flag:
+                # Default strength 1.0
+                args += [vid_flag, str(fpath), "1.0"]
 
         # Prompt + output
         pflag = first_supported(cap, "--prompt")

@@ -114,3 +114,18 @@ def render_resume(max_jobs: int = typer.Option(1, "--max-jobs")) -> None:
 
     controller = RenderController(project=None, registry=reg)
     controller.resume(max_jobs=max_jobs)
+
+
+@render_app.command("assemble")
+def render_assemble(
+    slug: str, output: str = typer.Option("final_cut.mp4", "--output")
+) -> None:
+    """Concatenate all rendered clips into a final movie."""
+    reg = Registry.load()
+    loader = ProjectLoader(registry=reg)
+    proj = loader.load(slug)
+
+    from vtx_app.render.assembler import Assembler
+
+    asm = Assembler(project=proj)
+    asm.assemble(output_name=output)
