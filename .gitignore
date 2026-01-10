@@ -43,5 +43,7 @@ tmp
 *.webp
 /app/projects/project_slug/prompts/clips/...
 
+*:Zone.Identifier
 *_Zone.Identifier
+
 
