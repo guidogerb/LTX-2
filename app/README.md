@@ -6,147 +6,131 @@ produce longform projects as a sequence of short clips rendered with LTX-2 pipel
 
 ## Features
 
-- Project scaffolding with a consistent folder layout
-- Continuity-aware prompt generation (style bible, characters, locations, LoRA bundles)
-- Optional OpenAI integration to generate outlines, shotlists, and per-clip specs
-- Rendering orchestration with a shared registry for resuming unfinished clips
+- **Project Scaffolding**: Consistent folder layout (`projects/<slug>`) with templates.
+- **AI-Assisted Pre-Production**:
+  - `propose`: Turn a raw idea into a production plan with CivitAI resource suggestions.
+  - `story`: Generate outlines, treatments, screenplays, characters, locations, and shotlists using OpenAI.
+- **Context Awareness**: CLI commands automatically detect the active project when run from project directories.
+- **Rendering Orchestration**: Manage render jobs (drafts vs. production), resuming, and assembly.
 
-## System assumptions
+## System Assumptions
 
-The LTX-2 toolchain is tested with Python 3.12 and CUDA 12.x. Align your environment
-accordingly.
+The LTX-2 toolchain is tested with Python 3.12+ and CUDA 12.x on Linux.
 
-## Quick start
+## Installation
 
-### 1) Install the app
-
-From `LTX-2/app`:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .
-```
-
-### 2) Configure shared environment files
-
-```bash
-cp config/global.env.example config/global.env
-cp config/models.env.example config/models.env
-```
-
-`config/models.env` is shared across all projects. Put model paths there.
-
-If you use OpenAI-assisted story generation:
-
-```bash
-export OPENAI_API_KEY="..."
-```
-
-### 3) Create a project
-
-```bash
-vtx projects new my_movie --title "My Movie"
-```
-
-This creates `projects/my_movie/` from `_global/templates/project_template`.
-
-### 4) Create the per-project environment
-
-```bash
-vtx project env-create my_movie
-```
-
-This installs dependencies from `projects/my_movie/env/requirements.txt`.
-
-### 5) Generate story artifacts (optional)
-
-```bash
-vtx story outline my_movie
-vtx story shotlist my_movie
-vtx story clips my_movie
-```
-
-### 6) Render clips / resume unfinished
-
-```bash
-vtx render clip my_movie A01_S01_SH001
-vtx render resume --max-jobs 1
-```
-
-## Proposal & Review Workflow
-
-For a guided setup with drafts and V2V refinement, follow this workflow:
-
-1. **Propose a concept:**
+1. **Install the app**
+   From the `app/` directory:
    ```bash
-   vtx projects propose "A cyberpunk noir set in 2099 rain..."
-   # or
-   vtx projects propose my_idea.txt
-   ```
-   This generates `proposal.yaml` with an AI-analyzed plan and CivitAI resource suggestions.
-
-2. **Create project from plan:**
-   Edit the proposal if needed, then run:
-   ```bash
-   vtx projects create-from-plan proposal.yaml
+   python -m venv .venv
+   source .venv/bin/activate
+   pip install -e .
    ```
 
-3. **Render Drafts (Half-Resolution):**
-   Render quick previews at 50% resolution to check composition and timing.
+2. **Configure shared environment**
    ```bash
-   # Render specific clip
-   vtx render clip my_movie A01_S01_SH001 --preset draft
-## The Vision Workflow
+   cp config/global.env.example config/global.env
+   cp config/models.env.example config/models.env
+   ```
+   *Edit `config/models.env` to point to your local model weights.*
 
-This workflow (aka "The Vision Workflow") is designed to take a raw concept description and turn it into a production-ready project with rich style definitions, resource allocations (LoRAs), and a full production plan.
+3. **Set API Keys (Optional)**
+   If using AI features:
+   ```bash
+   export OPENAI_API_KEY="sk-..."
+   ```
 
-### 1) Propose & Plan
+## Workflow: Automated "create-movie"
 
-Input: A detailed text description of your movie (story, style, vibe).
-
-```bash
-vtx projects propose "my_concept.txt" --out proposal.yaml
-```
-
-- Analyzes the concept for visual style keywords.
-- Searches CivitAI for relevant LoRAs.
-- Creates a `proposal.yaml` blueprint.
-
-### 2) Create & Hydrate
+To generate a complete project from idea to clip specs in one shot:
 
 ```bash
-vtx projects create-from-plan proposal.yaml
+vtx create-movie <slug> "<prompt>"
 ```
 
-- Creates the project structure.
-- Writes `story/00_brief.md`.
-- **Generates `prompts/style_bible.yaml`** (Visual language, lighting, audio).
-- **Populates `prompts/loras.yaml`** with the suggested LoRAs.
-
-### 3) Story & Specification
-
+Example:
 ```bash
-cd projects/<slug>
-vtx story outline      # Structure the story (Acts/Scenes)
-vtx story treatment    # Prose description
-vtx story screenplay   # Dialogue and action
-vtx story shotlist     # Shot-by-shot breakdown
-vtx story clips        # Generate renderable clip specs
+vtx create-movie theo_dragon "A young boy named Theo battles an evil dragon in suburbia..."
 ```
 
-### 4) Render Cycle (Draft -> Final)
+*This runs `propose`, `create-from-plan`, `outline`, `treatment`, `shotlist`, and `clips` automatically.*
 
+## Workflow: The "Vision" Path (Step-by-Step)
+
+This workflow takes a raw concept to a production-ready project with rich style definitions and resource allocations, allowing for manual edits between steps.
+
+### 1. Ideation & Planning
+Generate a project proposal from a text file or string.
 ```bash
-# Render 50% res draft
-vtx render clip <slug> <clip_id> --preset draft
-
-# Approve and choose strategy (t2v or v2v)
-vtx render approve <slug> <clip_id> --strategy v2v
-
-# Render final (v2v uses draft as input)
-vtx render clip <slug> <clip_id> --preset final
+# Finds visual style keywords and suggests CivitAI LoRAs
+vtx projects propose "A cyberpunk noir set in 2099 rain..."
+# OR
+vtx projects propose my_idea.txt
 ```
+*Output: `[slug]_plan.yaml`*
+
+### 2. Project Creation
+Create the project structure from the generated plan.
+```bash
+vtx projects create-from-plan [slug]_plan.yaml
+```
+*Creates `projects/[slug]`, hydrates `story/00_brief.md`, generates `prompts/style_bible.yaml`, and moves the plan file into the project root.*
+
+### 3. Story Development
+Navigate to the project directory. The CLI will automatically infer the project context.
+```bash
+cd projects/[slug]
+```
+
+Run the story generators in order:
+```bash
+# 1. Structure the story (Acts/Scenes)
+vtx story outline
+
+# 2. Generate prose description
+vtx story treatment
+
+# 3. Generate dialogue and action
+vtx story screenplay
+
+# 4. Define Characters and Locations (Visual Prompts)
+vtx story characters
+vtx story locations
+
+# 5. Break down into shots
+vtx story shotlist
+
+# 6. Generate renderable clip specifications
+vtx story clips
+```
+
+### 4. Production (Rendering)
+Render clips directly.
+```bash
+# View status of all clips
+vtx render status [slug]
+
+# Render a specific clip (Draft quality)
+vtx render clip [slug] [CLIP_ID] --preset draft
+
+# Approve a clip for V2V refinement
+vtx render approve [slug] [CLIP_ID] --strategy v2v
+
+# Render final quality
+vtx render clip [slug] [CLIP_ID] --preset final
+
+# Assemble final cut
+vtx render assemble [slug]
+```
+
+## Manual Workflow
+
+If you prefer to skip the AI planning:
+
+1. **Create Project**: `vtx projects new [slug] --title "My Title"`
+2. **Setup Env**: `vtx project env-create [slug]`
+3. **Manually Edit**: breakdown your story in `story/` and `prompts/`.
+4. **Render**: Use `vtx render` commands as above.
 
 ## Development
 
@@ -163,29 +147,19 @@ make test
 make verify
 ```
 
-## Core concepts
+## Core Concepts
 
-### Environment layering
-
+### Environment Layering
 1. OS environment variables
 2. `config/global.env`
 3. `config/models.env`
 4. `projects/<slug>/project.env` (overrides global defaults)
 
-### Clip specs
+### Clip Specs
+Per-clip specs live in `projects/<slug>/prompts/clips/`. They contain prompt text, render configuration, and output paths. The renderer reads these files and updates the shared registry.
 
-Per-clip specs live in `projects/<slug>/prompts/clips/` and are stored as
-`<clip_id>__<slug>.yaml`. They contain prompt text, render configuration, and output
-paths. The renderer reads these files and updates the shared registry.
-
-### Where to look
-
-- `src/vtx_app/cli.py` – CLI entrypoint
-- `src/vtx_app/story/` – schemas, prompt compilation, OpenAI builders
-- `src/vtx_app/render/` – render planning & orchestration
-- `_global/registry.sqlite` – multi-project progress registry
-- `_global/templates/project_template/` – new project template
-
-## Current limitations
-
-- Story CLI commands do not yet expose filtering or overwrite options.
+### Directory Structure
+- `src/vtx_app/cli.py` – CLI entrypoint & command logic.
+- `src/vtx_app/story/` – OpenAI integration, prompt builders, schemas.
+- `src/vtx_app/render/` – Render planning & orchestration.
+- `_global/registry.sqlite` – Multi-project progress registry.

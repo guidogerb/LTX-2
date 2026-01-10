@@ -307,6 +307,18 @@ For each shot:
         brief_path = self.project.root / "story" / "00_brief.md"
         brief = brief_path.read_text() if brief_path.exists() else ""
 
+        # Check for style preset in plan
+        from vtx_app.style_manager import StyleManager
+        
+        style_preset = None
+        plan_files = list(self.project.root.glob("*_plan.yaml"))
+        if plan_files:
+            plan_data = _load_yaml(plan_files[0])
+            style_preset_name = plan_data.get("meta", {}).get("style_preset")
+            if style_preset_name:
+                print(f"[blue]Using style preset:[/blue] {style_preset_name}")
+                style_preset = StyleManager().load_style(style_preset_name)
+
         schema = {
             "type": "object",
             "properties": {
@@ -339,6 +351,10 @@ For each shot:
 
         system = "You are a visual director. Create a comprehensive style guide (Style Bible) for the movie."
         user = f"Brief:\n{brief}\n\nCreate a style bible defining the visual language, rendering style, lighting, and audio mood."
+
+        if style_preset:
+            style_bible_data = style_preset.get("style_bible", {})
+            user += f"\n\nIMPORTANT: You MUST adapt the following Style Bible to the new story, but keep the core visual identity (Rendering, Aspect Ratio, Lighting Mood) identical.\n\nBASE STYLE:\n{json.dumps(style_bible_data, indent=2)}"
 
         try:
             data = self._call_structured(

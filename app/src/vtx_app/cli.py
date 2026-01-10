@@ -114,6 +114,140 @@ def produce(
     director.produce(slug=slug, concept=concept, title=title, auto_render=render)
 
 
+@app.command("create-style")
+def create_style(
+    style_name: str = typer.Argument(..., help="Name of the new style"),
+    project: Optional[str] = typer.Argument(None, help="Source project slug (default: current directory)"),
+) -> None:
+    """
+    Extract a reusable style style from an existing project.
+    Usage: vtx create-style <style_name> [project_slug]
+    """
+    from vtx_app.style_manager import StyleManager
+
+    slug = _get_slug(project)
+    reg = Registry.load()
+    loader = ProjectLoader(registry=reg)
+    proj = loader.load(slug)
+
+    mgr = StyleManager()
+    out_path = mgr.save_style(style_name, proj.root)
+    print(f"[green]Style '{style_name}' saved to {out_path}[/green]")
+    print(f"Use it in a new proposal: vtx create-movie new_movie \"[{style_name}] my movie idea...\"")
+
+
+@app.command("create-movie")
+def create_movie(
+    slug: str = typer.Argument(..., help="Name of the movie (project slug)"),
+    prompt: str = typer.Argument(..., help="Prompt including concept, style, etc."),
+) -> None:
+    """Automated end-to-end creation flow: idea -> plan -> project -> story artifacts."""
+    from pathlib import Path
+    import shutil
+    import yaml
+    from vtx_app.config.settings import Settings
+    from vtx_app.wizards.proposal import ProposalGenerator
+    from vtx_app.project.loader import ProjectLoader
+    from vtx_app.registry.db import Registry
+    from vtx_app.story.openai_builder import StoryBuilder
+
+    # 1. Proposal
+    print(f"[bold blue]Step 1: Generating proposal for '{slug}'...[/bold blue]")
+    s = Settings.from_env()
+    gen = ProposalGenerator(settings=s)
+    proposal = gen.create_proposal(prompt)
+
+    # Force slug in proposal metadata to match argument
+    if "meta" not in proposal:
+        proposal["meta"] = {}
+    proposal["meta"]["slug"] = slug
+
+    plan_filename = f"{slug}_plan.yaml"
+    plan_path = Path.cwd() / plan_filename
+    plan_path.write_text(yaml.safe_dump(proposal, sort_keys=False))
+    print(f"[green]Plan saved to {plan_path}[/green]")
+
+    # 2. Create Project
+    print(f"\n[bold blue]Step 2: Creating project from plan...[/bold blue]")
+    reg = Registry.load()
+    loader = ProjectLoader(registry=reg)
+
+    title = proposal["meta"].get("title", slug)
+    try:
+        path = loader.create_project(slug=slug, title=title)
+        print(f"[green]Created project {slug}[/green] at {path}")
+    except FileExistsError:
+        print(f"[yellow]Project {slug} already exists, updating files...[/yellow]")
+        proj = loader.load(slug)
+        path = proj.root
+
+    # Move plan file
+    dest_plan = path / plan_filename
+    if plan_path.resolve() != dest_plan.resolve():
+        shutil.move(str(plan_path), str(dest_plan))
+        print(f"Moved plan to {dest_plan}")
+
+    # Write brief
+    brief = proposal.get("story", {}).get("brief")
+    if brief:
+        (path / "story" / "00_brief.md").write_text(brief)
+        print("Updated story/00_brief.md")
+
+    # Hydrate Style Bible
+    print("[blue]Generating Style Bible...[/blue]")
+    proj = loader.load(slug)
+    builder = StoryBuilder(project=proj)
+    builder.generate_style_bible()
+    print("Updated prompts/style_bible.yaml")
+
+    # Update Resources (LoRAs)
+    suggested_loras = proposal.get("resources", {}).get("suggested_loras", [])
+    if suggested_loras:
+        loras_file = path / "prompts" / "loras.yaml"
+        current_loras = {}
+        if loras_file.exists():
+            current_loras = yaml.safe_load(loras_file.read_text()) or {}
+
+        bundles = current_loras.get("bundles") or {}
+        candidates = []
+        for item in suggested_loras:
+            candidates.append({
+                "name": item["name"],
+                "url": item["url"],
+                "download_url": item["download_url"],
+                "trigger_word": "TODO",
+            })
+        bundles["civitai_candidates"] = candidates
+        current_loras["bundles"] = bundles
+        loras_file.write_text(yaml.safe_dump(current_loras, sort_keys=False))
+        print(f"Added {len(candidates)} LoRA candidates to prompts/loras.yaml")
+
+    # 3. Story Generation Loop
+    print(f"\n[bold blue]Step 3: Generating Story Artifacts...[/bold blue]")
+
+    builder = StoryBuilder(project=proj)
+
+    print("Generating Outline...")
+    builder.generate_outline()
+    print("[green]Wrote[/green] story/01_outline.yaml")
+
+    print("Generating Treatment...")
+    builder.generate_treatment()
+    print("[green]Wrote[/green] story/02_treatment.md")
+
+    print("Generating Shotlist...")
+    builder.generate_shotlist()
+    print("[green]Wrote[/green] story/04_shotlist.yaml")
+
+    print("Generating Clip Specs...")
+    builder.generate_clip_specs()
+    print("[green]Generated[/green] prompts/clips/*.yaml")
+
+    print(f"\n[bold green]Movie '{slug}' created successfully![/bold green]")
+    print(f"Project location: {path}")
+    print(f"Next step: cd projects/{slug}")
+
+
 @projects_app.command("list")
 def projects_list() -> None:
     """List known projects (scans VTX_PROJECTS_ROOT and syncs registry)."""

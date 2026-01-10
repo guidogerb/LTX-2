@@ -93,17 +93,46 @@ class ProposalGenerator:
             }
 
     def create_proposal(self, concept_text: str) -> dict[str, Any]:
+        import re
+        from vtx_app.style_manager import StyleManager
+
+        # Check for [style] tag
+        style_match = re.match(r"^\[([\w\-_]+)\]\s*(.*)", concept_text, re.DOTALL)
+        style_name = None
+        if style_match:
+            style_name = style_match.group(1)
+            concept_text = style_match.group(2)  # Remove tag from concept
+            print(f"[blue]Detected style preset:[/blue] {style_name}")
+
         print("[blue]Analyzing concept...[/blue]")
         analysis = self.analyze_concept(concept_text)
+
+        # Inject style keywords if present
+        extra_loras = []
+        if style_name:
+            mgr = StyleManager()
+            keywords = mgr.get_style_keywords(style_name)
+            if keywords:
+                print(f"[dim]Injecting style keywords: {keywords}[/dim]")
+                analysis["visual_style_keywords"] = keywords + analysis["visual_style_keywords"]
+            
+            # Load style-specific LoRAs to suggest
+            style_data = mgr.load_style(style_name) or {}
+            extra_loras = style_data.get("resources", {}).get("bundles", [])
 
         print(
             f"[blue]Searching CivitAI for styles: {analysis['visual_style_keywords']}...[/blue]"
         )
         civitai = CivitAIClient()
         suggested_loras = []
-        for kw in analysis["visual_style_keywords"][:2]:  # limit searches
+        # Search for first few keywords
+        for kw in analysis["visual_style_keywords"][:2]:
             results = civitai.search_loras(kw, limit=2)
             suggested_loras.extend(results)
+
+        # Merge style extras
+        # We put style extras first so they take precedence in user attention
+        suggested_loras = extra_loras + suggested_loras
 
         proposal = {
             "meta": {
@@ -114,6 +143,14 @@ class ProposalGenerator:
             "story": {"brief": analysis["synopsis"]},
             "resources": {"suggested_loras": suggested_loras},
             "instructions": (
+                "Review this file. To create project, run: vtx projects create-from-plan proposal.yaml"
+            ),
+        }
+        
+        if style_name:
+            proposal["meta"]["style_preset"] = style_name
+
+        return proposal
                 "Review this file. To create project, run: vtx projects create-from-plan proposal.yaml"
             ),
         }
