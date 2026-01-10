@@ -87,6 +87,28 @@ def review(slug: str) -> None:
         print(f"[red]Failed to open: {e}[/red]")
 
 
+@app.command("produce")
+def produce(
+    slug: str = typer.Argument(..., help="Project slug"),
+    concept: str = typer.Option(
+        ..., "--concept", "-c", help="Short story brief/concept"
+    ),
+    title: str = typer.Option(
+        None, "--title", help="Project title (default: slugified)"
+    ),
+    render: bool = typer.Option(False, "--render", help="Immediately run rendering"),
+) -> None:
+    """Automated movie production (Zero to Finished)."""
+    # Local import to avoid circular imports or early init
+    from vtx_app.producer import Director
+
+    reg = Registry.load()
+    loader = ProjectLoader(registry=reg)
+    director = Director(registry=reg, loader=loader)
+
+    director.produce(slug=slug, concept=concept, title=title, auto_render=render)
+
+
 @projects_app.command("list")
 def projects_list() -> None:
     """List known projects (scans VTX_PROJECTS_ROOT and syncs registry)."""
