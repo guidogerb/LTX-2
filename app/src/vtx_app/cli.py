@@ -166,6 +166,35 @@ def create_style(
     )
 
 
+@app.command("delete-style")
+def delete_style(
+    style_name: str = typer.Argument(..., help="Name of style to delete")
+) -> None:
+    """Deletes a style from the global style registry."""
+    from vtx_app.style_manager import StyleManager
+
+    mgr = StyleManager()
+    if mgr.delete_style(style_name):
+        print(f"[green]Style '{style_name}' deleted.[/green]")
+    else:
+        print(f"[red]Style '{style_name}' not found.[/red]")
+
+
+@app.command("update-style-desc")
+def update_style_desc(
+    style_name: str = typer.Argument(..., help="Name of the style"),
+    description: str = typer.Argument(..., help="New description for the style"),
+) -> None:
+    """Updates the description of an existing style."""
+    from vtx_app.style_manager import StyleManager
+
+    mgr = StyleManager()
+    if mgr.update_description(style_name, description):
+        print(f"[green]Style '{style_name}' updated.[/green]")
+    else:
+        print(f"[red]Style '{style_name}' not found.[/red]")
+
+
 @app.command("create-movie")
 def create_movie(
     slug: str = typer.Argument(..., help="Name of the movie (project slug)"),

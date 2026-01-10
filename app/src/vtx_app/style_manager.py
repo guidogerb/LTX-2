@@ -63,6 +63,28 @@ class StyleManager:
         """Returns list of available style names."""
         return sorted([p.stem for p in self.root.glob("*.yaml")])
 
+    def delete_style(self, name: str) -> bool:
+        """Deletes a style yaml file. Returns True if deleted, False if not found."""
+        path = self.root / f"{name}.yaml"
+        if not path.exists():
+            return False
+        path.unlink()
+        return True
+
+    def update_description(self, name: str, description: str) -> bool:
+        """Updates the description of an existing style."""
+        path = self.root / f"{name}.yaml"
+        if not path.exists():
+            return False
+
+        data = yaml.safe_load(path.read_text()) or {}
+        if "meta" not in data:
+            data["meta"] = {}
+        data["meta"]["description"] = description
+
+        path.write_text(yaml.safe_dump(data, sort_keys=False))
+        return True
+
     def get_style_keywords(self, name: str) -> list[str]:
         """Extracts keywords from a style for searching/prompting."""
         data = self.load_style(name)

@@ -183,3 +183,45 @@ def test_create_style_with_description(tmp_path, mock_style_manager):
             # Test listing shows description
             res_list = runner.invoke(app, ["list-styles"])
             assert "A cool style" in res_list.stdout
+
+
+def test_delete_style(tmp_path, mock_style_manager):
+    """Test deleting a style."""
+    mgr = StyleManager()
+    style_path = mgr.root / "to_delete.yaml"
+    style_path.write_text(yaml.safe_dump({"meta": {"name": "to_delete"}}))
+
+    assert style_path.exists()
+
+    result = runner.invoke(app, ["delete-style", "to_delete"])
+    assert result.exit_code == 0
+    assert "deleted" in result.stdout
+    assert not style_path.exists()
+
+    # Test delete non-existent
+    result = runner.invoke(app, ["delete-style", "non_existent"])
+    assert result.exit_code == 0
+    assert "not found" in result.stdout
+
+
+def test_update_style_desc(tmp_path, mock_style_manager):
+    """Test updating style description."""
+    mgr = StyleManager()
+    style_path = mgr.root / "to_update.yaml"
+    style_path.write_text(
+        yaml.safe_dump({"meta": {"name": "to_update", "description": "old"}})
+    )
+
+    assert style_path.exists()
+
+    result = runner.invoke(app, ["update-style-desc", "to_update", "new description"])
+    assert result.exit_code == 0
+    assert "updated" in result.stdout
+
+    data = yaml.safe_load(style_path.read_text())
+    assert data["meta"]["description"] == "new description"
+
+    # Test update non-existent
+    result = runner.invoke(app, ["update-style-desc", "non_existent", "desc"])
+    assert result.exit_code == 0
+    assert "not found" in result.stdout
