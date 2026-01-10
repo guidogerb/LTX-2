@@ -1,0 +1,38 @@
+{
+  "type": "object",
+  "properties": {
+    "scenes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "act": { "type": "integer" },
+          "scene": { "type": "integer" },
+          "slug": { "type": "string" },
+          "title": { "type": "string" },
+          "summary": { "type": "string" },
+          "location_key": { "type": "string" },
+          "time_of_day": { "type": "string" },
+          "shots": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "clip_id": { "type": "string" },
+                "description": { "type": "string" },
+                "duration_hint_seconds": { "type": "number" },
+                "negative_prompt": { "type": "string" }
+              },
+              "required": ["clip_id", "description", "duration_hint_seconds"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": ["act", "scene", "slug", "shots"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["scenes"],
+  "additionalProperties": false
+}

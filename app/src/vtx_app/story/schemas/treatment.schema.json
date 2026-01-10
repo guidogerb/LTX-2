@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "title": { "type": "string" },
+    "content": { 
+      "type": "string",
+      "description": "The full treatment text in Markdown format, describing the story in detail, focusing on visual narrative."
+    }
+  },
+  "required": ["title", "content"],
+  "additionalProperties": false
+}

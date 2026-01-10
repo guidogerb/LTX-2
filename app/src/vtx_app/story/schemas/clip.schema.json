@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["clip_id", "prompt", "render"],
+  "properties": {
+    "clip_id": { "type": "string" },
+    "title": { "type": "string" },
+    "prompt": {
+      "type": "object",
+      "required": ["positive"],
+      "properties": {
+        "positive": { "type": "string" },
+        "negative": { "type": "string" }
+      }
+    },
+    "render": {
+      "type": "object",
+      "properties": {
+        "pipeline": { "type": "string" },
+        "fps": { "type": "integer" },
+        "width": { "type": "integer" },
+        "height": { "type": "integer" },
+        "seed": { "type": "integer" }
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["t2v", "i2v", "v2v"] },
+        "reference_image": { "type": ["string", "null"] },
+        "input_video": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

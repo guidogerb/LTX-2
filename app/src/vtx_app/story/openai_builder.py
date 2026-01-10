@@ -45,14 +45,24 @@ class StoryBuilder:
     ) -> dict[str, Any]:
         s = self.project.settings()
         client = self._client()
-        resp = client.responses.create(
+        completion = client.chat.completions.create(
             model=s.openai_model,
-            input=messages,
+            messages=messages,
             temperature=s.openai_temperature,
-            max_output_tokens=s.openai_max_output_tokens,
-            text={"format": {"type": "json_schema", "strict": True, "schema": schema}},
+            max_tokens=s.openai_max_output_tokens,
+            response_format={
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "response",
+                    "strict": True,
+                    "schema": schema,
+                },
+            },
         )
-        return json.loads(resp.output_text)
+        content = completion.choices[0].message.content
+        if not content:
+            return {}
+        return json.loads(content)
 
     def generate_outline(self) -> None:
         """
