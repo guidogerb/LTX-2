@@ -18,6 +18,8 @@ checkpoints/
 # Other files
 .DS_Store
 tmp
+*.sqlite
+*_cache/
 .wandb
 
 # Model checkpoints
