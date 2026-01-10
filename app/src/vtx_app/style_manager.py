@@ -42,7 +42,7 @@ class StyleManager:
             "style_bible": style_bible.get("StyleBible", {}),
             "resources": {
                 "bundles": (loras.get("bundles") or {}).get("civitai_candidates", [])
-            }
+            },
         }
 
         out_path = self.root / f"{name}.yaml"
@@ -65,15 +65,15 @@ class StyleManager:
         data = self.load_style(name)
         if not data:
             return []
-        
+
         bible = data.get("style_bible", {})
         fmt = bible.get("Format", {})
         look = bible.get("CoreLook", {})
-        
+
         keywords = []
         if fmt.get("OverallAesthetic"):
             keywords.append(fmt["OverallAesthetic"])
         if look.get("Rendering", {}).get("Style"):
             keywords.append(look["Rendering"]["Style"])
-            
+
         return keywords

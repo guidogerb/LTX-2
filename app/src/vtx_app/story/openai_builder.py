@@ -309,7 +309,7 @@ For each shot:
 
         # Check for style preset in plan
         from vtx_app.style_manager import StyleManager
-        
+
         style_preset = None
         plan_files = list(self.project.root.glob("*_plan.yaml"))
         if plan_files:
