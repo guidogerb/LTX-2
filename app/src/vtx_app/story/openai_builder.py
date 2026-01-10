@@ -290,6 +290,8 @@ For each shot:
                         },
                         "LightingPlan": {"type": "object"},
                         "AudioBible": {"type": "object"},
+                        "VFXGuidelines": {"type": "object"},
+                        "Dialogue": {"type": "object"},
                     },
                     "required": ["Format", "CoreLook"],
                 }
