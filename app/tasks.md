@@ -24,7 +24,7 @@ This file tracks production steps and a lightweight development backlog for the 
 ## App development backlog
 
 - [x] Expose `StoryBuilder.generate_clip_specs` options in the CLI (`--act`, `--scene`, `--overwrite`).
-- [ ] Implement ffmpeg helpers and assembly commands (`render/ffmpeg.py`, `render/assembler.py`).
-- [ ] Support input modalities in rendering (`inputs.type` for image/video/keyframes).
-- [ ] Add schema validation for story/clip YAML files before rendering.
-- [ ] Add test coverage for registry syncing, CLI commands, and render argument building.
+- [x] Implement ffmpeg helpers and assembly commands (`render/ffmpeg.py`, `render/assembler.py`).
+- [x] Support input modalities in rendering (`inputs.type` for image/video/keyframes).
+- [x] Add schema validation for story/clip YAML files before rendering.
+- [x] Add test coverage for registry syncing, CLI commands, and render argument building.
