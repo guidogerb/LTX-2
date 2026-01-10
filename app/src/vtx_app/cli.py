@@ -444,6 +444,160 @@ def create_movie(
     print(f"Next step: cd projects/{slug}")
 
 
+@app.command("create-movie-all")
+def create_movie_all(
+    slug: str = typer.Argument(..., help="Name of the movie (project slug)"),
+    prompt: str = typer.Argument(..., help="Prompt including concept, style, etc."),
+) -> None:
+    """Automated end-to-end creation flow including rendering and assembly, bypassing reviews."""
+    import shutil
+    from pathlib import Path
+
+    import yaml
+
+    from vtx_app.config.settings import Settings
+    from vtx_app.project.loader import ProjectLoader
+    from vtx_app.registry.db import Registry
+    from vtx_app.render.assembler import Assembler
+    from vtx_app.story.openai_builder import StoryBuilder
+    from vtx_app.wizards.proposal import ProposalGenerator
+
+    # Reuse create-movie logic logic but since create_movie is a command,
+    # we can't easily call it directly if it has typer specific decorators/context,
+    # or we can refactor. For now, duplication with extended steps is safer/clearer
+    # given the prompt structure, or I can call it via a helper.
+    # However, create_movie has heavy print logic. Let's replicate the flow.
+    # 1. Proposal
+    print(f"[bold blue]Step 1: Generating proposal for '{slug}'...[/bold blue]")
+    s = Settings.from_env()
+    gen = ProposalGenerator(settings=s)
+    proposal = gen.create_proposal(prompt)
+
+    # Force slug in proposal metadata
+    if "meta" not in proposal:
+        proposal["meta"] = {}
+    proposal["meta"]["slug"] = slug
+
+    plan_filename = f"{slug}_plan.yaml"
+    plan_path = Path.cwd() / plan_filename
+    plan_path.write_text(yaml.safe_dump(proposal, sort_keys=False))
+    print(f"[green]Plan saved to {plan_path}[/green]")
+
+    # 2. Create Project
+    print(f"\n[bold blue]Step 2: Creating project from plan...[/bold blue]")
+    reg = Registry.load()
+    loader = ProjectLoader(registry=reg)
+
+    title = proposal["meta"].get("title", slug)
+    try:
+        path = loader.create_project(slug=slug, title=title)
+        print(f"[green]Created project {slug}[/green] at {path}")
+    except FileExistsError:
+        print(f"[yellow]Project {slug} already exists, updating files...[/yellow]")
+        proj = loader.load(slug)
+        path = proj.root
+
+    # Move plan file
+    dest_plan = path / plan_filename
+    if plan_path.resolve() != dest_plan.resolve():
+        shutil.move(str(plan_path), str(dest_plan))
+
+    # Write brief
+    brief = proposal.get("story", {}).get("brief")
+    if brief:
+        (path / "story" / "00_brief.md").write_text(brief)
+
+    # Hydrate Style Bible
+    print("[blue]Generating Style Bible...[/blue]")
+    proj = loader.load(slug)
+    builder = StoryBuilder(project=proj)
+    builder.generate_style_bible()
+
+    # Update Resources (LoRAs)
+    suggested_loras = proposal.get("resources", {}).get("suggested_loras", [])
+    if suggested_loras:
+        loras_file = path / "prompts" / "loras.yaml"
+        current_loras = {}
+        if loras_file.exists():
+            current_loras = yaml.safe_load(loras_file.read_text()) or {}
+
+        bundles = current_loras.get("bundles") or {}
+        candidates = []
+        for item in suggested_loras:
+            candidates.append(
+                {
+                    "name": item["name"],
+                    "url": item["url"],
+                    "download_url": item["download_url"],
+                    "trigger_word": "TODO",
+                }
+            )
+        bundles["civitai_candidates"] = candidates
+        current_loras["bundles"] = bundles
+        loras_file.write_text(yaml.safe_dump(current_loras, sort_keys=False))
+
+    # 3. Story Generation Loop
+    print(f"\n[bold blue]Step 3: Generating Story Artifacts...[/bold blue]")
+    builder = StoryBuilder(project=proj)
+
+    print("Generating Outline...")
+    builder.generate_outline()
+    print("Generating Treatment...")
+    builder.generate_treatment()
+    print("Generating Shotlist...")
+    builder.generate_shotlist()
+    print("Generating Clip Specs...")
+    builder.generate_clip_specs()
+    # End of create-movie equivalent
+
+    # 4. Render Full (Equivalent to render-full)
+    print(f"\n[bold blue]Step 4: Rendering Full Resolution...[/bold blue]")
+
+    # Reload project to ensure paths are correct if things moved
+    proj = loader.load(slug)
+
+    clips_dir = proj.root / "prompts" / "clips"
+    if not clips_dir.exists():
+        print(f"[red]No clips found in {slug}[/red]")
+        return
+
+    clip_files = sorted(clips_dir.glob("*.yaml"))
+    # Filter hidden
+    clip_files = [p for p in clip_files if not p.name.startswith(".")]
+
+    controller = RenderController(project=proj, registry=reg)
+    out_dir = path / "renders" / "high-res"
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    for cf in clip_files:
+        cid = cf.stem
+        if "__" in cid:
+            cid = cid.split("__")[0]
+
+        print(f"Rendering {cid} (Full Res)...")
+        try:
+            controller.render_clip(
+                clip_id=cid, preset="final", resolution_scale=1.0, output_dir=out_dir
+            )
+        except Exception as e:
+            print(f"[red]Failed to render {cid}: {e}[/red]")
+
+    # 5. Assemble (Equivalent to assemble)
+    print(f"\n[bold blue]Step 5: Assembling Final Cut...[/bold blue]")
+    asm = Assembler(project=proj)
+
+    if out_dir.exists():
+        asm.assemble(clips_dir=out_dir)
+    else:
+        print(
+            "[yellow]High-res folder not found, attempting assembly of any available clips...[/yellow]"
+        )
+        asm.assemble()
+
+    print(f"\n[bold green]Movie '{slug}' COMPLETED![/bold green]")
+    print(f"Final video: {path}/final_cut.mp4")
+
+
 @projects_app.command("list")
 def projects_list() -> None:
     """List known projects (scans VTX_PROJECTS_ROOT and syncs registry)."""

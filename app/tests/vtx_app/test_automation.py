@@ -307,3 +307,64 @@ def test_assemble_command(tmp_path):
             MockAsm.return_value.assemble.assert_called_with(
                 clips_dir=proj_root / "renders" / "high-res"
             )
+
+
+def test_create_movie_all(tmp_path):
+    """Test create-movie-all command."""
+    # This command chains create-movie, render-full, and assemble.
+    # We will mock the internal calls to Typer commands or logic.
+
+    # Actually, calling other Typer commands from within a command is tricky without invoking the runner or context.
+    # The implementation likely just calls the underlying logic.
+    # So we verify that the underlying logic for all 3 steps is called.
+
+    # 1. Project creation/story gen (same as create-movie)
+    # 2. Render full (RenderController loop)
+    # 3. Assemble (Assembler)
+
+    with patch("vtx_app.cli.Registry.load"), patch(
+        "vtx_app.cli.ProjectLoader"
+    ) as MockLoader, patch("vtx_app.cli.Settings.from_env"), patch(
+        "vtx_app.wizards.proposal.ProposalGenerator"
+    ) as MockPropGen, patch(
+        "vtx_app.story.openai_builder.StoryBuilder"
+    ) as MockBuilder, patch(
+        "vtx_app.cli.RenderController"
+    ) as MockController, patch(
+        "vtx_app.render.assembler.Assembler"
+    ) as MockAsm:
+
+        # Setup mocks
+        MockPropGen.return_value.create_proposal.return_value = {"meta": {}}
+
+        mock_proj = MagicMock()
+        mock_proj.root = tmp_path / "projects" / "all_full_movie"
+        mock_proj.root.mkdir(parents=True)
+        (mock_proj.root / "prompts" / "clips").mkdir(parents=True)
+
+        # Add a dummy clip file so render_full has something to iterate
+        (mock_proj.root / "prompts" / "clips" / "C1.yaml").touch()
+
+        MockLoader.return_value.load.return_value = mock_proj
+        MockLoader.return_value.create_project.return_value = mock_proj.root
+
+        # Invoke
+        result = runner.invoke(
+            app, ["create-movie-all", "all_full_movie", "A full movie"]
+        )
+
+        assert result.exit_code == 0
+
+        # Check Step 1: Proposal/Project
+        # (Implicitly checked if code runs, but let's check StoryBuilder calls)
+        assert MockBuilder.return_value.generate_clip_specs.called
+
+        # Check Step 2: Render
+        MockController.return_value.render_clip.assert_called()
+        # Verify it was called with 'final' preset
+        call_args = MockController.return_value.render_clip.call_args[1]
+        assert call_args.get("preset") == "final"
+        assert call_args.get("resolution_scale") == 1.0
+
+        # Check Step 3: Assemble
+        MockAsm.return_value.assemble.assert_called()
