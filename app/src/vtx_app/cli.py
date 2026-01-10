@@ -117,7 +117,9 @@ def produce(
 @app.command("create-style")
 def create_style(
     style_name: str = typer.Argument(..., help="Name of the new style"),
-    project: Optional[str] = typer.Argument(None, help="Source project slug (default: current directory)"),
+    project: Optional[str] = typer.Argument(
+        None, help="Source project slug (default: current directory)"
+    ),
 ) -> None:
     """
     Extract a reusable style style from an existing project.
@@ -133,7 +135,9 @@ def create_style(
     mgr = StyleManager()
     out_path = mgr.save_style(style_name, proj.root)
     print(f"[green]Style '{style_name}' saved to {out_path}[/green]")
-    print(f"Use it in a new proposal: vtx create-movie new_movie \"[{style_name}] my movie idea...\"")
+    print(
+        f'Use it in a new proposal: vtx create-movie new_movie "[{style_name}] my movie idea..."'
+    )
 
 
 @app.command("create-movie")
@@ -142,14 +146,16 @@ def create_movie(
     prompt: str = typer.Argument(..., help="Prompt including concept, style, etc."),
 ) -> None:
     """Automated end-to-end creation flow: idea -> plan -> project -> story artifacts."""
-    from pathlib import Path
     import shutil
+    from pathlib import Path
+
     import yaml
+
     from vtx_app.config.settings import Settings
-    from vtx_app.wizards.proposal import ProposalGenerator
     from vtx_app.project.loader import ProjectLoader
     from vtx_app.registry.db import Registry
     from vtx_app.story.openai_builder import StoryBuilder
+    from vtx_app.wizards.proposal import ProposalGenerator
 
     # 1. Proposal
     print(f"[bold blue]Step 1: Generating proposal for '{slug}'...[/bold blue]")
@@ -211,12 +217,14 @@ def create_movie(
         bundles = current_loras.get("bundles") or {}
         candidates = []
         for item in suggested_loras:
-            candidates.append({
-                "name": item["name"],
-                "url": item["url"],
-                "download_url": item["download_url"],
-                "trigger_word": "TODO",
-            })
+            candidates.append(
+                {
+                    "name": item["name"],
+                    "url": item["url"],
+                    "download_url": item["download_url"],
+                    "trigger_word": "TODO",
+                }
+            )
         bundles["civitai_candidates"] = candidates
         current_loras["bundles"] = bundles
         loras_file.write_text(yaml.safe_dump(current_loras, sort_keys=False))

@@ -94,6 +94,7 @@ class ProposalGenerator:
 
     def create_proposal(self, concept_text: str) -> dict[str, Any]:
         import re
+
         from vtx_app.style_manager import StyleManager
 
         # Check for [style] tag
@@ -114,8 +115,10 @@ class ProposalGenerator:
             keywords = mgr.get_style_keywords(style_name)
             if keywords:
                 print(f"[dim]Injecting style keywords: {keywords}[/dim]")
-                analysis["visual_style_keywords"] = keywords + analysis["visual_style_keywords"]
-            
+                analysis["visual_style_keywords"] = (
+                    keywords + analysis["visual_style_keywords"]
+                )
+
             # Load style-specific LoRAs to suggest
             style_data = mgr.load_style(style_name) or {}
             extra_loras = style_data.get("resources", {}).get("bundles", [])
@@ -146,12 +149,8 @@ class ProposalGenerator:
                 "Review this file. To create project, run: vtx projects create-from-plan proposal.yaml"
             ),
         }
-        
+
         if style_name:
             proposal["meta"]["style_preset"] = style_name
 
-        return proposal
-                "Review this file. To create project, run: vtx projects create-from-plan proposal.yaml"
-            ),
-        }
         return proposal
