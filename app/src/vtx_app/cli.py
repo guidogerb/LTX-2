@@ -5,8 +5,8 @@ from rich import print
 
 from vtx_app.project.loader import ProjectLoader
 from vtx_app.registry.db import Registry
-from vtx_app.story.openai_builder import StoryBuilder
 from vtx_app.render.renderer import RenderController
+from vtx_app.story.openai_builder import StoryBuilder
 
 app = typer.Typer(no_args_is_help=True)
 

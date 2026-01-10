@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+
 from vtx_app.project.layout import Project
 
 
@@ -21,6 +22,7 @@ def _load_yaml(path: Path) -> dict[str, Any]:
 
 def _slugify(text: str) -> str:
     import re
+
     s = (text or "").strip().lower()
     s = re.sub(r"[^a-z0-9]+", "_", s)
     s = re.sub(r"_+", "_", s).strip("_")
@@ -35,9 +37,12 @@ class StoryBuilder:
         # OPENAI_API_KEY is read automatically by the official SDK when present.
         # If missing, OpenAI() will raise.
         from openai import OpenAI
+
         return OpenAI()
 
-    def _call_structured(self, *, schema: dict[str, Any], messages: list[dict[str, str]]) -> dict[str, Any]:
+    def _call_structured(
+        self, *, schema: dict[str, Any], messages: list[dict[str, str]]
+    ) -> dict[str, Any]:
         s = self.project.settings()
         client = self._client()
         resp = client.responses.create(
@@ -74,10 +79,13 @@ Keep beats short and visual.
 """
 
         try:
-            data = self._call_structured(schema=schema, messages=[
-                {"role": "system", "content": system},
-                {"role": "user", "content": user},
-            ])
+            data = self._call_structured(
+                schema=schema,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+            )
             outline_path.write_text(yaml.safe_dump(data, sort_keys=False))
         except Exception:
             # Leave stub if API unavailable
@@ -100,8 +108,12 @@ Keep beats short and visual.
         schema = json.loads(schema_path.read_text())
 
         # Provide available keys for locations/characters so the model uses consistent identifiers.
-        chars = _load_yaml(self.project.root / "prompts" / "characters.yaml").get("characters", {})
-        locs = _load_yaml(self.project.root / "prompts" / "locations.yaml").get("locations", {})
+        chars = _load_yaml(self.project.root / "prompts" / "characters.yaml").get(
+            "characters", {}
+        )
+        locs = _load_yaml(self.project.root / "prompts" / "locations.yaml").get(
+            "locations", {}
+        )
 
         system = (
             "You are a director + cinematographer assistant. "
@@ -130,16 +142,25 @@ For each shot:
 """
 
         try:
-            data = self._call_structured(schema=schema, messages=[
-                {"role": "system", "content": system},
-                {"role": "user", "content": user},
-            ])
+            data = self._call_structured(
+                schema=schema,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+            )
             shotlist_path.write_text(yaml.safe_dump(data, sort_keys=False))
         except Exception:
             if not shotlist_path.exists():
                 shotlist_path.write_text("version: 1\nscenes: []\n")
 
-    def generate_clip_specs(self, *, overwrite: bool = False, act: int | None = None, scene: int | None = None) -> None:
+    def generate_clip_specs(
+        self,
+        *,
+        overwrite: bool = False,
+        act: int | None = None,
+        scene: int | None = None,
+    ) -> None:
         """
         Generates prompts/clips/*.yaml from story/04_shotlist.yaml.
 
@@ -150,7 +171,9 @@ For each shot:
         """
         shotlist_path = self.project.root / "story" / "04_shotlist.yaml"
         if not shotlist_path.exists():
-            raise FileNotFoundError("Missing story/04_shotlist.yaml. Run 'story shotlist' first.")
+            raise FileNotFoundError(
+                "Missing story/04_shotlist.yaml. Run 'story shotlist' first."
+            )
 
         shotlist = yaml.safe_load(shotlist_path.read_text()) or {}
         scenes = shotlist.get("scenes") or []
@@ -165,11 +188,18 @@ For each shot:
         self.project.settings()  # ensure env loaded
         style_profile = os.getenv("PROJECT_STYLE_PROFILE", "default")
         loras_profile = os.getenv("PROJECT_LORAS_PROFILE", "core")
-        pipeline_key = os.getenv("PROJECT_DEFAULT_PIPELINE") or self.project.settings().default_pipeline
+        pipeline_key = (
+            os.getenv("PROJECT_DEFAULT_PIPELINE")
+            or self.project.settings().default_pipeline
+        )
 
         fps = int(os.getenv("PROJECT_FPS", str(self.project.settings().default_fps)))
-        width = int(os.getenv("PROJECT_WIDTH", str(self.project.settings().default_width)))
-        height = int(os.getenv("PROJECT_HEIGHT", str(self.project.settings().default_height)))
+        width = int(
+            os.getenv("PROJECT_WIDTH", str(self.project.settings().default_width))
+        )
+        height = int(
+            os.getenv("PROJECT_HEIGHT", str(self.project.settings().default_height))
+        )
         max_seconds = float(self.project.settings().default_max_seconds)
 
         # Read prompt dictionaries for context
@@ -179,7 +209,11 @@ For each shot:
         loras_doc = _load_yaml(self.project.root / "prompts" / "loras.yaml")
 
         # Resolve LoRA bundle into clip.loras entries for determinism (optional but recommended)
-        bundles = (loras_doc.get("bundles") or {}) if isinstance(loras_doc.get("bundles"), dict) else {}
+        bundles = (
+            (loras_doc.get("bundles") or {})
+            if isinstance(loras_doc.get("bundles"), dict)
+            else {}
+        )
         bundle_items = bundles.get(loras_profile) or []
         if not isinstance(bundle_items, list):
             bundle_items = []
@@ -205,7 +239,7 @@ For each shot:
             # If all clip files for this scene exist and overwrite is False, skip
             if not overwrite:
                 all_exist = True
-                for sh in (scene_obj.get("shots") or []):
+                for sh in scene_obj.get("shots") or []:
                     cid = sh.get("clip_id")
                     if not cid:
                         continue
@@ -254,10 +288,13 @@ Clip spec requirements:
 """
 
             try:
-                batch = self._call_structured(schema=batch_schema, messages=[
-                    {"role": "system", "content": system},
-                    {"role": "user", "content": user},
-                ])
+                batch = self._call_structured(
+                    schema=batch_schema,
+                    messages=[
+                        {"role": "system", "content": system},
+                        {"role": "user", "content": user},
+                    ],
+                )
             except Exception:
                 # If the API isn't available, create minimal stubs for this scene
                 batch = {"version": 1, "clips": []}
@@ -267,7 +304,11 @@ Clip spec requirements:
                 clips = []
 
             # Post-process + write
-            shot_map = { (sh.get("clip_id") or ""): sh for sh in (scene_obj.get("shots") or []) if isinstance(sh, dict) }
+            shot_map = {
+                (sh.get("clip_id") or ""): sh
+                for sh in scene_obj.get("shots") or []
+                if isinstance(sh, dict)
+            }
 
             for clip in clips:
                 if not isinstance(clip, dict):
@@ -291,7 +332,10 @@ Clip spec requirements:
                 continuity.setdefault("characters", sh.get("characters") or [])
                 continuity.setdefault("locations", sh.get("locations") or [])
 
-                clip.setdefault("story_beats", sh.get("action_beats") or scene_obj.get("beats") or [])
+                clip.setdefault(
+                    "story_beats",
+                    sh.get("action_beats") or scene_obj.get("beats") or [],
+                )
 
                 prompt = clip.setdefault("prompt", {})
                 prompt.setdefault("positive", sh.get("description") or "")
@@ -336,7 +380,9 @@ Clip spec requirements:
                         env_name = item.get("env")
                         weight = item.get("weight", 0.8)
                         if env_name:
-                            loras_list.append({"env": env_name, "weight": float(weight)})
+                            loras_list.append(
+                                {"env": env_name, "weight": float(weight)}
+                            )
                     if loras_list:
                         clip["loras"] = loras_list
 

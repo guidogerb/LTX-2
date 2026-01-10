@@ -7,15 +7,14 @@ from pathlib import Path
 import yaml
 from rich import print
 
-from vtx_app.project.layout import Project
-from vtx_app.registry.db import Registry
-from vtx_app.story.prompt_compiler import compile_prompt
-from vtx_app.story.duration_estimator import estimate_seconds
 from vtx_app.pipelines.base import PipelineCommand
 from vtx_app.pipelines.capabilities import detect_capabilities, first_supported
 from vtx_app.pipelines.runner_subprocess import run
+from vtx_app.project.layout import Project
+from vtx_app.registry.db import Registry
+from vtx_app.story.duration_estimator import estimate_seconds
+from vtx_app.story.prompt_compiler import compile_prompt
 from vtx_app.utils.timecode import now_iso
-
 
 PIPELINE_MODULES = {
     "ti2vid_two_stages": "ltx_pipelines.ti2vid_two_stages",
@@ -63,9 +62,21 @@ class RenderController:
         cap = detect_capabilities(module)
 
         # Resolution / fps defaults
-        fps = int((clip.get("render") or {}).get("fps") or os.getenv("PROJECT_FPS") or s.default_fps)
-        width = int((clip.get("render") or {}).get("width") or os.getenv("PROJECT_WIDTH") or s.default_width)
-        height = int((clip.get("render") or {}).get("height") or os.getenv("PROJECT_HEIGHT") or s.default_height)
+        fps = int(
+            (clip.get("render") or {}).get("fps")
+            or os.getenv("PROJECT_FPS")
+            or s.default_fps
+        )
+        width = int(
+            (clip.get("render") or {}).get("width")
+            or os.getenv("PROJECT_WIDTH")
+            or s.default_width
+        )
+        height = int(
+            (clip.get("render") or {}).get("height")
+            or os.getenv("PROJECT_HEIGHT")
+            or s.default_height
+        )
 
         # Duration -> frames (content-driven via story beats + prompt)
         seconds = estimate_seconds(clip)
@@ -137,7 +148,9 @@ class RenderController:
             args += [pflag, pack.positive]
         else:
             # Most pipelines use --prompt; if not, fail loudly
-            raise RuntimeError(f"Pipeline {module} appears to not support --prompt (detected flags: {sorted(cap.flags)[:20]})")
+            raise RuntimeError(
+                f"Pipeline {module} appears to not support --prompt (detected flags: {sorted(cap.flags)[:20]})"
+            )
 
         oflag = first_supported(cap, "--output-path", "--output_path")
         if oflag:
@@ -171,7 +184,9 @@ class RenderController:
                 updated_at=now_iso(),
                 last_error=None,
             )
-            print(f"[green]Rendered[/green] {clip_id} -> {out_rel}  ({seconds:.1f}s @ {fps}fps = {num_frames} frames)")
+            print(
+                f"[green]Rendered[/green] {clip_id} -> {out_rel}  ({seconds:.1f}s @ {fps}fps = {num_frames} frames)"
+            )
         except Exception as e:
             self.registry.upsert_clip(
                 project_id=project_id,
@@ -196,7 +211,9 @@ class RenderController:
             print("[green]No unfinished clips.[/green]")
             return
 
-        proj_map = {p["project_id"]: Path(p["path"]) for p in self.registry.list_projects()}
+        proj_map = {
+            p["project_id"]: Path(p["path"]) for p in self.registry.list_projects()
+        }
 
         count = 0
         for item in unfinished:

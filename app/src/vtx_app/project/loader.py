@@ -10,8 +10,8 @@ from rich import print
 
 from vtx_app.config.env_layers import load_env
 from vtx_app.config.settings import Settings
-from vtx_app.registry.db import Registry
 from vtx_app.project.layout import Project
+from vtx_app.registry.db import Registry
 from vtx_app.utils.timecode import now_iso
 
 

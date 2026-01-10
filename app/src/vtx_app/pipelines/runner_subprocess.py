@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import subprocess
+
 from rich import print
+
 from vtx_app.pipelines.base import PipelineCommand
 
 

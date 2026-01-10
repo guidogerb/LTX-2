@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import subprocess
 from dataclasses import dataclass
 from pathlib import Path
-import subprocess
 
 import yaml
 
@@ -44,5 +44,7 @@ class Project:
         # Create venv
         subprocess.check_call(["python", "-m", "venv", str(self.venv_path)])
 
-        pip = self.venv_path / ("Scripts/pip.exe" if (self.venv_path/"Scripts").exists() else "bin/pip")
+        pip = self.venv_path / (
+            "Scripts/pip.exe" if (self.venv_path / "Scripts").exists() else "bin/pip"
+        )
         subprocess.check_call([str(pip), "install", "-r", str(req)])
