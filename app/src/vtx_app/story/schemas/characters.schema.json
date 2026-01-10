@@ -2,11 +2,18 @@
   "type": "object",
   "properties": {
     "characters": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "string"
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "required": ["name", "description"],
+        "additionalProperties": false
       }
     }
   },
-  "required": ["characters"]
+  "required": ["characters"],
+  "additionalProperties": false
 }

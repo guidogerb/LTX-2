@@ -23,12 +23,12 @@
                 "duration_hint_seconds": { "type": "number" },
                 "negative_prompt": { "type": "string" }
               },
-              "required": ["clip_id", "description", "duration_hint_seconds"],
+              "required": ["clip_id", "description", "duration_hint_seconds", "negative_prompt"],
               "additionalProperties": false
             }
           }
         },
-        "required": ["act", "scene", "slug", "shots"],
+        "required": ["act", "scene", "slug", "title", "summary", "location_key", "time_of_day", "shots"],
         "additionalProperties": false
       }
     }

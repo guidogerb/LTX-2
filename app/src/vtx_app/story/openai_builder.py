@@ -190,7 +190,10 @@ For each shot:
                 ],
             )
             shotlist_path.write_text(yaml.safe_dump(data, sort_keys=False))
-        except Exception:
+        except Exception as e:
+            from rich import print
+
+            print(f"[red]Shotlist Generation Error:[/red] {e}")
             if not shotlist_path.exists():
                 shotlist_path.write_text("version: 1\nscenes: []\n")
 
@@ -242,8 +245,22 @@ For each shot:
                     {"role": "user", "content": user},
                 ],
             )
-            out_path.write_text(yaml.safe_dump(data, sort_keys=False))
-        except Exception:
+            # transform list to dict for yaml
+            chars_list = data.get("characters", [])
+            chars_dict = {}
+            for c in chars_list:
+                name = c.get("name", "Unknown")
+                chars_dict[name] = {"description": c.get("description", "")}
+
+            out_path.write_text(
+                yaml.safe_dump(
+                    {"version": 1, "characters": chars_dict}, sort_keys=False
+                )
+            )
+        except Exception as e:
+            from rich import print
+
+            print(f"[red]Char Generation Error:[/red] {e}")
             if not out_path.exists():
                 out_path.write_text("characters: {}\n")
 
@@ -267,8 +284,20 @@ For each shot:
                     {"role": "user", "content": user},
                 ],
             )
-            out_path.write_text(yaml.safe_dump(data, sort_keys=False))
-        except Exception:
+            # transform list to dict for yaml
+            locs_list = data.get("locations", [])
+            locs_dict = {}
+            for l in locs_list:
+                name = l.get("name", "Unknown")
+                locs_dict[name] = {"description": l.get("description", "")}
+
+            out_path.write_text(
+                yaml.safe_dump({"version": 1, "locations": locs_dict}, sort_keys=False)
+            )
+        except Exception as e:
+            from rich import print
+
+            print(f"[red]Loc Generation Error:[/red] {e}")
             if not out_path.exists():
                 out_path.write_text("locations: {}\n")
 

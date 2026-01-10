@@ -45,7 +45,10 @@ def test_generate_characters(mock_project):
     with patch(
         "vtx_app.story.openai_builder.StoryBuilder._call_structured"
     ) as mock_call:
-        mock_call.return_value = {"characters": {"Alice": "A girl"}}
+        # Strict schema returns list of objects
+        mock_call.return_value = {
+            "characters": [{"name": "Alice", "description": "A girl"}]
+        }
 
         builder = StoryBuilder(project=mock_project)
         builder.generate_characters()
@@ -53,7 +56,8 @@ def test_generate_characters(mock_project):
         out_file = mock_project.root / "prompts" / "characters.yaml"
         assert out_file.exists()
         data = yaml.safe_load(out_file.read_text())
-        assert data["characters"]["Alice"] == "A girl"
+        # Implementation transforms back to dict for generic usage
+        assert data["characters"]["Alice"]["description"] == "A girl"
 
         mock_call.assert_called_once()
 
@@ -62,7 +66,10 @@ def test_generate_locations(mock_project):
     with patch(
         "vtx_app.story.openai_builder.StoryBuilder._call_structured"
     ) as mock_call:
-        mock_call.return_value = {"locations": {"Park": "Green trees"}}
+        # Strict schema returns list of objects
+        mock_call.return_value = {
+            "locations": [{"name": "Park", "description": "Green trees"}]
+        }
 
         builder = StoryBuilder(project=mock_project)
         builder.generate_locations()
@@ -70,7 +77,7 @@ def test_generate_locations(mock_project):
         out_file = mock_project.root / "prompts" / "locations.yaml"
         assert out_file.exists()
         data = yaml.safe_load(out_file.read_text())
-        assert data["locations"]["Park"] == "Green trees"
+        assert data["locations"]["Park"]["description"] == "Green trees"
 
         mock_call.assert_called_once()
 
