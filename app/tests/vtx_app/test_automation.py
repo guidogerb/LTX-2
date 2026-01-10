@@ -225,3 +225,85 @@ def test_update_style_desc(tmp_path, mock_style_manager):
     result = runner.invoke(app, ["update-style-desc", "non_existent", "desc"])
     assert result.exit_code == 0
     assert "not found" in result.stdout
+
+
+def test_workflow_commands(tmp_path):
+    """Test render-reviews, render-full, etc."""
+    # Setup project with 1 clip
+    proj_root = tmp_path / "projects" / "wf_proj"
+    proj_root.mkdir(parents=True)
+    (proj_root / "prompts" / "clips").mkdir(parents=True)
+
+    (proj_root / "prompts" / "clips" / "C01__desc.yaml").write_text(
+        "render:\n  width: 1920\n  height: 1080\n"
+    )
+
+    # Mock RenderController
+    with patch("vtx_app.cli.RenderController") as MockController:
+        mock_inst = MockController.return_value
+
+        # Mock Registry/Loader
+        with patch("vtx_app.cli.Registry.load"), patch(
+            "vtx_app.cli.ProjectLoader"
+        ) as MockLoader:
+            mock_proj = MagicMock()
+            mock_proj.root = proj_root
+            MockLoader.return_value.load.return_value = mock_proj
+
+            # 1. render-reviews
+            result = runner.invoke(app, ["render-reviews", "wf_proj"])
+            assert result.exit_code == 0
+            assert "Rendering C01" in result.stdout
+
+            # Verify call args
+            mock_inst.render_clip.assert_called_with(
+                clip_id="C01",
+                resolution_scale=0.5,
+                output_dir=proj_root / "renders" / "low-res",
+            )
+
+            # 2. render-review (single)
+            result = runner.invoke(app, ["render-review", "wf_proj", "C01"])
+            assert result.exit_code == 0
+            mock_inst.render_clip.assert_called_with(
+                clip_id="C01",
+                resolution_scale=0.5,
+                output_dir=proj_root / "renders" / "low-res",
+            )
+
+            # 3. render-full
+            result = runner.invoke(app, ["render-full", "wf_proj"])
+            assert result.exit_code == 0
+            mock_inst.render_clip.assert_called_with(
+                clip_id="C01",
+                preset="final",
+                resolution_scale=1.0,
+                output_dir=proj_root / "renders" / "high-res",
+            )
+
+
+def test_assemble_command(tmp_path):
+    """Test assemble command."""
+    proj_root = tmp_path / "projects" / "asm_proj"
+    proj_root.mkdir(parents=True)
+    (proj_root / "renders" / "high-res").mkdir(parents=True)
+
+    with patch("vtx_app.cli.Registry.load"), patch(
+        "vtx_app.cli.ProjectLoader"
+    ) as MockLoader:
+        mock_proj = MagicMock()
+        mock_proj.root = proj_root
+        MockLoader.return_value.load.return_value = mock_proj
+
+        with patch(
+            "vtx_app.render.assembler.Assembler"
+        ) as MockAsm:  # It is imported locally in cli function
+            # The cli imports Assembler inside the function, so we patch where it is used.
+            # vtx_app.render.assembler.Assembler
+
+            result = runner.invoke(app, ["assemble", "asm_proj"])
+            assert result.exit_code == 0
+
+            MockAsm.return_value.assemble.assert_called_with(
+                clips_dir=proj_root / "renders" / "high-res"
+            )

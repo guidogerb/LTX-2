@@ -195,6 +195,139 @@ def update_style_desc(
         print(f"[red]Style '{style_name}' not found.[/red]")
 
 
+@app.command("render-reviews")
+def render_reviews(
+    slug: str = typer.Argument(..., help="Project slug"),
+) -> None:
+    """Renders all clips at half resolution to renders/low-res for review."""
+    reg = Registry.load()
+    loader = ProjectLoader(registry=reg)
+    proj = loader.load(slug)
+
+    clips_dir = proj.root / "prompts" / "clips"
+    if not clips_dir.exists():
+        print(f"[red]No clips found in {slug}[/red]")
+        return
+
+    clip_files = sorted(clips_dir.glob("*.yaml"))
+
+    # Filter out hidden files or non-yaml if glob isn't perfect
+    clip_files = [p for p in clip_files if not p.name.startswith(".")]
+
+    if not clip_files:
+        print(f"[red]No clips found in {slug}[/red]")
+        return
+
+    print(f"Rendering {len(clip_files)} clips for review (low-res)...")
+
+    controller = RenderController(project=proj, registry=reg)
+    out_dir = proj.root / "renders" / "low-res"
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    for cf in clip_files:
+        cid = cf.stem
+        # Handle clip_id__desc format if necessary, though renderer handles fuzzy matching
+        # But for list iteration we have exact file stem
+        # Extract ID part if convention A01_S01__desc
+        if "__" in cid:
+            cid = cid.split("__")[0]
+
+        print(f"Rendering {cid}...")
+        try:
+            controller.render_clip(
+                clip_id=cid, resolution_scale=0.5, output_dir=out_dir
+            )
+        except Exception as e:
+            print(f"[red]Failed to render {cid}: {e}[/red]")
+
+
+@app.command("render-review")
+def render_review(
+    slug: str = typer.Argument(..., help="Project slug"),
+    clip_name: str = typer.Argument(..., help="Clip ID/Name"),
+) -> None:
+    """Renders a single clip at half resolution to renders/low-res."""
+    reg = Registry.load()
+    loader = ProjectLoader(registry=reg)
+    proj = loader.load(slug)
+
+    controller = RenderController(project=proj, registry=reg)
+    out_dir = proj.root / "renders" / "low-res"
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    # Clean clip name
+    if "__" in clip_name:
+        clip_name = clip_name.split("__")[0]
+
+    print(f"Rendering {clip_name} for review...")
+    try:
+        controller.render_clip(
+            clip_id=clip_name, resolution_scale=0.5, output_dir=out_dir
+        )
+    except Exception as e:
+        print(f"[red]Failed to render {clip_name}: {e}[/red]")
+
+
+@app.command("render-full")
+def render_full(
+    slug: str = typer.Argument(..., help="Project slug"),
+) -> None:
+    """Renders all clips at full resolution to renders/high-res."""
+    reg = Registry.load()
+    loader = ProjectLoader(registry=reg)
+    proj = loader.load(slug)
+
+    clips_dir = proj.root / "prompts" / "clips"
+    if not clips_dir.exists():
+        print(f"[red]No clips found in {slug}[/red]")
+        return
+
+    clip_files = sorted(clips_dir.glob("*.yaml"))
+
+    print(f"Rendering {len(clip_files)} clips at FULL resolution...")
+
+    controller = RenderController(project=proj, registry=reg)
+    out_dir = proj.root / "renders" / "high-res"
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    for cf in clip_files:
+        cid = cf.stem
+        if "__" in cid:
+            cid = cid.split("__")[0]
+
+        print(f"Rendering {cid}...")
+        try:
+            controller.render_clip(
+                clip_id=cid, preset="final", resolution_scale=1.0, output_dir=out_dir
+            )
+        except Exception as e:
+            print(f"[red]Failed to render {cid}: {e}[/red]")
+
+
+@app.command("assemble")
+def assemble(
+    slug: str = typer.Argument(..., help="Project slug"),
+) -> None:
+    """Assembles clips from renders/high-res into final_cut.mp4."""
+    from vtx_app.render.assembler import Assembler
+
+    reg = Registry.load()
+    loader = ProjectLoader(registry=reg)
+    proj = loader.load(slug)
+
+    asm = Assembler(project=proj)
+    high_res = proj.root / "renders" / "high-res"
+
+    if high_res.exists():
+        print(f"Assembling from {high_res}...")
+        asm.assemble(clips_dir=high_res)
+    else:
+        print(
+            "[yellow]High-res folder not found, assembling available clips...[/yellow]"
+        )
+        asm.assemble()
+
+
 @app.command("create-movie")
 def create_movie(
     slug: str = typer.Argument(..., help="Name of the movie (project slug)"),

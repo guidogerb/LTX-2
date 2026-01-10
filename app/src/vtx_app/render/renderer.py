@@ -32,7 +32,14 @@ class RenderController:
     project: Project | None
     registry: Registry
 
-    def render_clip(self, *, clip_id: str, preset: str | None = None) -> None:
+    def render_clip(
+        self,
+        *,
+        clip_id: str,
+        preset: str | None = None,
+        output_dir: Path | None = None,
+        resolution_scale: float = 1.0,
+    ) -> None:
         if self.project is None:
             raise ValueError("RenderController.project is required for render_clip()")
 
@@ -60,7 +67,12 @@ class RenderController:
         out_rel = (clip.get("outputs") or {}).get("mp4")
         if not out_rel:
             raise ValueError(f"Clip spec missing outputs.mp4: {clip_path}")
+
         out_path = proj.root / out_rel
+
+        if output_dir:
+            out_path = output_dir / out_path.name
+
         out_path.parent.mkdir(parents=True, exist_ok=True)
 
         pipeline_key = (clip.get("render") or {}).get("pipeline") or s.default_pipeline
@@ -98,20 +110,38 @@ class RenderController:
         )
 
         # Scaling logic
-        width = base_width
-        height = base_height
+        width = int(base_width * resolution_scale)
+        height = int(base_height * resolution_scale)
 
         if preset == "draft":
-            # "Exactly half of the target resolution"
-            width = base_width // 2
-            height = base_height // 2
+            # "Exactly half of the target resolution" if not scaled by resolution_scale
+            # If resolution_scale is passed, we respect it.
+            # If resolution_scale is 1.0 (default), but preset is draft, we apply preset logic?
+            # actually let's respect resolution_scale multiply.
+            # But earlier logic was:
+            # width = base_width // 2
+            # Let's keep existing behavior if resolution_scale is 1.0, otherwise combine?
+            # The prompt requested "half the target resolution" for render-reviews.
+            # I will pass resolution_scale=0.5 from CLI.
+
+            # Legacy preset handling:
+            if resolution_scale == 1.0:
+                width = base_width // 2
+                height = base_height // 2
+
             # Draft writes to separate file to preserve as input for final
-            out_path = out_path.with_name(f"{out_path.stem}_draft{out_path.suffix}")
+            # If output_dir is set, we don't necessarily need the suffix, but
+            # let's keep it if output_dir is NOT set.
+            if not output_dir:
+                out_path = out_path.with_name(f"{out_path.stem}_draft{out_path.suffix}")
 
         elif preset == "final":
             # Use full res
-            width = base_width
-            height = base_height
+            pass  # width/height are already set * scale
+
+        # Force even dimensions (ffmpeg requirement often)
+        width = (width // 2) * 2
+        height = (height // 2) * 2
 
         # Duration -> frames (content-driven via story beats + prompt)
         seconds = estimate_seconds(clip)

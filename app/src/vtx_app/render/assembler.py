@@ -11,7 +11,9 @@ class Assembler:
     def __init__(self, project: Project):
         self.project = project
 
-    def assemble(self, output_name: str = "final_cut.mp4") -> None:
+    def assemble(
+        self, output_name: str = "final_cut.mp4", clips_dir: Path | None = None
+    ) -> None:
         """
         Scans story/04_shotlist.yaml, finds rendered clips, and concatenates them.
         """
@@ -50,10 +52,18 @@ class Assembler:
                 out_leaf = spec.get("outputs", {}).get("mp4")
                 if out_leaf:
                     mp4_path = self.project.root / out_leaf
+
+                    # Override lookup if clips_dir is provided
+                    if clips_dir:
+                        # Try to find the file in clips_dir with the same name
+                        override_path = clips_dir / mp4_path.name
+                        if override_path.exists():
+                            mp4_path = override_path
+
                     if mp4_path.exists():
                         clip_files.append(mp4_path)
                     else:
-                        missing_clips.append(f"{cid} (not rendered)")
+                        missing_clips.append(f"{cid} (not rendered: {mp4_path})")
                 else:
                     missing_clips.append(f"{cid} (no output path)")
 
