@@ -52,6 +52,23 @@ def clean() -> None:
     print(f"[green]Removed {count} __pycache__ directories.[/green]")
 
 
+@app.command("list-styles")
+def list_styles() -> None:
+    """List available styles in _global/styles."""
+    from vtx_app.style_manager import StyleManager
+
+    mgr = StyleManager()
+    styles = mgr.list_styles()
+
+    if not styles:
+        print("[yellow]No styles found.[/yellow]")
+        return
+
+    print(f"[bold]Available Styles ({len(styles)}):[/bold]")
+    for s in styles:
+        print(f" - {s}")
+
+
 @app.command("review")
 def review(slug: str) -> None:
     """Open the assembled final_cut.mp4."""
