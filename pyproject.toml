@@ -3,7 +3,10 @@ ltx-core = { workspace = true }
 ltx-pipelines = { workspace = true }
 
 [tool.uv.workspace]
-members = ["packages/*"]
+members = [
+  "packages/*",
+  "app/*",
+]
 
 [[tool.uv.index]]
 name = "pypi"
@@ -17,7 +20,7 @@ dev = [
 ]
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py312"
 line-length = 120
 exclude = []
 
