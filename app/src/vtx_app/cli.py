@@ -1,9 +1,14 @@
 from __future__ import annotations
 
+from pathlib import Path
+from typing import Optional
+
 import typer
 from rich import print
 
+from vtx_app.config.env_layers import load_env
 from vtx_app.config.log import configure_logging
+from vtx_app.config.settings import Settings
 from vtx_app.project.loader import ProjectLoader
 from vtx_app.registry.db import Registry
 from vtx_app.render.renderer import RenderController
@@ -286,9 +291,36 @@ def project_export(
         print(f"[green]Exported[/green] to {archive}")
 
 
+def _get_slug(slug: str | None) -> str:
+    if slug:
+        return slug
+
+    cwd = Path.cwd()
+    load_env(project_env_path=None)
+    s = Settings.from_env()
+
+    try:
+        rel = cwd.relative_to(s.projects_root.resolve())
+    except ValueError:
+        try:
+            rel = cwd.relative_to(s.projects_root)
+        except ValueError:
+            print("[red]Missing argument 'SLUG'. Not in a project directory.[/red]")
+            raise typer.Exit(code=1)
+
+    if str(rel) == ".":
+        print("[red]Missing argument 'SLUG'. Cannot infer from project root.[/red]")
+        raise typer.Exit(code=1)
+
+    inferred = rel.parts[0]
+    print(f"[dim]Inferred project: {inferred}[/dim]")
+    return inferred
+
+
 @story_app.command("outline")
-def story_outline(slug: str) -> None:
+def story_outline(slug: Optional[str] = typer.Argument(None)) -> None:
     """Generate outline (01_outline.yaml) using OpenAI (optional)."""
+    slug = _get_slug(slug)
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)
     proj = loader.load(slug)
@@ -299,8 +331,9 @@ def story_outline(slug: str) -> None:
 
 
 @story_app.command("treatment")
-def story_treatment(slug: str) -> None:
+def story_treatment(slug: Optional[str] = typer.Argument(None)) -> None:
     """Generate treatment (02_treatment.md) using OpenAI."""
+    slug = _get_slug(slug)
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)
     proj = loader.load(slug)
@@ -311,8 +344,9 @@ def story_treatment(slug: str) -> None:
 
 
 @story_app.command("screenplay")
-def story_screenplay(slug: str) -> None:
+def story_screenplay(slug: Optional[str] = typer.Argument(None)) -> None:
     """Generate screenplay (03_screenplay.yaml) using OpenAI."""
+    slug = _get_slug(slug)
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)
     proj = loader.load(slug)
@@ -323,8 +357,9 @@ def story_screenplay(slug: str) -> None:
 
 
 @story_app.command("characters")
-def story_characters(slug: str) -> None:
+def story_characters(slug: Optional[str] = typer.Argument(None)) -> None:
     """Generate characters (prompts/characters.yaml) using OpenAI."""
+    slug = _get_slug(slug)
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)
     proj = loader.load(slug)
@@ -335,8 +370,9 @@ def story_characters(slug: str) -> None:
 
 
 @story_app.command("locations")
-def story_locations(slug: str) -> None:
+def story_locations(slug: Optional[str] = typer.Argument(None)) -> None:
     """Generate locations (prompts/locations.yaml) using OpenAI."""
+    slug = _get_slug(slug)
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)
     proj = loader.load(slug)
@@ -347,8 +383,9 @@ def story_locations(slug: str) -> None:
 
 
 @story_app.command("shotlist")
-def story_shotlist(slug: str) -> None:
+def story_shotlist(slug: Optional[str] = typer.Argument(None)) -> None:
     """Generate shotlist (04_shotlist.yaml) using OpenAI (optional)."""
+    slug = _get_slug(slug)
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)
     proj = loader.load(slug)
@@ -360,12 +397,13 @@ def story_shotlist(slug: str) -> None:
 
 @story_app.command("clips")
 def story_clips(
-    slug: str,
+    slug: Optional[str] = typer.Argument(None),
     act: int | None = typer.Option(None, "--act"),
     scene: int | None = typer.Option(None, "--scene"),
     overwrite: bool = typer.Option(False, "--overwrite"),
 ) -> None:
     """Generate per-clip specs under prompts/clips/ using OpenAI (optional)."""
+    slug = _get_slug(slug)
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)
     proj = loader.load(slug)
