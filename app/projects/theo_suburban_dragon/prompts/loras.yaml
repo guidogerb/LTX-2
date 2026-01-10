@@ -1,0 +1,23 @@
+version: 1
+bundles:
+  core:
+  - env: LTX_DISTILLED_LORA_PATH
+    weight: 0.8
+  civitai_candidates:
+  - name: Liminal Suburbs 2 Electric Boogaloo
+    url: https://civitai.com/models/1357899
+    download_url: https://civitai.com/api/download/models/1624858
+    trigger_word: TODO
+  - name: Suburban Industrial / Suburban Decay
+    url: https://civitai.com/models/2191833
+    download_url: https://civitai.com/api/download/models/2467945
+    trigger_word: TODO
+  - name: "\u30E9\u30F3\u30BF\u30CA / Lantana(\u30B0\u30E9\u30F3\u30D6\u30EB\u30FC\
+      \u30D5\u30A1\u30F3\u30BF\u30B8\u30FC / Granblue Fantasy)"
+    url: https://civitai.com/models/2294138
+    download_url: https://civitai.com/api/download/models/2581576
+    trigger_word: TODO
+  - name: Another World - Swamp V
+    url: https://civitai.com/models/2295834
+    download_url: https://civitai.com/api/download/models/2583403
+    trigger_word: TODO

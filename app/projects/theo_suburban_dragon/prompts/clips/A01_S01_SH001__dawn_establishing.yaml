@@ -1,0 +1,44 @@
+version: 1
+clip_id: "A01_S01_SH001"
+title: "Dawn establishing shot"
+act: 1
+scene: 1
+shot: 1
+
+continuity:
+  shared_prompt_profile: "default"
+  shared_loras_profile: "core"
+  characters: []
+  locations: []
+
+story_beats:
+  - "Establish the setting."
+  - "Hold just long enough to read the mood."
+
+prompt:
+  positive: |
+    A quiet dawn over a city skyline, gentle motion in the clouds, calm atmosphere.
+  negative: ""
+
+render:
+  pipeline: "ti2vid_two_stages"
+  duration:
+    mode: "auto"
+    min_seconds: 2
+    max_seconds: 15
+  fps: 16
+  width: 1536
+  height: 864
+  seed: 12345
+
+inputs:
+  type: "t2v"
+  reference_image: null
+  input_video: null
+  keyframes: []
+
+outputs:
+  mp4: "renders/clips/A01_S01_SH001__dawn_establishing.mp4"
+status:
+  state: "planned"
+  last_error: null

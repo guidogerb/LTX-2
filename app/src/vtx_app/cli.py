@@ -562,6 +562,8 @@ def create_movie_all(
         return
 
     clip_files = sorted(clips_dir.glob("*.yaml"))
+    # Debug print
+    print(f"DEBUG: Found clip files: {[p.name for p in clip_files]}")
     # Filter hidden
     clip_files = [p for p in clip_files if not p.name.startswith(".")]
 

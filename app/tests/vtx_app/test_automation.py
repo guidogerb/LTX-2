@@ -322,14 +322,15 @@ def test_create_movie_all(tmp_path):
     # 2. Render full (RenderController loop)
     # 3. Assemble (Assembler)
 
-    with patch("vtx_app.cli.Registry.load"), patch(
-        "vtx_app.cli.ProjectLoader"
-    ) as MockLoader, patch("vtx_app.cli.Settings.from_env"), patch(
+    # Note: We must patch the source modules because CLI command imports them locally
+    with patch("vtx_app.registry.db.Registry.load"), patch(
+        "vtx_app.project.loader.ProjectLoader"
+    ) as MockLoader, patch("vtx_app.config.settings.Settings.from_env"), patch(
         "vtx_app.wizards.proposal.ProposalGenerator"
     ) as MockPropGen, patch(
         "vtx_app.story.openai_builder.StoryBuilder"
     ) as MockBuilder, patch(
-        "vtx_app.cli.RenderController"
+        "vtx_app.render.renderer.RenderController"
     ) as MockController, patch(
         "vtx_app.render.assembler.Assembler"
     ) as MockAsm:
@@ -352,6 +353,8 @@ def test_create_movie_all(tmp_path):
         result = runner.invoke(
             app, ["create-movie-all", "all_full_movie", "A full movie"]
         )
+
+        print(result.stdout)
 
         assert result.exit_code == 0
 

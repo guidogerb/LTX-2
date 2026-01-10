@@ -1,0 +1,30 @@
+version: 1
+locations:
+  Theo's Suburban Neighborhood:
+    description: A quintessential suburban setting with tree-lined streets and neatly
+      trimmed lawns. The houses are modest, each with its own unique charm, featuring
+      pastel-colored sidings and small front porches. The neighborhood is peaceful,
+      with the distant sound of children playing and the occasional car passing by.
+      The air is crisp, filled with the scent of blooming flowers from well-tended
+      gardens.
+  The Abandoned Lot:
+    description: A stark contrast to the surrounding neighborhood, the abandoned lot
+      is overgrown and wild. Tall grasses sway in the breeze, and patches of dandelions
+      and thistles grow unchecked. In the center stands a crumbling stone foundation,
+      remnants of a structure long gone, now serving as the dragon's lair. The area
+      is eerily quiet, with shadows cast by the surrounding trees creating a sense
+      of foreboding. The air is cooler here, carrying a faint, sulfurous smell.
+  Theo's Secret Hideout:
+    description: 'Nestled in the dense foliage of the neighborhood park, Theo''s hideout
+      is a small, makeshift fort made of old wooden planks and canvas. It''s hidden
+      from view by a thick canopy of leaves, offering a sense of seclusion and safety.
+      Inside, there''s a collection of Theo''s treasures: comic books, a flashlight,
+      and a map of the neighborhood. The ground is covered with a patchwork quilt,
+      and the air is filled with the earthy scent of damp leaves and pine.'
+  The Dragon's Lair:
+    description: "Located within the abandoned lot, the dragon's lair is a cavernous\
+      \ space beneath the crumbling stone foundation. The entrance is hidden by a\
+      \ tangle of thorny vines, and inside, the air is thick with heat and the smell\
+      \ of smoke. The walls are lined with glistening scales and piles of treasure\u2014\
+      gold coins, jewels, and ancient artifacts. The lair is dimly lit by the flickering\
+      \ glow of the dragon's fiery breath, casting eerie shadows on the walls."

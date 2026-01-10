@@ -1,0 +1,13 @@
+project_id: b73992e2-4d99-41ce-b695-d92d95f40ee7
+slug: theo_suburban_dragon
+title: Theo and the Suburban Dragon
+logline: A one-sentence logline.
+acts_enabled: true
+defaults:
+  pipeline: ti2vid_two_stages
+  fps: 16
+  aspect: 2.39:1
+  width: 1920
+  height: 800
+  max_seconds: 15
+updated_at: '2026-01-10T17:44:37Z'
