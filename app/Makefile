@@ -8,3 +8,5 @@ lint:
 
 test:
 	./scripts/test.sh
+
+verify: format test

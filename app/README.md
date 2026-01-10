@@ -120,6 +120,21 @@ For a guided setup with drafts and V2V refinement, follow this workflow:
    vtx render assemble my_movie
    ```
 
+## Development
+
+This project uses `make` to manage development tasks.
+
+```bash
+# Format code (Black, isort)
+make format
+
+# Run tests
+make test
+
+# Verify all (Format + Test)
+make verify
+```
+
 ## Core concepts
 
 ### Environment layering

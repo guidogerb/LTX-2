@@ -137,8 +137,10 @@ def projects_propose(
     out: str = typer.Option("proposal.yaml", "--out", help="Output YAML file"),
 ) -> None:
     """Generate a project proposal with resource suggestions from CivitAI."""
-    import yaml
     from pathlib import Path
+
+    import yaml
+
     from vtx_app.config.settings import Settings
     from vtx_app.wizards.proposal import ProposalGenerator
 
@@ -163,8 +165,9 @@ def projects_create_from_plan(
     plan: str = typer.Argument(..., help="Path to proposal.yaml"),
 ) -> None:
     """Create a project and resources from a proposal file."""
-    import yaml
     from pathlib import Path
+
+    import yaml
 
     p = Path(plan)
     if not p.exists():
@@ -209,12 +212,14 @@ def projects_create_from_plan(
         bundles = current_loras.get("bundles") or {}
         candidates = []
         for item in suggested_loras:
-            candidates.append({
-                "name": item["name"],
-                "url": item["url"],
-                "download_url": item["download_url"],
-                "trigger_word": "TODO"
-            })
+            candidates.append(
+                {
+                    "name": item["name"],
+                    "url": item["url"],
+                    "download_url": item["download_url"],
+                    "trigger_word": "TODO",
+                }
+            )
         bundles["civitai_candidates"] = candidates
         current_loras["bundles"] = bundles
 
@@ -431,10 +436,11 @@ def render_approve(
 ) -> None:
     """Mark a clip as approved and plan its final render strategy."""
     import yaml
+
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)
     proj = loader.load(slug)
-    
+
     # Locate clip
     clip_path = proj.root / "prompts" / "clips" / f"{clip_id}.yaml"
     if not clip_path.exists():
@@ -444,27 +450,29 @@ def render_approve(
         else:
             print(f"[red]Clip {clip_id} not found[/red]")
             raise typer.Exit(1)
-            
+
     data = yaml.safe_load(clip_path.read_text()) or {}
-    
+
     # Check for draft output
     out_mp4 = (data.get("outputs") or {}).get("mp4")
     draft_exists = False
     if out_mp4:
         draft_exists = (proj.root / out_mp4).exists()
-    
+
     if strategy == "v2v" and not draft_exists:
-        print(f"[yellow]Warning: Strategy is v2v but no draft render found at {out_mp4}[/yellow]")
+        print(
+            f"[yellow]Warning: Strategy is v2v but no draft render found at {out_mp4}[/yellow]"
+        )
 
     # Update metadata
     render_config = data.get("render") or {}
     render_config["approved"] = True
     render_config["final_strategy"] = strategy
-    
+
     # If v2v, we might want to lock the input video path explicitly?
     # Or rely on convention (input = the draft output).
     # Let's rely on convention in renderer.
-    
+
     data["render"] = render_config
     clip_path.write_text(yaml.safe_dump(data, sort_keys=False))
     print(f"[green]Approved[/green] {clip_id} for {strategy}")

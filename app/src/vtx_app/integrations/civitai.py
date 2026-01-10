@@ -23,14 +23,14 @@ class CivitAIClient:
             "sort": "Highest Rated",
             "period": "AllTime",
         }
-        
+
         try:
             with httpx.Client(timeout=10.0) as client:
                 resp = client.get(url, params=params)
                 resp.raise_for_status()
                 data = resp.json()
                 items = data.get("items", [])
-                
+
                 results = []
                 for item in items:
                     name = item.get("name")
@@ -40,13 +40,15 @@ class CivitAIClient:
                     if versions:
                         # Get latest version
                         download_url = versions[0].get("downloadUrl", "")
-                    
-                    results.append({
-                        "name": name,
-                        "url": f"https://civitai.com/models/{model_id}",
-                        "download_url": download_url,
-                        "description": item.get("description", "")[:200]
-                    })
+
+                    results.append(
+                        {
+                            "name": name,
+                            "url": f"https://civitai.com/models/{model_id}",
+                            "download_url": download_url,
+                            "description": item.get("description", "")[:200],
+                        }
+                    )
                 return results
 
         except Exception as e:
