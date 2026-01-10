@@ -97,28 +97,56 @@ For a guided setup with drafts and V2V refinement, follow this workflow:
    ```bash
    # Render specific clip
    vtx render clip my_movie A01_S01_SH001 --preset draft
-   ```
+## The Vision Workflow
 
-4. **Review & Approve:**
-   Check the drafts. For each clip, decide if it's good enough to be upscaled (V2V) or needs a fresh high-res generation (T2V).
-   ```bash
-   # Mark for Video-to-Video refinement (uses draft as input)
-   vtx render approve my_movie A01_S01_SH001 --strategy v2v
-   
-   # Or mark for fresh Text-to-Video generation
-   vtx render approve my_movie A01_S02_SH001 --strategy t2v
-   ```
+This workflow (aka "The Vision Workflow") is designed to take a raw concept description and turn it into a production-ready project with rich style definitions, resource allocations (LoRAs), and a full production plan.
 
-5. **Render Finals:**
-   Run the final render pass. Clips approved for V2V will use the draft video as input.
-   ```bash
-   vtx render clip my_movie A01_S01_SH001 --preset final
-   ```
+### 1) Propose & Plan
 
-6. **Assemble:**
-   ```bash
-   vtx render assemble my_movie
-   ```
+Input: A detailed text description of your movie (story, style, vibe).
+
+```bash
+vtx projects propose "my_concept.txt" --out proposal.yaml
+```
+
+- Analyzes the concept for visual style keywords.
+- Searches CivitAI for relevant LoRAs.
+- Creates a `proposal.yaml` blueprint.
+
+### 2) Create & Hydrate
+
+```bash
+vtx projects create-from-plan proposal.yaml
+```
+
+- Creates the project structure.
+- Writes `story/00_brief.md`.
+- **Generates `prompts/style_bible.yaml`** (Visual language, lighting, audio).
+- **Populates `prompts/loras.yaml`** with the suggested LoRAs.
+
+### 3) Story & Specification
+
+```bash
+cd projects/<slug>
+vtx story outline      # Structure the story (Acts/Scenes)
+vtx story treatment    # Prose description
+vtx story screenplay   # Dialogue and action
+vtx story shotlist     # Shot-by-shot breakdown
+vtx story clips        # Generate renderable clip specs
+```
+
+### 4) Render Cycle (Draft -> Final)
+
+```bash
+# Render 50% res draft
+vtx render clip <slug> <clip_id> --preset draft
+
+# Approve and choose strategy (t2v or v2v)
+vtx render approve <slug> <clip_id> --strategy v2v
+
+# Render final (v2v uses draft as input)
+vtx render clip <slug> <clip_id> --preset final
+```
 
 ## Development
 

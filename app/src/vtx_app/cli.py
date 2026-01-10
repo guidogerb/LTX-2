@@ -200,6 +200,14 @@ def projects_create_from_plan(
         (path / "story" / "00_brief.md").write_text(brief)
         print("Updated story/00_brief.md")
 
+    # Generate Style Bible (Hydrate from brief)
+    from vtx_app.story.openai_builder import StoryBuilder
+
+    builder = StoryBuilder(project=loader.load(slug))
+    print("[blue]Generating Style Bible...[/blue]")
+    builder.generate_style_bible()
+    print("Updated prompts/style_bible.yaml")
+
     # Update resources/loras
     suggested_loras = data.get("resources", {}).get("suggested_loras", [])
     if suggested_loras:

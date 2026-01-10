@@ -262,6 +262,56 @@ For each shot:
             if not out_path.exists():
                 out_path.write_text("locations: {}\n")
 
+    def generate_style_bible(self) -> None:
+        """Writes prompts/style_bible.yaml from brief/proposal."""
+        out_path = self.project.root / "prompts" / "style_bible.yaml"
+        brief_path = self.project.root / "story" / "00_brief.md"
+        brief = brief_path.read_text() if brief_path.exists() else ""
+
+        schema = {
+            "type": "object",
+            "properties": {
+                "StyleBible": {
+                    "type": "object",
+                    "properties": {
+                        "Format": {
+                            "type": "object",
+                            "properties": {
+                                "AspectRatio": {"type": "string"},
+                                "OverallAesthetic": {"type": "string"},
+                            },
+                        },
+                        "CoreLook": {
+                            "type": "object",
+                            "properties": {
+                                "Rendering": {"type": "object"},
+                                "CharacterDesign": {"type": "object"},
+                            },
+                        },
+                        "LightingPlan": {"type": "object"},
+                        "AudioBible": {"type": "object"},
+                    },
+                    "required": ["Format", "CoreLook"],
+                }
+            },
+        }
+
+        system = "You are a visual director. Create a comprehensive style guide (Style Bible) for the movie."
+        user = f"Brief:\n{brief}\n\nCreate a style bible defining the visual language, rendering style, lighting, and audio mood."
+
+        try:
+            data = self._call_structured(
+                schema=schema,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+            )
+            out_path.write_text(yaml.safe_dump(data, sort_keys=False))
+        except Exception:
+            if not out_path.exists():
+                out_path.write_text("StyleBible: {}\n")
+
     def generate_clip_specs(
         self,
         *,
