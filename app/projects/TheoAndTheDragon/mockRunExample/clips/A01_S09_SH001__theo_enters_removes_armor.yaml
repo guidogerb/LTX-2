@@ -1,0 +1,31 @@
+Prompt: |
+  16:9 fixed camera near the front door inside the house, like a classic animated short: Theo enters, shuts the
+  door, and exhales with satisfied relief. He removes his oversized helmet and sets it down, then slips off his
+  play armor pieces one by one, placing them neatly in view with soft plastic clacks. The lighting is warm and
+  domestic, and the adventurous score softens into a gentle ‘home safe’ motif. Offscreen household sounds—faint
+  dishes and distant footsteps—bring the world back to ordinary.
+
+Negative: |
+  photorealistic live-action look; modern ultra-detailed CGI; hyper-real skin pores; realistic hair strand
+  simulation; gritty realistic violence; blood; gore; injury detail; horror tone; harsh contrast teal-orange
+  grading; excessive lens flare; extreme depth-of-field blur; unstable character identity; inconsistent
+  clothing; duplicate Theo; extra parents; extra dragons; crowded streets full of people; modern brand logos;
+  readable signage; subtitles; watermarks; UI overlays; glitch artifacts; warped faces; broken anatomy; extra
+  limbs/fingers; melting objects; jittery teleporting motion; chaotic fast camera spins; aggressive handheld
+  shake; extreme motion blur; strobing lights; noisy particle storms that obscure the action; fire/explosions
+  filling the entire frame; lots of on-screen text; credits crawl. Avoid: camera movement here; keep it fixed;
+  avoid clutter blocking the armor pile.
+
+Duration: 9  # seconds (<=10)
+AspectRatio: "16:9"
+Act: "A01"
+Scene: "S09"
+Shot: "SH001"
+Description: "theo_enters_removes_armor"
+Characters:
+  - Theo
+Location: "Home_Entryway"
+ContinuityNotes: |
+  Maintain early-era 3D animation look: slightly plasticky materials, gentle squash-and-stretch, readable
+  staging. Keep Theo’s helmet noticeably too large whenever he is wearing it. Camera should feel like a classic
+  fixed-position animated short; keep the armor pile clearly visible.

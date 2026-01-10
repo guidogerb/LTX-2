@@ -1,0 +1,112 @@
+Version: 1.0
+Project: "Theo vs. The Dragon (Retro CG Short)"
+CharacterGuide:
+  GeneralNotes: |
+    All characters should read as early-era 3D animation: slightly simplified geometry, rounded forms,
+    clean silhouettes, and expressive acting driven by posture and timing (not micro-details).
+    Maintain consistent proportions across shots; avoid photoreal textures and avoid brand logos.
+
+Characters:
+  Theo:
+    Role: "Protagonist (Hero)"
+    Age: 8
+    BodyType: "Small child proportions, slightly oversized head typical of family-friendly CG shorts."
+    SkinTone: "Neutral; keep consistent across shots."
+    Hair: "Mostly hidden by helmet; any visible hair should be simple, short, and tidy."
+    Costume:
+      Armor: |
+        Play knight armor made of lightweight plastic with soft scuffs at edges, visible velcro/strap hints,
+        toy-like shine (not metal), and slightly chunky kid-friendly shapes.
+      Helmet: |
+        Plastic helmet that is noticeably too large; it sits low on the brow and wobbles as he moves.
+        This is a continuity gag—keep it obvious whenever worn.
+      Props:
+        Shield: "Small plastic shield with simple molded details; no heraldic logos or readable text."
+        Sword: "Plastic sword with rounded tip; bright toy highlights; no realistic blade sharpness."
+    ExpressionAndActing:
+      Default: "Bright-eyed, eager, fearless in posture; bravery is shown through stance and movement."
+      ComedyBeats: "Helmet bobble, partial blocked vision, quick head-tilts to see, proud little armor pats."
+      HeroBeats: "Wide stance, shield-forward, decisive roll-to-stand, confident victory freeze."
+    Voice:
+      Type: "Child voice, energetic and clear."
+      Dialogue:
+        - "Mom, Dad, I am going outside to fight the evil dragon that is destroying the neighborhood."
+        - "BAD DRAGON!"
+        - "What's for dinner, Mom?"
+    ConsistencyAnchors:
+      PromptAnchor: |
+        "Theo, 8-year-old boy, play knight armor, oversized helmet too large, plastic shield and plastic sword,
+        earnest heroic posture, early-era 3D animation"
+      Avoid: |
+        "teenager/adult Theo, realistic armor, sharp metal weapons, modern streetwear, hyper-real skin"
+
+  Jordie:
+    Role: "Supporting (Mom)"
+    AgeRange: "30s–40s"
+    BodyType: "Average build, friendly silhouette."
+    Wardrobe: "Casual at-home clothing suitable for housework (e.g., simple top and pants), no logos."
+    Acting: |
+      Warm, amused smile; supportive and affectionate. She stays busy with housework and remains offscreen
+      for the dinner response if continuity is difficult.
+    Voice:
+      Type: "Warm adult voice, calm and practical."
+      Dialogue:
+        - "macaroni and cheese."
+    ConsistencyAnchors:
+      PromptAnchor: "Jordie, mom, casual home clothes, warm smile, busy with housework, early-era 3D animation"
+      Avoid: "hostile tone, leaving the house, joining the fight"
+
+  Alex:
+    Role: "Supporting (Dad)"
+    AgeRange: "30s–40s"
+    BodyType: "Average build, relaxed posture."
+    Wardrobe: "Casual at-home clothing; simple colors; no branding."
+    Acting: |
+      Quiet amused chuckle, supportive nod. He remains at a computer workstation, briefly glancing at Jordie
+      to share the moment, then returns to work.
+    Voice:
+      Type: "Warm adult voice; minimal dialogue (primarily reaction)."
+    ConsistencyAnchors:
+      PromptAnchor: "Alex, dad, working at computer desk, gentle laugh, early-era 3D animation"
+      Avoid: "changing to a different job/location, dramatic reactions"
+
+  Dragon:
+    Role: "Villain (Threatening but Family-Friendly)"
+    Scale: "Large enough to dwarf Theo; clearly the dominant figure in wide shots."
+    Design: |
+      Big readable shapes, glossy stylized scales, expressive brows and mouth, not grotesque.
+      Fire breath should be bright and cartoon-readable, controlled in size (never full-frame).
+    Movement: |
+      Heavy wingbeats, deliberate claw swipes, staged choreography that stays readable and not chaotic.
+      Reacts to Theo's toy strikes with exaggerated animation timing.
+    Audio: "Deep roar and rumble; no horror scream design."
+    Outcome: "Falls unconscious, then is banished by a magical vortex (no gore, no slaying)."
+    ConsistencyAnchors:
+      PromptAnchor: "large stylized dragon, glossy scales, family-friendly, early-era 3D animation, readable fire breath"
+      Avoid: "horror dragon, gore, realistic suffering"
+
+  BlueBirds:
+    Role: "Supporting (Gratitude Chorus)"
+    Count: 3
+    Design: "Simple rounded blue birds with tiny beaks; bright friendly eyes; quick flutter motion."
+    Acting: |
+      Fly into scene, circle Theo once or twice, then one bird lands on the tip of Theo's sword.
+      Keep the flight path simple and readable.
+    Voice:
+      Type: "High-pitched birdlike voice."
+      Dialogue:
+        - "Thanks Theo! You saved us all!"
+    ConsistencyAnchors:
+      PromptAnchor: "three small blue birds, cute, early-era 3D animation, one bird perches on sword tip"
+      Avoid: "more than three birds, different species, long complex flocking patterns"
+
+  Lamp:
+    Role: "Intro Mascot (Generic Desk Lamp, Non-branded)"
+    Design: |
+      Generic white desk lamp with a springy neck and round base; no logos; no recognizable studio marks.
+      Uses squash-and-stretch for comedic bounces.
+    Acting: "Hops into frame, tilts shade like eye contact, clicks on to create a wipe transition."
+    Audio: "Soft rubber squeaks, crisp click, cheerful orchestral jingle."
+    ConsistencyAnchors:
+      PromptAnchor: "generic desk lamp, white, springy, squash-and-stretch, retro CG intro"
+      Avoid: "any brand-specific lamp or studio logo"

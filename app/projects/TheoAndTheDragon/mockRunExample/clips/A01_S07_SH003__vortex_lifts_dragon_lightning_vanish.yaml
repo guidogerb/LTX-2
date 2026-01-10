@@ -1,0 +1,33 @@
+Prompt: |
+  16:9 wide shot aimed upward: the vortex wraps around the dragon and lifts it into the dark sky, spinning it in
+  a controlled spiral while lightning flickers rhythmically around the swirl. Theo finishes his roll on the
+  pavement and looks up, one arm raised to block the brightness, his posture showing awe and relief. The dragon
+  vanishes into the clouds with a sharp thunder-crack, and the violent energy collapses upward like it’s being
+  zipped closed. The clouds quickly soften and settle back toward normal as the score drops into calm.
+
+Negative: |
+  photorealistic live-action look; modern ultra-detailed CGI; hyper-real skin pores; realistic hair strand
+  simulation; gritty realistic violence; blood; gore; injury detail; horror tone; harsh contrast teal-orange
+  grading; excessive lens flare; extreme depth-of-field blur; unstable character identity; inconsistent
+  clothing; duplicate Theo; extra parents; extra dragons; crowded streets full of people; modern brand logos;
+  readable signage; subtitles; watermarks; UI overlays; glitch artifacts; warped faces; broken anatomy; extra
+  limbs/fingers; melting objects; jittery teleporting motion; chaotic fast camera spins; aggressive handheld
+  shake; extreme motion blur; strobing lights; noisy particle storms that obscure the action; fire/explosions
+  filling the entire frame; lots of on-screen text; credits crawl. Avoid: strobe-like lightning; avoid chaotic
+  spinning that causes artifacts; keep the spiral smooth.
+
+Duration: 9  # seconds (<=10)
+AspectRatio: "16:9"
+Act: "A01"
+Scene: "S07"
+Shot: "SH003"
+Description: "vortex_lifts_dragon_lightning_vanish"
+Characters:
+  - Theo
+  - Dragon
+Location: "Suburbia_Street_Storm_to_Clear"
+ContinuityNotes: |
+  Maintain early-era 3D animation look: slightly plasticky materials, gentle squash-and-stretch, readable
+  staging. Keep Theo’s helmet noticeably too large whenever he is wearing it. Dragon is threatening but family-
+  friendly; no gore, no injury detail. Action must stay readable: controlled fire, controlled lightning, no
+  chaotic camera spins.

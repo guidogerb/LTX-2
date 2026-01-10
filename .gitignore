@@ -42,3 +42,6 @@ tmp
 *.wav
 *.webp
 /app/projects/project_slug/prompts/clips/...
+
+*_Zone.Identifier
+

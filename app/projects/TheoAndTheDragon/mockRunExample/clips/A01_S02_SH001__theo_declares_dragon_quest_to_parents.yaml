@@ -1,0 +1,33 @@
+Prompt: |
+  Warm suburban home interior in early-era 3D animation, 16:9: Theo, an 8-year-old boy in shiny play armor with
+  an oversized helmet sitting low on his brow, stands in a medium-wide shot gripping a plastic shield and sword.
+  He plants his feet wide, puffs his chest, and raises his voice with bright excitement, saying, “Mom, Dad, I am
+  going outside to fight the evil dragon that is destroying the neighborhood.” The camera eases in with a gentle
+  dolly to emphasize his heroic seriousness, and the toy materials catch soft window highlights. A playful
+  adventure motif begins under his line, while the room’s ambience stays cozy and domestic.
+
+Negative: |
+  photorealistic live-action look; modern ultra-detailed CGI; hyper-real skin pores; realistic hair strand
+  simulation; gritty realistic violence; blood; gore; injury detail; horror tone; harsh contrast teal-orange
+  grading; excessive lens flare; extreme depth-of-field blur; unstable character identity; inconsistent
+  clothing; duplicate Theo; extra parents; extra dragons; crowded streets full of people; modern brand logos;
+  readable signage; subtitles; watermarks; UI overlays; glitch artifacts; warped faces; broken anatomy; extra
+  limbs/fingers; melting objects; jittery teleporting motion; chaotic fast camera spins; aggressive handheld
+  shake; extreme motion blur; strobing lights; noisy particle storms that obscure the action; fire/explosions
+  filling the entire frame; lots of on-screen text; credits crawl. Avoid: Theo changing age/face; avoid armor
+  becoming real metal; keep helmet obviously too large.
+
+Duration: 9  # seconds (<=10)
+AspectRatio: "16:9"
+Act: "A01"
+Scene: "S02"
+Shot: "SH001"
+Description: "theo_declares_dragon_quest_to_parents"
+Characters:
+  - Theo
+  - Jordie
+  - Alex
+Location: "Home_LivingRoom"
+ContinuityNotes: |
+  Maintain early-era 3D animation look: slightly plasticky materials, gentle squash-and-stretch, readable
+  staging. Keep Theo’s helmet noticeably too large whenever he is wearing it.

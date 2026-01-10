@@ -1,0 +1,30 @@
+Prompt: |
+  Side-tracking 16:9 shot at Theo’s height: he continues shuffling forward, helmet bobbling comically as he
+  peers out from under its rim. The sunlight subtly cools as clouds gather overhead, dimming the street in a
+  gradual, readable change. Theo tightens his posture and lifts his shield a little higher, showing bravery
+  through action rather than words. The music shifts into a low suspense pulse while the ambient birds fade
+  slightly, as if the world is holding its breath.
+
+Negative: |
+  photorealistic live-action look; modern ultra-detailed CGI; hyper-real skin pores; realistic hair strand
+  simulation; gritty realistic violence; blood; gore; injury detail; horror tone; harsh contrast teal-orange
+  grading; excessive lens flare; extreme depth-of-field blur; unstable character identity; inconsistent
+  clothing; duplicate Theo; extra parents; extra dragons; crowded streets full of people; modern brand logos;
+  readable signage; subtitles; watermarks; UI overlays; glitch artifacts; warped faces; broken anatomy; extra
+  limbs/fingers; melting objects; jittery teleporting motion; chaotic fast camera spins; aggressive handheld
+  shake; extreme motion blur; strobing lights; noisy particle storms that obscure the action; fire/explosions
+  filling the entire frame; lots of on-screen text; credits crawl. Avoid: instant storm jump-cuts; avoid overly
+  dark night lighting; keep it clearly daytime turning overcast.
+
+Duration: 9  # seconds (<=10)
+AspectRatio: "16:9"
+Act: "A01"
+Scene: "S04"
+Shot: "SH002"
+Description: "tracking_theo_clouds_gather"
+Characters:
+  - Theo
+Location: "Suburbia_Street_Day_to_Overcast"
+ContinuityNotes: |
+  Maintain early-era 3D animation look: slightly plasticky materials, gentle squash-and-stretch, readable
+  staging. Keep Theo’s helmet noticeably too large whenever he is wearing it.

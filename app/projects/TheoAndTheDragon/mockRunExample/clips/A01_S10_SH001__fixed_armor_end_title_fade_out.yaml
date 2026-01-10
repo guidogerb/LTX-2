@@ -1,0 +1,31 @@
+Prompt: |
+  16:9 fixed shot holds on the quiet entryway where Theo left his helmet and play armor, now still and peaceful
+  under warm indoor light. The room tone is soft, and the music resolves into a final gentle chord with a tiny
+  playful flourish at the end. A simple centered end title fades in reading “The End,” large and minimal for
+  clarity, then holds briefly. The image fades to black with subtle film grain lingering for a beat as the final
+  orchestral stinger closes the short.
+
+Negative: |
+  photorealistic live-action look; modern ultra-detailed CGI; hyper-real skin pores; realistic hair strand
+  simulation; gritty realistic violence; blood; gore; injury detail; horror tone; harsh contrast teal-orange
+  grading; excessive lens flare; extreme depth-of-field blur; unstable character identity; inconsistent
+  clothing; duplicate Theo; extra parents; extra dragons; crowded streets full of people; modern brand logos;
+  readable signage; subtitles; watermarks; UI overlays; glitch artifacts; warped faces; broken anatomy; extra
+  limbs/fingers; melting objects; jittery teleporting motion; chaotic fast camera spins; aggressive handheld
+  shake; extreme motion blur; strobing lights; noisy particle storms that obscure the action; fire/explosions
+  filling the entire frame; lots of on-screen text; credits crawl. Avoid: garbled or misspelled text; avoid long
+  credits; keep “The End” simple, centered, and short.
+
+Duration: 10  # seconds (<=10)
+AspectRatio: "16:9"
+Act: "A01"
+Scene: "S10"
+Shot: "SH001"
+Description: "fixed_armor_end_title_fade_out"
+Characters:
+  - NONE
+Location: "Home_Entryway"
+ContinuityNotes: |
+  Maintain early-era 3D animation look: slightly plasticky materials, gentle squash-and-stretch, readable
+  staging. Keep Theo’s helmet noticeably too large whenever he is wearing it. Camera should feel like a classic
+  fixed-position animated short; keep the armor pile clearly visible.

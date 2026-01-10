@@ -1,0 +1,32 @@
+Prompt: |
+  Same fixed 16:9 angle: Theo pauses, tilts his head toward the other room, and calls loudly, “What’s for
+  dinner, Mom?” From offscreen, Jordie answers clearly, “macaroni and cheese,” and Theo’s face immediately
+  blooms into a huge grin. He suddenly sprints past the camera, quick footsteps and happy breathy laughter
+  filling the audio as he rushes for his favorite meal. The camera stays still on the entryway and the neatly
+  placed armor, emphasizing the calm after the adventure.
+
+Negative: |
+  photorealistic live-action look; modern ultra-detailed CGI; hyper-real skin pores; realistic hair strand
+  simulation; gritty realistic violence; blood; gore; injury detail; horror tone; harsh contrast teal-orange
+  grading; excessive lens flare; extreme depth-of-field blur; unstable character identity; inconsistent
+  clothing; duplicate Theo; extra parents; extra dragons; crowded streets full of people; modern brand logos;
+  readable signage; subtitles; watermarks; UI overlays; glitch artifacts; warped faces; broken anatomy; extra
+  limbs/fingers; melting objects; jittery teleporting motion; chaotic fast camera spins; aggressive handheld
+  shake; extreme motion blur; strobing lights; noisy particle storms that obscure the action; fire/explosions
+  filling the entire frame; lots of on-screen text; credits crawl. Avoid: showing Jordie on camera if you can’t
+  maintain continuity; keep her voice offscreen; avoid adding text captions.
+
+Duration: 9  # seconds (<=10)
+AspectRatio: "16:9"
+Act: "A01"
+Scene: "S09"
+Shot: "SH002"
+Description: "dinner_question_mac_and_cheese_run_past_camera"
+Characters:
+  - Theo
+  - Jordie
+Location: "Home_Entryway"
+ContinuityNotes: |
+  Maintain early-era 3D animation look: slightly plasticky materials, gentle squash-and-stretch, readable
+  staging. Keep Theo’s helmet noticeably too large whenever he is wearing it. Camera should feel like a classic
+  fixed-position animated short; keep the armor pile clearly visible.

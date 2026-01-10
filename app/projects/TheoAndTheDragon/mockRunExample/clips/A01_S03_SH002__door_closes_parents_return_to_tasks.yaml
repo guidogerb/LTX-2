@@ -1,0 +1,31 @@
+Prompt: |
+  From a fixed 16:9 interior angle looking toward the door, Theo steps outside and the door closes with a soft,
+  satisfying click. Jordie resumes tidying with calm, efficient motions, and Alex refocuses on his computer,
+  posture relaxed, both still amused by their son’s ‘quest.’ The camera remains steady and slightly wide,
+  emphasizing ordinary home life returning. The orchestral theme gently pivots from cozy to adventurous as the
+  soundscape transitions fully outdoors.
+
+Negative: |
+  photorealistic live-action look; modern ultra-detailed CGI; hyper-real skin pores; realistic hair strand
+  simulation; gritty realistic violence; blood; gore; injury detail; horror tone; harsh contrast teal-orange
+  grading; excessive lens flare; extreme depth-of-field blur; unstable character identity; inconsistent
+  clothing; duplicate Theo; extra parents; extra dragons; crowded streets full of people; modern brand logos;
+  readable signage; subtitles; watermarks; UI overlays; glitch artifacts; warped faces; broken anatomy; extra
+  limbs/fingers; melting objects; jittery teleporting motion; chaotic fast camera spins; aggressive handheld
+  shake; extreme motion blur; strobing lights; noisy particle storms that obscure the action; fire/explosions
+  filling the entire frame; lots of on-screen text; credits crawl. Avoid: showing Theo again inside; avoid
+  sudden lighting jumps; keep continuity of morning light.
+
+Duration: 7  # seconds (<=10)
+AspectRatio: "16:9"
+Act: "A01"
+Scene: "S03"
+Shot: "SH002"
+Description: "door_closes_parents_return_to_tasks"
+Characters:
+  - Jordie
+  - Alex
+Location: "Home_LivingRoom"
+ContinuityNotes: |
+  Maintain early-era 3D animation look: slightly plasticky materials, gentle squash-and-stretch, readable
+  staging. Keep Theo’s helmet noticeably too large whenever he is wearing it.

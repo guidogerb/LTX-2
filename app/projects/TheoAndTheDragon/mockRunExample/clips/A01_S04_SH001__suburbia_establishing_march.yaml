@@ -1,0 +1,30 @@
+Prompt: |
+  Wide establishing shot in 16:9: a well-kept suburban street with neat lawns, tidy houses, and bright morning
+  colors rendered in simple early-era CG geometry. Theo appears small in frame, marching down the sidewalk with
+  earnest hero energy, sword forward and shield up despite the toy-like look. The camera stays stable and wide
+  to clearly establish the peaceful neighborhood and Theo’s tiny scale within it. Birds chirp and a light breeze
+  rustles leaves under a gentle, optimistic musical phrase.
+
+Negative: |
+  photorealistic live-action look; modern ultra-detailed CGI; hyper-real skin pores; realistic hair strand
+  simulation; gritty realistic violence; blood; gore; injury detail; horror tone; harsh contrast teal-orange
+  grading; excessive lens flare; extreme depth-of-field blur; unstable character identity; inconsistent
+  clothing; duplicate Theo; extra parents; extra dragons; crowded streets full of people; modern brand logos;
+  readable signage; subtitles; watermarks; UI overlays; glitch artifacts; warped faces; broken anatomy; extra
+  limbs/fingers; melting objects; jittery teleporting motion; chaotic fast camera spins; aggressive handheld
+  shake; extreme motion blur; strobing lights; noisy particle storms that obscure the action; fire/explosions
+  filling the entire frame; lots of on-screen text; credits crawl. Avoid: crowds of people; avoid modern signage
+  and brand logos; keep street clean and minimal.
+
+Duration: 8  # seconds (<=10)
+AspectRatio: "16:9"
+Act: "A01"
+Scene: "S04"
+Shot: "SH001"
+Description: "suburbia_establishing_march"
+Characters:
+  - Theo
+Location: "Suburbia_Street_Day"
+ContinuityNotes: |
+  Maintain early-era 3D animation look: slightly plasticky materials, gentle squash-and-stretch, readable
+  staging. Keep Theo’s helmet noticeably too large whenever he is wearing it.

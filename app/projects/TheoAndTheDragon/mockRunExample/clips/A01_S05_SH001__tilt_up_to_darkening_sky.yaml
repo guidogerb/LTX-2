@@ -1,0 +1,30 @@
+Prompt: |
+  Medium shot on Theo in 16:9, then a slow tilt upward into the sky: clouds thicken into dramatic gray, and a
+  broad shadow passes over the neighborhood. A distant rumble builds like far-off thunder, and Theo’s helmeted
+  head follows the movement with a small, tense swallow and widened stance. The camera movement is smooth and
+  restrained, keeping the moment clear and anticipatory. The score holds a sustained note that feels like a
+  question right before the villain appears.
+
+Negative: |
+  photorealistic live-action look; modern ultra-detailed CGI; hyper-real skin pores; realistic hair strand
+  simulation; gritty realistic violence; blood; gore; injury detail; horror tone; harsh contrast teal-orange
+  grading; excessive lens flare; extreme depth-of-field blur; unstable character identity; inconsistent
+  clothing; duplicate Theo; extra parents; extra dragons; crowded streets full of people; modern brand logos;
+  readable signage; subtitles; watermarks; UI overlays; glitch artifacts; warped faces; broken anatomy; extra
+  limbs/fingers; melting objects; jittery teleporting motion; chaotic fast camera spins; aggressive handheld
+  shake; extreme motion blur; strobing lights; noisy particle storms that obscure the action; fire/explosions
+  filling the entire frame; lots of on-screen text; credits crawl. Avoid: chaotic cloud motion; avoid camera
+  whip; keep tilt slow and clean.
+
+Duration: 8  # seconds (<=10)
+AspectRatio: "16:9"
+Act: "A01"
+Scene: "S05"
+Shot: "SH001"
+Description: "tilt_up_to_darkening_sky"
+Characters:
+  - Theo
+Location: "Suburbia_Street_Overcast"
+ContinuityNotes: |
+  Maintain early-era 3D animation look: slightly plasticky materials, gentle squash-and-stretch, readable
+  staging. Keep Theo’s helmet noticeably too large whenever he is wearing it.

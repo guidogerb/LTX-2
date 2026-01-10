@@ -1,0 +1,31 @@
+Prompt: |
+  Early-era 3D computer animation in 16:9 widescreen with subtle film grain and slightly plasticky materials: a
+  small generic white desk lamp hops into frame onto a clean neutral stage, squashing on landing and stretching
+  as it rebounds. The camera holds a steady medium-wide framing while the lamp’s springy neck wobbles and it
+  does two quick bounces, each landing making a soft rubber squeak. A friendly orchestral jingle plays in sync
+  with the hops, bright and simple like a classic animated short. The lamp tilts its shade left and right as if
+  making eye contact with the viewer, then settles into a proud, ready pose facing camera.
+
+Negative: |
+  photorealistic live-action look; modern ultra-detailed CGI; hyper-real skin pores; realistic hair strand
+  simulation; gritty realistic violence; blood; gore; injury detail; horror tone; harsh contrast teal-orange
+  grading; excessive lens flare; extreme depth-of-field blur; unstable character identity; inconsistent
+  clothing; duplicate Theo; extra parents; extra dragons; crowded streets full of people; modern brand logos;
+  readable signage; subtitles; watermarks; UI overlays; glitch artifacts; warped faces; broken anatomy; extra
+  limbs/fingers; melting objects; jittery teleporting motion; chaotic fast camera spins; aggressive handheld
+  shake; extreme motion blur; strobing lights; noisy particle storms that obscure the action; fire/explosions
+  filling the entire frame; lots of on-screen text; credits crawl. Avoid: brand logos, recognizable studio
+  marks, and any readable text on the stage.
+
+Duration: 7  # seconds (<=10)
+AspectRatio: "16:9"
+Act: "A01"
+Scene: "S01"
+Shot: "SH001"
+Description: "lamp_hops_on_stage"
+Characters:
+  - Lamp
+Location: "Neutral_Stage"
+ContinuityNotes: |
+  Maintain early-era 3D animation look: slightly plasticky materials, gentle squash-and-stretch, readable
+  staging. Keep Theo’s helmet noticeably too large whenever he is wearing it.

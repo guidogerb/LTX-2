@@ -1,0 +1,30 @@
+Prompt: |
+  16:9 child-height tracking shot in the same retro 3D style: Theo shuffles toward the front door, his oversized
+  helmet wobbling and blocking part of his view so he tilts his head to see. His plastic sword bumps lightly
+  against the shield, making toy-like clacks that match his determined march. The camera glides beside him as he
+  reaches the door handle and pushes, sunlight spilling across the floor in a warm rectangle. Outdoor
+  ambience—breeze and distant birds—starts to leak in as the door swings open.
+
+Negative: |
+  photorealistic live-action look; modern ultra-detailed CGI; hyper-real skin pores; realistic hair strand
+  simulation; gritty realistic violence; blood; gore; injury detail; horror tone; harsh contrast teal-orange
+  grading; excessive lens flare; extreme depth-of-field blur; unstable character identity; inconsistent
+  clothing; duplicate Theo; extra parents; extra dragons; crowded streets full of people; modern brand logos;
+  readable signage; subtitles; watermarks; UI overlays; glitch artifacts; warped faces; broken anatomy; extra
+  limbs/fingers; melting objects; jittery teleporting motion; chaotic fast camera spins; aggressive handheld
+  shake; extreme motion blur; strobing lights; noisy particle storms that obscure the action; fire/explosions
+  filling the entire frame; lots of on-screen text; credits crawl. Avoid: cluttered doorway; avoid fast shaky
+  cam; keep motion smooth and readable.
+
+Duration: 8  # seconds (<=10)
+AspectRatio: "16:9"
+Act: "A01"
+Scene: "S03"
+Shot: "SH001"
+Description: "theo_shuffles_to_front_door"
+Characters:
+  - Theo
+Location: "Home_Entryway"
+ContinuityNotes: |
+  Maintain early-era 3D animation look: slightly plasticky materials, gentle squash-and-stretch, readable
+  staging. Keep Theo’s helmet noticeably too large whenever he is wearing it.

@@ -1,0 +1,30 @@
+Prompt: |
+  16:9 medium-wide: clouds part and sunlight pours through, restoring the neighborhood’s bright colors and
+  peaceful ambience. Theo lies on the ground for a beat, then sits up and stands, smiling wide as he straightens
+  his play armor with proud little pats. His helmet is still noticeably too large and slightly crooked, keeping
+  the comedy gentle and consistent. The camera dollies in subtly as the music resolves into a warm, triumphant
+  theme.
+
+Negative: |
+  photorealistic live-action look; modern ultra-detailed CGI; hyper-real skin pores; realistic hair strand
+  simulation; gritty realistic violence; blood; gore; injury detail; horror tone; harsh contrast teal-orange
+  grading; excessive lens flare; extreme depth-of-field blur; unstable character identity; inconsistent
+  clothing; duplicate Theo; extra parents; extra dragons; crowded streets full of people; modern brand logos;
+  readable signage; subtitles; watermarks; UI overlays; glitch artifacts; warped faces; broken anatomy; extra
+  limbs/fingers; melting objects; jittery teleporting motion; chaotic fast camera spins; aggressive handheld
+  shake; extreme motion blur; strobing lights; noisy particle storms that obscure the action; fire/explosions
+  filling the entire frame; lots of on-screen text; credits crawl. Avoid: sudden location change; keep street
+  consistent; avoid overly dramatic god-rays that obscure Theo.
+
+Duration: 8  # seconds (<=10)
+AspectRatio: "16:9"
+Act: "A01"
+Scene: "S08"
+Shot: "SH001"
+Description: "sun_returns_theo_stands_proud"
+Characters:
+  - Theo
+Location: "Suburbia_Street_Clear"
+ContinuityNotes: |
+  Maintain early-era 3D animation look: slightly plasticky materials, gentle squash-and-stretch, readable
+  staging. Keep Theo’s helmet noticeably too large whenever he is wearing it.

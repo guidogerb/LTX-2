@@ -1,0 +1,31 @@
+Prompt: |
+  16:9 shot with soft daylight: three blue birds flutter into frame and circle Theo once in a playful loop,
+  their chirps bright against the now-calm suburb. One bird lands delicately on the tip of Theo’s plastic sword
+  and speaks in a tiny high-pitched birdlike voice, “Thanks Theo! You saved us all!” Theo holds very still so
+  the moment reads cleanly, then grins with proud surprise and gives a small nod. The bird hops off to rejoin
+  its friends, and the trio flits alongside Theo as he walks toward home.
+
+Negative: |
+  photorealistic live-action look; modern ultra-detailed CGI; hyper-real skin pores; realistic hair strand
+  simulation; gritty realistic violence; blood; gore; injury detail; horror tone; harsh contrast teal-orange
+  grading; excessive lens flare; extreme depth-of-field blur; unstable character identity; inconsistent
+  clothing; duplicate Theo; extra parents; extra dragons; crowded streets full of people; modern brand logos;
+  readable signage; subtitles; watermarks; UI overlays; glitch artifacts; warped faces; broken anatomy; extra
+  limbs/fingers; melting objects; jittery teleporting motion; chaotic fast camera spins; aggressive handheld
+  shake; extreme motion blur; strobing lights; noisy particle storms that obscure the action; fire/explosions
+  filling the entire frame; lots of on-screen text; credits crawl. Avoid: birds turning into different species;
+  avoid extra talking animals; keep exactly three birds.
+
+Duration: 9  # seconds (<=10)
+AspectRatio: "16:9"
+Act: "A01"
+Scene: "S08"
+Shot: "SH002"
+Description: "blue_birds_thank_theo"
+Characters:
+  - Theo
+  - BlueBirds
+Location: "Suburbia_Street_Clear"
+ContinuityNotes: |
+  Maintain early-era 3D animation look: slightly plasticky materials, gentle squash-and-stretch, readable
+  staging. Keep Theo’s helmet noticeably too large whenever he is wearing it.
