@@ -66,7 +66,12 @@ def list_styles() -> None:
 
     print(f"[bold]Available Styles ({len(styles)}):[/bold]")
     for s in styles:
-        print(f" - {s}")
+        data = mgr.load_style(s) or {}
+        desc = data.get("meta", {}).get("description")
+        if desc:
+            print(f" - [bold]{s}[/bold]: {desc}")
+        else:
+            print(f" - {s}")
 
 
 @app.command("review")
@@ -137,10 +142,13 @@ def create_style(
     project: Optional[str] = typer.Argument(
         None, help="Source project slug (default: current directory)"
     ),
+    description: Optional[str] = typer.Argument(
+        None, help="Optional description of the style"
+    ),
 ) -> None:
     """
     Extract a reusable style style from an existing project.
-    Usage: vtx create-style <style_name> [project_slug]
+    Usage: vtx create-style <style_name> [project_slug] [description]
     """
     from vtx_app.style_manager import StyleManager
 
@@ -150,7 +158,8 @@ def create_style(
     proj = loader.load(slug)
 
     mgr = StyleManager()
-    out_path = mgr.save_style(style_name, proj.root)
+    out_path = mgr.save_style(style_name, proj.root, description=description)
+
     print(f"[green]Style '{style_name}' saved to {out_path}[/green]")
     print(
         f'Use it in a new proposal: vtx create-movie new_movie "[{style_name}] my movie idea..."'

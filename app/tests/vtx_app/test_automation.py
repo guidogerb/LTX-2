@@ -149,3 +149,37 @@ def test_list_styles(tmp_path, mock_style_manager):
     assert "style_a" in result.stdout
     assert "style_b" in result.stdout
     assert "Available Styles (2):" in result.stdout
+
+
+def test_create_style_with_description(tmp_path, mock_style_manager):
+    """Test creating a style with a description."""
+    proj_root = tmp_path / "projects" / "p_desc"
+    proj_root.mkdir(parents=True)
+    (proj_root / "prompts").mkdir()
+
+    (proj_root / "prompts" / "style_bible.yaml").write_text(
+        yaml.safe_dump({"StyleBible": {}})
+    )
+
+    with patch("vtx_app.cli.Registry.load"), patch(
+        "vtx_app.cli.ProjectLoader"
+    ) as MockLoader:
+        mock_proj = MagicMock()
+        mock_proj.root = proj_root
+        MockLoader.return_value.load.return_value = mock_proj
+
+        with patch("vtx_app.cli._get_slug", return_value="p_desc"):
+            result = runner.invoke(
+                app, ["create-style", "desc_style", "p_desc", "A cool style"]
+            )
+
+            assert result.exit_code == 0
+            assert "Style 'desc_style' saved" in result.stdout
+
+            mgr = StyleManager()
+            style_data = mgr.load_style("desc_style")
+            assert style_data["meta"]["description"] == "A cool style"
+
+            # Test listing shows description
+            res_list = runner.invoke(app, ["list-styles"])
+            assert "A cool style" in res_list.stdout

@@ -18,7 +18,9 @@ class StyleManager:
         self.root = Settings.from_env().app_home / "styles"
         self.root.mkdir(parents=True, exist_ok=True)
 
-    def save_style(self, name: str, project_root: Path) -> Path:
+    def save_style(
+        self, name: str, project_root: Path, description: str | None = None
+    ) -> Path:
         """Extracts style config from a project and saves it as a style preset."""
         # Load source files
         style_bible_path = project_root / "prompts" / "style_bible.yaml"
@@ -38,6 +40,7 @@ class StyleManager:
             "meta": {
                 "name": name,
                 "source_project": project_root.name,
+                "description": description or "",
             },
             "style_bible": style_bible.get("StyleBible", {}),
             "resources": {
