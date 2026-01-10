@@ -60,9 +60,10 @@ def test_propose_command(tmp_path, mock_analyze_concept, mock_civitai):
     with runner.isolated_filesystem(temp_dir=tmp_path):
         result = runner.invoke(app, ["projects", "propose", "A crazy idea"])
         assert result.exit_code == 0
-        assert "Proposal written to proposal.yaml" in result.stdout
+        # Now defaults to {slug}_plan.yaml
+        assert "Proposal written to mock_movie_plan.yaml" in result.stdout
 
-        p = Path("proposal.yaml")
+        p = Path("mock_movie_plan.yaml")
         assert p.exists()
         data = yaml.safe_load(p.read_text())
         assert data["meta"]["title"] == "Mock Movie"

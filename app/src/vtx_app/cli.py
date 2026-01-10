@@ -160,6 +160,12 @@ def projects_propose(
     gen = ProposalGenerator(settings=s)
     proposal = gen.create_proposal(text)
 
+    # If out is default "proposal.yaml", try to use slug_plan.yaml
+    meta = proposal.get("meta", {})
+    slug = meta.get("slug")
+    if out == "proposal.yaml" and slug:
+        out = f"{slug}_plan.yaml"
+
     Path(out).write_text(yaml.safe_dump(proposal, sort_keys=False))
     print(f"[green]Proposal written to {out}[/green]")
     print(f"Edit this file, then run: vtx projects create-from-plan {out}")
@@ -198,6 +204,14 @@ def projects_create_from_plan(
         print(f"[yellow]Project {slug} already exists, updating files...[/yellow]")
         proj = loader.load(slug)
         path = proj.root
+
+    # Move the plan file to the project root
+    dest_plan = path / p.name
+    if p.resolve() != dest_plan.resolve():
+        import shutil
+
+        shutil.copy2(p, dest_plan)
+        print(f"Copied plan to {dest_plan}")
 
     # Write brief
     brief = data.get("story", {}).get("brief")
