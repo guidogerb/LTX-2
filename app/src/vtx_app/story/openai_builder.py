@@ -92,6 +92,36 @@ Keep beats short and visual.
             if not outline_path.exists():
                 outline_path.write_text("version: 1\nacts: []\n")
 
+    def generate_treatment(self) -> None:
+        """Writes story/02_treatment.md from outline/brief."""
+        treatment_path = self.project.root / "story" / "02_treatment.md"
+        outline_path = self.project.root / "story" / "01_outline.yaml"
+        brief_path = self.project.root / "story" / "00_brief.md"
+
+        outline = outline_path.read_text() if outline_path.exists() else ""
+        brief = brief_path.read_text() if brief_path.exists() else ""
+
+        schema_path = Path(__file__).parent / "schemas" / "treatment.schema.json"
+        schema = json.loads(schema_path.read_text())
+
+        system = "You are a screenwriter. Write a detailed film treatment (prose format) based on the outline."
+        user = f"Brief:\n{brief}\n\nOutline:\n{outline}\n\nWrite the treatment."
+
+        try:
+            data = self._call_structured(
+                schema=schema,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+            )
+            content = data.get("content", "")
+            title = data.get("title", "Treatment")
+            treatment_path.write_text(f"# {title}\n\n{content}")
+        except Exception:
+            if not treatment_path.exists():
+                treatment_path.write_text("# Treatment\n\n(Pending)\n")
+
     def generate_shotlist(self) -> None:
         """
         Writes story/04_shotlist.yaml in a fixed schema.

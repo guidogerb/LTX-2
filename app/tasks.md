@@ -29,13 +29,18 @@ This file tracks production steps and a lightweight development backlog for the 
 - [x] Add schema validation for story/clip YAML files before rendering.
 - [x] Add test coverage for registry syncing, CLI commands, and render argument building.
 
-- [ ] Implement `vtx story screenplay` command to generate screenplay from outline.
-- [ ] Implement `vtx story characters` command to generate character profiles.
-- [ ] Implement `vtx story locations` command to generate location profiles.
-- [ ] Implement `vtx project export` command to archive projects.
-- [ ] Implement `vtx render status` command for progress reporting.
-- [ ] Implement `vtx clean` command to manage artifacts.
-- [ ] Integrate structlog/logging via `config/logging.yaml`.
-- [ ] Add render profiles support (draft/production configs).
-- [ ] Implement `vtx review` to list and open rendered clips.
-- [ ] Implement `vtx config` to manage global settings.
+- [x] Implement `vtx story screenplay` command to generate screenplay from outline.
+- [x] Implement `vtx story characters` command to generate character profiles.
+- [x] Implement `vtx story locations` command to generate location profiles.
+- [x] Implement `vtx project export` command to archive projects.
+- [x] Implement `vtx render status` command for progress reporting.
+- [x] Implement `vtx clean` command to manage artifacts.
+- [x] Integrate structlog/logging via `config/logging.yaml`.
+- [x] Add render profiles support (draft/production configs).
+- [x] Implement `vtx review` to list and open rendered clips.
+- [x] Implement `vtx config` to manage global settings.
+
+## 1.0 Polish
+
+- [ ] Implement `vtx story treatment` (bridge between outline and screenplay).
+- [ ] Cleanup `utils/logging.py` and documentation TODOs.

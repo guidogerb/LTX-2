@@ -73,3 +73,24 @@ def test_generate_locations(mock_project):
         assert data["locations"]["Park"] == "Green trees"
 
         mock_call.assert_called_once()
+
+
+def test_generate_treatment(mock_project):
+    with patch(
+        "vtx_app.story.openai_builder.StoryBuilder._call_structured"
+    ) as mock_call:
+        mock_call.return_value = {
+            "title": "My Movie",
+            "content": "The story begins...",
+        }
+
+        builder = StoryBuilder(project=mock_project)
+        builder.generate_treatment()
+
+        out_file = mock_project.root / "story" / "02_treatment.md"
+        assert out_file.exists()
+        content = out_file.read_text()
+        assert "# My Movie" in content
+        assert "The story begins..." in content
+
+        mock_call.assert_called_once()

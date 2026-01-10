@@ -168,6 +168,18 @@ def story_outline(slug: str) -> None:
     print("[green]Wrote[/green] story/01_outline.yaml")
 
 
+@story_app.command("treatment")
+def story_treatment(slug: str) -> None:
+    """Generate treatment (02_treatment.md) using OpenAI."""
+    reg = Registry.load()
+    loader = ProjectLoader(registry=reg)
+    proj = loader.load(slug)
+
+    builder = StoryBuilder(project=proj)
+    builder.generate_treatment()
+    print("[green]Wrote[/green] story/02_treatment.md")
+
+
 @story_app.command("screenplay")
 def story_screenplay(slug: str) -> None:
     """Generate screenplay (03_screenplay.yaml) using OpenAI."""

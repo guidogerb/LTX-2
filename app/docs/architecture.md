@@ -30,13 +30,13 @@ source-of-truth reference for architecture, scope, and quality gates.
   - [ ] acts (if enabled)
   - [ ] final cut
 
-## App development TODO
+## Future Roadmap
 
 - [ ] Add richer duration estimator (beats -> seconds)
 - [ ] Add keyframe interpolation plan mode
-- [ ] Add v2v + ic-lora input wiring
-- [ ] Add richer registry queries (filters, priorities)
-- [ ] Add ffmpeg-based assembler presets (acts/final)
+- [x] Add v2v + ic-lora input wiring
+- [x] Add richer registry queries (filters, priorities)
+- [x] Add ffmpeg-based assembler presets (acts/final)
 - [ ] Add prompt QA checks (token length, banned phrases, text legibility hints)
 
 ---
@@ -99,15 +99,8 @@ The scaffold currently includes (verify in `packages/app`):
   - `story/duration_estimator.py` (basic content-driven seconds estimator)
   - `pipelines/capabilities.py` (auto-detect supported flags by running `python -m <module> --help`)
   - `pipelines/runner_subprocess.py` (subprocess runner)
-  - `render/renderer.py` (**partially incomplete**) render controller and resume logic
-  - `render/ffmpeg.py` (**stub**) and `render/assembler.py` (**stub**)
-
-Known incomplete areas:
-- `src/vtx_app/cli.py` is incomplete (missing commands wiring).
-- `src/vtx_app/config/env_layers.py` is incomplete (missing app-root resolution + file detection).
-- `src/vtx_app/render/renderer.py` has an unfinished large portion (render_clip arg building, state updates).
-- `render/ffmpeg.py` and `render/assembler.py` are TODO stubs.
-- No `tests/` directory yet; no CI; no lint/type configuration.
+  - `render/renderer.py` render controller and resume logic
+  - `render/ffmpeg.py` and `render/assembler.py` (assembly logic)
 
 > **Codex directive:** treat the scaffold as the starting point; do not rewrite architecture unless required. Fill gaps, add tests, and harden behavior.
 
