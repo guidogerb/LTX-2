@@ -154,6 +154,84 @@ For each shot:
             if not shotlist_path.exists():
                 shotlist_path.write_text("version: 1\nscenes: []\n")
 
+    def generate_screenplay(self) -> None:
+        """Writes story/03_screenplay.yaml from outline/brief."""
+        screenplay_path = self.project.root / "story" / "03_screenplay.yaml"
+        outline_path = self.project.root / "story" / "01_outline.yaml"
+        brief_path = self.project.root / "story" / "00_brief.md"
+
+        outline = outline_path.read_text() if outline_path.exists() else ""
+        brief = brief_path.read_text() if brief_path.exists() else ""
+
+        schema_path = Path(__file__).parent / "schemas" / "screenplay.schema.json"
+        schema = json.loads(schema_path.read_text())
+
+        system = "You are a professional screenwriter. Expand the outline into a detailed screenplay format (slugs, description, dialogue)."
+        user = f"Brief:\n{brief}\n\nOutline:\n{outline}\n\nWrite the full screenplay in JSON."
+
+        try:
+            data = self._call_structured(
+                schema=schema,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+            )
+            screenplay_path.write_text(yaml.safe_dump(data, sort_keys=False))
+        except Exception:
+            if not screenplay_path.exists():
+                screenplay_path.write_text("screenplay: []\n")
+
+    def generate_characters(self) -> None:
+        """Writes prompts/characters.yaml from brief."""
+        out_path = self.project.root / "prompts" / "characters.yaml"
+        brief_path = self.project.root / "story" / "00_brief.md"
+        brief = brief_path.read_text() if brief_path.exists() else ""
+
+        schema_path = Path(__file__).parent / "schemas" / "characters.schema.json"
+        schema = json.loads(schema_path.read_text())
+
+        system = "You are a casting director. Create specific visual descriptions for characters."
+        user = f"Brief:\n{brief}\n\nExtract characters and their visual descriptions (key=name, value=description)."
+
+        try:
+            data = self._call_structured(
+                schema=schema,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+            )
+            out_path.write_text(yaml.safe_dump(data, sort_keys=False))
+        except Exception:
+            if not out_path.exists():
+                out_path.write_text("characters: {}\n")
+
+    def generate_locations(self) -> None:
+        """Writes prompts/locations.yaml from brief."""
+        out_path = self.project.root / "prompts" / "locations.yaml"
+        brief_path = self.project.root / "story" / "00_brief.md"
+        brief = brief_path.read_text() if brief_path.exists() else ""
+
+        schema_path = Path(__file__).parent / "schemas" / "locations.schema.json"
+        schema = json.loads(schema_path.read_text())
+
+        system = "You are a location scout. Create specific visual descriptions for locations."
+        user = f"Brief:\n{brief}\n\nExtract locations and their visual descriptions (key=name, value=description)."
+
+        try:
+            data = self._call_structured(
+                schema=schema,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+            )
+            out_path.write_text(yaml.safe_dump(data, sort_keys=False))
+        except Exception:
+            if not out_path.exists():
+                out_path.write_text("locations: {}\n")
+
     def generate_clip_specs(
         self,
         *,

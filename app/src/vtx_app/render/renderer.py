@@ -12,6 +12,7 @@ from vtx_app.pipelines.capabilities import detect_capabilities, first_supported
 from vtx_app.pipelines.runner_subprocess import run
 from vtx_app.project.layout import Project
 from vtx_app.registry.db import Registry
+from vtx_app.render.presets import get_preset
 from vtx_app.story.duration_estimator import estimate_seconds
 from vtx_app.story.prompt_compiler import compile_prompt
 from vtx_app.utils.timecode import now_iso
@@ -31,12 +32,14 @@ class RenderController:
     project: Project | None
     registry: Registry
 
-    def render_clip(self, *, clip_id: str) -> None:
+    def render_clip(self, *, clip_id: str, preset: str | None = None) -> None:
         if self.project is None:
             raise ValueError("RenderController.project is required for render_clip()")
 
         proj = self.project
         s = proj.settings()
+
+        preset_cfg = get_preset(preset) if preset else {}
 
         clip_path = proj.root / "prompts" / "clips" / f"{clip_id}.yaml"
         if not clip_path.exists():
@@ -68,17 +71,20 @@ class RenderController:
 
         # Resolution / fps defaults
         fps = int(
-            (clip.get("render") or {}).get("fps")
+            preset_cfg.get("fps")
+            or (clip.get("render") or {}).get("fps")
             or os.getenv("PROJECT_FPS")
             or s.default_fps
         )
         width = int(
-            (clip.get("render") or {}).get("width")
+            preset_cfg.get("width")
+            or (clip.get("render") or {}).get("width")
             or os.getenv("PROJECT_WIDTH")
             or s.default_width
         )
         height = int(
-            (clip.get("render") or {}).get("height")
+            preset_cfg.get("height")
+            or (clip.get("render") or {}).get("height")
             or os.getenv("PROJECT_HEIGHT")
             or s.default_height
         )
