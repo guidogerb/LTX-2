@@ -120,10 +120,14 @@ def test_create_proposal_flow(generator):
         assert "suggested_loras" in proposal["resources"]
         loras = proposal["resources"]["suggested_loras"]
         # Expected: StyleLora (extra) + SearchLora (search result)
-        assert any(item["name"] == "StyleLora" for item in loras), f"Loras found: {loras}"
+        assert any(
+            item["name"] == "StyleLora" for item in loras
+        ), f"Loras found: {loras}"
 
         # NOTE: mock civitai result list order is appended after extra_loras
-        assert any(item["name"] == "SearchLora" for item in loras), f"Loras found: {loras}"
+        assert any(
+            item["name"] == "SearchLora" for item in loras
+        ), f"Loras found: {loras}"
 
 
 def test_create_proposal_legacy_style(generator):
@@ -176,4 +180,3 @@ def test_create_proposal_no_style(generator):
 
         proposal = generator.create_proposal("Raw text")
         assert "style_preset" not in proposal["meta"]
-
