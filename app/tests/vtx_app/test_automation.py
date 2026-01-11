@@ -330,7 +330,7 @@ def test_create_movie_all(tmp_path):
     ) as MockPropGen, patch(
         "vtx_app.story.openai_builder.StoryBuilder"
     ) as MockBuilder, patch(
-        "vtx_app.render.renderer.RenderController"
+        "vtx_app.cli.RenderController"
     ) as MockController, patch(
         "vtx_app.render.assembler.Assembler"
     ) as MockAsm:
@@ -344,7 +344,15 @@ def test_create_movie_all(tmp_path):
         (mock_proj.root / "prompts" / "clips").mkdir(parents=True)
 
         # Add a dummy clip file so render_full has something to iterate
-        (mock_proj.root / "prompts" / "clips" / "C1.yaml").touch()
+        clip_file = mock_proj.root / "prompts" / "clips" / "C1.yaml"
+        clip_file.write_text("""
+clip_id: "C1"
+prompt:
+  positive: "A nice test"
+render:
+  width: 720
+  height: 480
+""")
 
         MockLoader.return_value.load.return_value = mock_proj
         MockLoader.return_value.create_project.return_value = mock_proj.root
