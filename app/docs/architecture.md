@@ -44,7 +44,7 @@ source-of-truth reference for architecture, scope, and quality gates.
 ## 0) Specification summary (source-of-truth)
 
 ### 0.1 Core product requirements
-- The application root is **`LTX-2/packages/app`** (this folder).
+- The application root is **`LTX-2/app`** (this folder).
 - Application code must be separate from movie projects.
 - Movie projects follow a **fixed folder layout** so the app can work across many projects consistently.
 - **Model paths** must be managed via a **single shared env file** used by all projects (`config/models.env`).
