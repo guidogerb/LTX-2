@@ -377,5 +377,14 @@ render:
         assert call_args.get("preset") == "final"
         assert call_args.get("resolution_scale") == 1.0
 
+        # Verify no calls were made for lower resolutions (half-res)
+        for call in MockController.return_value.render_clip.call_args_list:
+            _, kwargs = call
+            assert kwargs.get("resolution_scale") != 0.5
+            assert kwargs.get("preset") != "preview"
+            # Ensure it is explicitly full resolution
+            assert kwargs.get("resolution_scale") == 1.0
+            assert kwargs.get("preset") == "final"
+
         # Check Step 3: Assemble
         MockAsm.return_value.assemble.assert_called()
