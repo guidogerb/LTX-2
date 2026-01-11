@@ -1,6 +1,0 @@
-name: ltx-env
-channels:
-  - defaults
-dependencies:
-  - python=3.12
-  # Add your project dependencies here, e.g. numpy, pandas
