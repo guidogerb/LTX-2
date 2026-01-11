@@ -34,7 +34,7 @@ def test_analyze_concept_success(generator):
     mock_resp = MagicMock()
     mock_resp.choices[0].message.content = json.dumps(expected_args)
 
-    with patch("openai.OpenAI") as MockOpenAI:
+    with patch("vtx_app.wizards.proposal.OpenAI") as MockOpenAI:
         mock_client = MockOpenAI.return_value
         mock_client.chat.completions.create.return_value = mock_resp
 
@@ -50,7 +50,7 @@ def test_analyze_concept_success(generator):
 
 
 def test_analyze_concept_failure_openai(generator):
-    with patch("openai.OpenAI") as MockOpenAI:
+    with patch("vtx_app.wizards.proposal.OpenAI") as MockOpenAI:
         mock_client = MockOpenAI.return_value
         mock_client.chat.completions.create.side_effect = Exception("OpenAI Error")
 
@@ -65,7 +65,7 @@ def test_analyze_concept_empty_response(generator):
     mock_resp = MagicMock()
     mock_resp.choices[0].message.content = ""  # Empty
 
-    with patch("openai.OpenAI") as MockOpenAI:
+    with patch("vtx_app.wizards.proposal.OpenAI") as MockOpenAI:
         mock_client = MockOpenAI.return_value
         mock_client.chat.completions.create.return_value = mock_resp
 
@@ -76,9 +76,9 @@ def test_analyze_concept_empty_response(generator):
 
 
 def test_create_proposal_flow(generator):
-    # Mock dependencies - note we mock where they are DEFINED because they are local imports
-    with patch("vtx_app.tags_manager.TagManager") as MockTM, patch(
-        "vtx_app.style_manager.StyleManager"
+    # Mock dependencies using patches on the imported symbols in proposal.py
+    with patch("vtx_app.wizards.proposal.TagManager") as MockTM, patch(
+        "vtx_app.wizards.proposal.StyleManager"
     ) as MockSM, patch(
         "vtx_app.wizards.proposal.CivitAIClient"
     ) as MockCivit, patch.object(
@@ -87,18 +87,9 @@ def test_create_proposal_flow(generator):
 
         # Setup mocks
         mock_tm = MockTM.return_value
-        mock_tm.process_prompt.return_value = (
-            "Processed Text [style_preset]"  # returns text with style tag?
-        )
-        # Actually in code:
-        #   concept_text = tm.process_prompt(concept_text)
-        #   style_matches = re.finditer...
-        # So process_prompt should return text that might have expanded tags.
-        # But if we want to test style detection, we should put the style tag in the output.
-
-        mock_tm.process_prompt.side_effect = (
-            lambda x: x
-        )  # Identity for simplicity or specific expansion
+        # This simulates that process_prompt just returns the text as is,
+        # preserving the [style_test] tag if present.
+        mock_tm.process_prompt.side_effect = lambda x: x
 
         mock_analyze.return_value = {
             "title": "T",
@@ -118,7 +109,7 @@ def test_create_proposal_flow(generator):
         mock_civit.search_loras.return_value = [{"name": "SearchLora"}]
 
         # Run
-        # Case 1: Text with style tag
+        # Case 1: Text with style tag. The mock TM returns it as is.
         input_text = "My idea [style_test]"
         proposal = generator.create_proposal(input_text)
 
@@ -126,22 +117,18 @@ def test_create_proposal_flow(generator):
         assert proposal["meta"]["style_preset"] == "test"
 
         # Verify style keywords injection
-        # analyze_concept was called. logic inside create_proposal merges keywords.
-        # Wait, analyze_concept is called with stripped text.
-        # Then the RESULT of analyze_concept is modified with style keywords.
-
         assert "suggested_loras" in proposal["resources"]
         loras = proposal["resources"]["suggested_loras"]
         # Expected: StyleLora (extra) + SearchLora (search result)
-        assert any(item["name"] == "StyleLora" for item in loras)
+        assert any(item["name"] == "StyleLora" for item in loras), f"Loras found: {loras}"
 
         # NOTE: mock civitai result list order is appended after extra_loras
-        assert any(item["name"] == "SearchLora" for item in loras)
+        assert any(item["name"] == "SearchLora" for item in loras), f"Loras found: {loras}"
 
 
 def test_create_proposal_legacy_style(generator):
-    with patch("vtx_app.tags_manager.TagManager") as MockTM, patch(
-        "vtx_app.style_manager.StyleManager"
+    with patch("vtx_app.wizards.proposal.TagManager") as MockTM, patch(
+        "vtx_app.wizards.proposal.StyleManager"
     ) as MockSM, patch("vtx_app.wizards.proposal.CivitAIClient"), patch.object(
         generator, "analyze_concept"
     ) as mock_analyze:
@@ -171,8 +158,8 @@ def test_create_proposal_legacy_style(generator):
 
 
 def test_create_proposal_no_style(generator):
-    with patch("vtx_app.tags_manager.TagManager") as MockTM, patch(
-        "vtx_app.style_manager.StyleManager"
+    with patch("vtx_app.wizards.proposal.TagManager") as MockTM, patch(
+        "vtx_app.wizards.proposal.StyleManager"
     ), patch("vtx_app.wizards.proposal.CivitAIClient"), patch.object(
         generator, "analyze_concept"
     ) as mock_analyze:
@@ -189,3 +176,4 @@ def test_create_proposal_no_style(generator):
 
         proposal = generator.create_proposal("Raw text")
         assert "style_preset" not in proposal["meta"]
+
