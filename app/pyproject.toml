@@ -2,7 +2,12 @@
 name = "vtx-app"
 version = "0.1.0"
 description = "Longform orchestration app for LTX-2/VTX-2 pipelines"
+readme = "README.md"
+authors = [
+    { name = "Gary Gerber", email = "contact@garygerber.com" }
+]
 requires-python = ">=3.12"
+
 dependencies = [
   "typer>=0.12.0",
   "rich>=13.0.0",

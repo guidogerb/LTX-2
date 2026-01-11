@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "Matan Ben-Yosef", email = "mbyosef@lightricks.com" }
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
     "ltx-core",
     "accelerate>=1.2.1",
@@ -48,7 +48,7 @@ build-backend = "hatchling.build"
 
 
 [tool.ruff]
-target-version = "1.0.0"
+target-version = "py312"
 line-length = 120
 
 [tool.ruff.lint]
