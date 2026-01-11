@@ -393,7 +393,7 @@ def create_movie(
                     "name": item["name"],
                     "url": item["url"],
                     "download_url": item["download_url"],
-                    "trigger_word": "TODO",
+                    "trigger_word": "",
                 }
             )
         bundles["civitai_candidates"] = candidates
@@ -424,7 +424,7 @@ def create_movie(
 
     rich_print(f"\n[bold green]Movie '{slug}' created successfully![/bold green]")
     rich_print(f"Project location: {path}")
-    rich_print(f"Next step: cd projects/{slug}")
+    rich_print(f"Next step: cd project/{slug}")
 
 
 @app.command("create-movie-all")
@@ -500,7 +500,7 @@ def create_movie_all(
                     "name": item["name"],
                     "url": item["url"],
                     "download_url": item["download_url"],
-                    "trigger_word": "TODO",
+                    "trigger_word": "",
                 }
             )
         bundles["civitai_candidates"] = candidates
@@ -689,7 +689,7 @@ def projects_create_from_plan(
                     "name": item["name"],
                     "url": item["url"],
                     "download_url": item["download_url"],
-                    "trigger_word": "TODO",
+                    "trigger_word": "",
                 }
             )
         bundles["civitai_candidates"] = candidates
@@ -699,7 +699,7 @@ def projects_create_from_plan(
         print(f"Added {len(candidates)} LoRA candidates to prompts/loras.yaml")
 
     print("\n[bold]Next steps:[/bold]")
-    print(f"1. cd projects/{slug}")
+    print(f"1. cd project/{slug}")
     print("2. vtx story outline")
 
 
@@ -1026,3 +1026,7 @@ def config_show(slug: str = typer.Option(None, "--project", "-p")) -> None:
         data["openai_api_key"] = "sk-..."
 
     rich_print(data)
+
+
+if __name__ == "__main__":
+    app()

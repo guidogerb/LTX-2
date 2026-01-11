@@ -40,7 +40,7 @@ class Settings:
     def from_env() -> "Settings":
         app_root = Path(__file__).resolve().parents[3]
         app_home = Path(os.getenv("VTX_APP_HOME", str(app_root / "_global")))
-        projects_root = Path(os.getenv("VTX_PROJECTS_ROOT", str(app_root / "projects")))
+        projects_root = Path(os.getenv("VTX_PROJECTS_ROOT", str(app_root / "project")))
 
         return Settings(
             app_home=app_home,

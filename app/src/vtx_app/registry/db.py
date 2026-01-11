@@ -74,6 +74,22 @@ class Registry:
             for r in rows
         ]
 
+    def get_project_by_slug(self, slug: str) -> dict[str, Any] | None:
+        cur = self.conn.execute(
+            "SELECT project_id, slug, title, path, updated_at FROM projects WHERE slug = ?",
+            (slug,),
+        )
+        row = cur.fetchone()
+        if not row:
+            return None
+        return {
+            "project_id": row[0],
+            "slug": row[1],
+            "title": row[2],
+            "path": row[3],
+            "updated_at": row[4],
+        }
+
     def upsert_clip(
         self,
         *,

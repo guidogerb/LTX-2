@@ -4,6 +4,6 @@ set -e
 cd "$(dirname "$0")/.."
 
 echo "Running Pytest..."
-# Excluding crashing tests (CLI and Produce segfault/terminate with current environment)
-PYTHONPATH=src pytest --ignore=tests/vtx_app/test_cli.py --ignore=tests/vtx_app/test_produce.py tests
+# Excluding crashing tests (Produce segfaults/terminates with current environment)
+PYTHONPATH=src pytest --cov=vtx_app --cov-report=term-missing --ignore=tests/vtx_app/test_produce.py tests
 

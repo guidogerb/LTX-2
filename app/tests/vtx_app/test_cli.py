@@ -38,10 +38,10 @@ def mock_deps():
     ) as MockAssembler, patch(
         "vtx_app.style_manager.StyleManager"
     ) as MockStyleMgr, patch(
-        "vtx_app.wizards.proposal.ProposalGenerator"
-    ) as MockProposalGen, patch(
         "vtx_app.producer.Director"
     ) as MockDirector:
+
+        MockProposalGen = MagicMock()
 
         # Apply these mocks to vtx_app.cli globals as well
         with patch("vtx_app.cli.Registry", MockRegistrySource), patch(
@@ -590,8 +590,8 @@ def test_story_outline_infer_slug(mock_deps):
     """Test _get_slug inference failure/success logic"""
     # Success case: inside project root
     with patch("pathlib.Path.cwd") as mock_cwd:
-        mock_cwd.return_value = Path("/tmp/projects/p1")
-        mock_deps["settings"].projects_root = Path("/tmp/projects")
+        mock_cwd.return_value = Path("/tmp/project/p1")
+        mock_deps["settings"].projects_root = Path("/tmp/project")
 
         # We need to mock relative_to behavior since paths are mocked
         # But wait, Path objects are real objects in my test, just cwd returns one.

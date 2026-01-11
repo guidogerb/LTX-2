@@ -1,0 +1,10 @@
+version: 1
+acts:
+  - act: 1
+    title: "Act I"
+    scenes:
+      - scene: 1
+        title: "Opening"
+        beats:
+          - "Introduce the world."
+          - "Introduce the protagonist."

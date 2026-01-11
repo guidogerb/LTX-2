@@ -1,10 +1,9 @@
-meta:
-  name: pixar
-  source_project: theo_suburban_dragon
-  description: just like a pixar annimation!
-style_bible: {}
-resources:
-  bundles:
+version: 1
+bundles:
+  core:
+  - env: LTX_DISTILLED_LORA_PATH
+    weight: 0.8
+  civitai_candidates:
   - name: Liminal Suburbs 2 Electric Boogaloo
     url: https://civitai.com/models/1357899
     download_url: https://civitai.com/api/download/models/1624858

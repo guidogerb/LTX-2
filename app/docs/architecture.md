@@ -264,7 +264,7 @@ Acceptance criteria:
 Tasks:
 - [ ] Confirm `ProjectLoader.create_project()`:
   - Validates slug (safe folder name)
-  - Copies `_global/templates/project_template/` into `projects/<slug>`
+  - Copies `_global/templates/project_template/` into `project/<slug>`
   - Generates new UUID in `metadata.yaml`
   - Writes title/logline if provided
   - Copies `project.env.example` → `project.env`
@@ -560,7 +560,7 @@ Acceptance criteria:
 Tasks:
 - [ ] Implement `utils/logging.py`:
   - configure Rich logging or stdlib logging
-  - per-project logs in `projects/<slug>/logs/`
+  - per-project logs in `project/<slug>/logs/`
 - [ ] Ensure subprocess stdout/stderr is captured:
   - store into `renders/clips/<clip>.log.txt` (optional)
   - store failure output in registry `last_error`

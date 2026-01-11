@@ -6,12 +6,18 @@ produce longform projects as a sequence of short clips rendered with LTX-2 pipel
 
 ## Features
 
-- **Project Scaffolding**: Consistent folder layout (`projects/<slug>`) with templates.
+- **Project Scaffolding**: Consistent folder layout (`project/<slug>`) with templates.
 - **AI-Assisted Pre-Production**:
   - `propose`: Turn a raw idea into a production plan with CivitAI resource suggestions.
   - `story`: Generate outlines, treatments, screenplays, characters, locations, and shotlists using OpenAI.
 - **Context Awareness**: CLI commands automatically detect the active project when run from project directories.
 - **Rendering Orchestration**: Manage render jobs (drafts vs. production), resuming, and assembly.
+
+## Documentation
+
+- [Commands Reference](config/commands.md)
+- [Manual Workflows & Advanced Configuration](docs/MANUAL_WORKFLOWS.md): Detailed guide on manually editing files, managing tags, and invoking custom pipelines.
+- [Project Architecture](docs/architecture.md)
 
 ## System Assumptions
 
@@ -74,12 +80,12 @@ Create the project structure from the generated plan.
 ```bash
 vtx projects create-from-plan [slug]_plan.yaml
 ```
-*Creates `projects/[slug]`, hydrates `story/00_brief.md`, generates `prompts/style_bible.yaml`, and moves the plan file into the project root.*
+*Creates `project/[slug]`, hydrates `story/00_brief.md`, generates `prompts/style_bible.yaml`, and moves the plan file into the project root.*
 
 ### 3. Story Development
 Navigate to the project directory. The CLI will automatically infer the project context.
 ```bash
-cd projects/[slug]
+cd project/[slug]
 ```
 
 Run the story generators in order:
@@ -208,10 +214,10 @@ make verify
 1. OS environment variables
 2. `config/global.env`
 3. `config/models.env`
-4. `projects/<slug>/project.env` (overrides global defaults)
+4. `project/<slug>/project.env` (overrides global defaults)
 
 ### Clip Specs
-Per-clip specs live in `projects/<slug>/prompts/clips/`. They contain prompt text, render configuration, and output paths. The renderer reads these files and updates the shared registry.
+Per-clip specs live in `project/<slug>/prompts/clips/`. They contain prompt text, render configuration, and output paths. The renderer reads these files and updates the shared registry.
 
 ### Directory Structure
 - `src/vtx_app/cli.py` – CLI entrypoint & command logic.
