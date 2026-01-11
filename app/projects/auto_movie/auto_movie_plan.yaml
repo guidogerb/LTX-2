@@ -1,0 +1,7 @@
+meta:
+  slug: auto_movie
+  title: Auto Title
+story:
+  brief: Brief
+resources:
+  suggested_loras: []

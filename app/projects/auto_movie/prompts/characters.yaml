@@ -1,0 +1,6 @@
+version: 1
+characters:
+  HERO:
+    description: "Protagonist with consistent wardrobe and facial features across all scenes."
+  NARRATOR:
+    description: "Voice-only character, calm delivery."

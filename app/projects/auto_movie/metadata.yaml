@@ -1,0 +1,13 @@
+project_id: f09afefa-e2ed-477b-9070-4e324bb8d7f5
+slug: auto_movie
+title: Auto Title
+logline: A one-sentence logline.
+acts_enabled: true
+defaults:
+  pipeline: ti2vid_two_stages
+  fps: 16
+  aspect: 2.39:1
+  width: 1920
+  height: 800
+  max_seconds: 15
+updated_at: '2026-01-11T13:56:09Z'

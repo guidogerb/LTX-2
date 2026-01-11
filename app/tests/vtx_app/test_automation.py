@@ -74,11 +74,11 @@ def test_create_movie_automation(tmp_path, mock_style_manager):
     # So we patch vtx_app.wizards.proposal.ProposalGenerator.
 
     with patch("vtx_app.cli.Settings") as MockSettings, patch(
-        "vtx_app.wizards.proposal.ProposalGenerator"
+        "vtx_app.cli.ProposalGenerator"
     ) as MockPropGen, patch("vtx_app.registry.db.Registry.load"), patch(
-        "vtx_app.project.loader.ProjectLoader"
+        "vtx_app.cli.ProjectLoader"
     ) as MockLoader, patch(
-        "vtx_app.story.openai_builder.StoryBuilder"
+        "vtx_app.cli.StoryBuilder"
     ) as MockBuilder:
 
         # 1. Settings
@@ -287,6 +287,8 @@ def test_assemble_command(tmp_path):
     proj_root = tmp_path / "projects" / "asm_proj"
     proj_root.mkdir(parents=True)
     (proj_root / "renders" / "high-res").mkdir(parents=True)
+    (proj_root / "story").mkdir(parents=True)
+    (proj_root / "story" / "04_shotlist.yaml").write_text("shots: []")
 
     with patch("vtx_app.cli.Registry.load"), patch(
         "vtx_app.cli.ProjectLoader"
@@ -296,7 +298,7 @@ def test_assemble_command(tmp_path):
         MockLoader.return_value.load.return_value = mock_proj
 
         with patch(
-            "vtx_app.render.assembler.Assembler"
+            "vtx_app.cli.Assembler"
         ) as MockAsm:  # It is imported locally in cli function
             # The cli imports Assembler inside the function, so we patch where it is used.
             # vtx_app.render.assembler.Assembler
@@ -324,15 +326,15 @@ def test_create_movie_all(tmp_path):
 
     # Note: We must patch the source modules because CLI command imports them locally
     with patch("vtx_app.registry.db.Registry.load"), patch(
-        "vtx_app.project.loader.ProjectLoader"
+        "vtx_app.cli.ProjectLoader"
     ) as MockLoader, patch("vtx_app.config.settings.Settings.from_env"), patch(
-        "vtx_app.wizards.proposal.ProposalGenerator"
+        "vtx_app.cli.ProposalGenerator"
     ) as MockPropGen, patch(
-        "vtx_app.story.openai_builder.StoryBuilder"
+        "vtx_app.cli.StoryBuilder"
     ) as MockBuilder, patch(
         "vtx_app.cli.RenderController"
     ) as MockController, patch(
-        "vtx_app.render.assembler.Assembler"
+        "vtx_app.cli.Assembler"
     ) as MockAsm:
 
         # Setup mocks
