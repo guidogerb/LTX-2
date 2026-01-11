@@ -39,6 +39,9 @@ This file tracks production steps and a lightweight development backlog for the 
 - [x] Add render profiles support (draft/production configs).
 - [x] Implement `vtx review` to list and open rendered clips.
 - [x] Implement `vtx config` to manage global settings.
+- [x] Implement `vtx tags` commands for managing tag descriptions.
+- [x] Implement `vtx create-style`, `delete-style`, `update-style-desc`.
+- [x] Implement `vtx render-reviews` and `vtx render-full` shortcuts.
 
 ## 1.0 Polish
 

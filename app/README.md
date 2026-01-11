@@ -100,6 +100,61 @@ vtx story locations
 # 5. Break down into shots
 vtx story shotlist
 
+# 6. Generate granular clip specifications
+# Optional: specify --act or --scene to limit generation
+vtx story clips
+```
+
+### 4. Review & Rendering
+
+Render workflows allow for draft reviews and final assembly.
+
+```bash
+# Check status of all clips
+vtx render status [slug]
+
+# Render all clips at low resolution for review
+vtx render-reviews [slug]
+
+# Review the assembled storyboard or draft
+vtx review [slug]
+
+# Render all clips at full resolution
+vtx render-full [slug]
+
+# Assemble the final cut
+vtx assemble [slug]
+```
+
+## Additional Commands
+
+### Projects
+- `vtx projects list`: List all known projects.
+- `vtx projects new [slug] --title "My Movie"`: Create a blank project.
+- `vtx project env-create [slug]`: Create a dedicated virtualenv for the project.
+- `vtx project export [slug]`: Export project to a zip file.
+
+### Tags Management
+- `vtx tags list-groups`: List tag groups.
+- `vtx tags list-all`: List all tags.
+- `vtx tags update-desc [group] [tag] [desc]`: Update tag description.
+
+### Style Management
+- `vtx list-styles`: List global styles.
+- `vtx create-style [name] [project_slug]`: Save a project's style as a global template.
+- `vtx delete-style [name]`: Delete a global style.
+- `vtx update-style-desc [name] [desc]`: Update style description.
+
+### Rendering (Advanced)
+- `vtx render clip [slug] [clip_id]`: Render a single clip.
+- `vtx render approve [slug] [clip_id]`: Mark a clip as approved.
+- `vtx render resume`: Resume unfinished render jobs across projects.
+
+### Configuration
+- `vtx config show`: Display current configuration and environment variables.
+- `vtx clean`: Remove `__pycache__` and temporary files.
+vtx story shotlist
+
 # 6. Generate renderable clip specifications
 vtx story clips
 ```

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import stat
+import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
@@ -11,6 +12,7 @@ from rich import print
 from vtx_app.project.layout import Project
 from vtx_app.project.loader import ProjectLoader
 from vtx_app.registry.db import Registry
+from vtx_app.render.assembler import Assembler
 from vtx_app.story.openai_builder import StoryBuilder
 
 
@@ -75,14 +77,11 @@ class Director:
 
         # 5. Auto Render?
         if auto_render:
-            import subprocess
 
             print("[bold red]🚀 Launching Render Sequence...[/bold red]")
             subprocess.run(["bash", str(script_path)], check=True)
 
             # Assemble
-            from vtx_app.render.assembler import Assembler
-
             asm = Assembler(project=proj)
             asm.assemble()
             print("[bold green]✅ Production Complete![/bold green] (final_cut.mp4)")

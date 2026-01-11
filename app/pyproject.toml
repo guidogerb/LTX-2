@@ -21,6 +21,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
     "black>=23.0.0",
     "isort>=5.0.0",
     "flake8>=6.0.0",
@@ -46,10 +47,7 @@ select = [
     "E",       # pycodestyle errors
     "F",       # pyflakes
     "PLC0415", # import-outside-top-level
-    "A004",    # builtin-variable-shadowing
     "PT011",   # pytest-raises-too-broad
-    "ANN401",  # any-type
-    "T201",    # print
     "B904",    # raise-without-from-inside-except
 ]
 

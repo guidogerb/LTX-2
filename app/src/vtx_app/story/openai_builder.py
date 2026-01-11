@@ -206,7 +206,10 @@ For each shot:
         schema_path = Path(__file__).parent / "schemas" / "screenplay.schema.json"
         schema = json.loads(schema_path.read_text())
 
-        system = "You are a professional screenwriter. Expand the outline into a detailed screenplay format (slugs, description, dialogue)."
+        system = (
+            "You are a professional screenwriter. Expand the outline into a detailed "
+            "screenplay format (slugs, description, dialogue)."
+        )
         user = f"Brief:\n{brief}\n\nOutline:\n{outline}\n\nWrite the full screenplay in JSON."
 
         try:
@@ -282,9 +285,9 @@ For each shot:
             # transform list to dict for yaml
             locs_list = data.get("locations", [])
             locs_dict = {}
-            for l in locs_list:
-                name = l.get("name", "Unknown")
-                locs_dict[name] = {"description": l.get("description", "")}
+            for loc in locs_list:
+                name = loc.get("name", "Unknown")
+                locs_dict[name] = {"description": loc.get("description", "")}
 
             out_path.write_text(
                 yaml.safe_dump({"version": 1, "locations": locs_dict}, sort_keys=False)
@@ -301,7 +304,7 @@ For each shot:
         brief = brief_path.read_text() if brief_path.exists() else ""
 
         # Check for style preset in plan
-        from vtx_app.style_manager import StyleManager
+        from vtx_app.style_manager import StyleManager  # noqa: PLC0415
 
         style_preset = None
         plan_files = list(self.project.root.glob("*_plan.yaml"))
@@ -343,11 +346,18 @@ For each shot:
         }
 
         system = "You are a visual director. Create a comprehensive style guide (Style Bible) for the movie."
-        user = f"Brief:\n{brief}\n\nCreate a style bible defining the visual language, rendering style, lighting, and audio mood."
+        user = (
+            f"Brief:\n{brief}\n\nCreate a style bible defining the visual language, "
+            "rendering style, lighting, and audio mood."
+        )
 
         if style_preset:
             style_bible_data = style_preset.get("style_bible", {})
-            user += f"\n\nIMPORTANT: You MUST adapt the following Style Bible to the new story, but keep the core visual identity (Rendering, Aspect Ratio, Lighting Mood) identical.\n\nBASE STYLE:\n{json.dumps(style_bible_data, indent=2)}"
+            user += (
+                f"\n\nIMPORTANT: You MUST adapt the following Style Bible to the new story, but keep the core "
+                f"visual identity (Rendering, Aspect Ratio, Lighting Mood) identical.\n\n"
+                f"BASE STYLE:\n{json.dumps(style_bible_data, indent=2)}"
+            )
 
         try:
             data = self._call_structured(
@@ -487,7 +497,8 @@ Clip spec requirements:
 - continuity.shared_prompt_profile = "{style_profile}"
 - continuity.shared_loras_profile = "{loras_profile}"
 - continuity.characters and continuity.locations must use the keys from the shot.
-- prompt.positive must be shot-specific: camera framing/motion, subject actions, key props, lighting differences, emotion.
+- prompt.positive must be shot-specific: camera framing/motion, subject actions, key props, lighting differences,
+  emotion.
 - Keep prompts concise but vivid; avoid contradictions.
 - duration: if shot.duration_hint_seconds > 0, set render.duration.mode=fixed and duration.seconds=that value.
   Otherwise use render.duration.mode=auto with min_seconds>=2 and max_seconds<= {max_seconds}.

@@ -24,7 +24,10 @@ def get_filename_from_url(url, content):
 
 def download_resource(url, base_url, media_folder):
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
+        'User-Agent': (
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+            '(KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
+        )
     }
     try:
         abs_url = urljoin(base_url, url)
@@ -46,7 +49,10 @@ def scrape_page_to_markdown(url, output_folder="output"):
     os.makedirs(media_path, exist_ok=True)
 
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
+        'User-Agent': (
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+            '(KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
+        )
     }
 
     rprint(f"Fetching {url}...")

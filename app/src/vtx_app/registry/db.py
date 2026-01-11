@@ -52,7 +52,8 @@ class Registry:
     ) -> None:
         self.conn.execute(
             "INSERT INTO projects(project_id, slug, title, path, updated_at) VALUES (?, ?, ?, ?, ?) "
-            "ON CONFLICT(project_id) DO UPDATE SET slug=excluded.slug, title=excluded.title, path=excluded.path, updated_at=excluded.updated_at",
+            "ON CONFLICT(project_id) DO UPDATE SET "
+            "slug=excluded.slug, title=excluded.title, path=excluded.path, updated_at=excluded.updated_at",
             (project_id, slug, title, path, updated_at),
         )
         self.conn.commit()

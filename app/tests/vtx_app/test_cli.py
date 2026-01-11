@@ -52,6 +52,14 @@ def mock_deps():
             "vtx_app.cli.Settings", MockSettingsSource
         ), patch(
             "vtx_app.cli.load_env", MockLoadEnvSource
+        ), patch(
+            "vtx_app.cli.StyleManager", MockStyleMgr
+        ), patch(
+            "vtx_app.cli.Assembler", MockAssembler
+        ), patch(
+            "vtx_app.cli.Director", MockDirector
+        ), patch(
+            "vtx_app.cli.ProposalGenerator", MockProposalGen
         ):
 
             reg = MockRegistrySource.load.return_value
@@ -117,7 +125,7 @@ def test_review(mock_deps):
     proj = mock_deps["project"]
     proj.root = MagicMock()
 
-    with patch("subprocess.run") as mock_run:
+    with patch("subprocess.run"):
         with patch("pathlib.Path.exists") as mock_exists:
             mock_exists.side_effect = [True]
 
@@ -428,7 +436,7 @@ def test_render_status(mock_deps):
 
     with patch("pathlib.Path.exists") as mock_exists, patch(
         "pathlib.Path.glob"
-    ) as mock_glob, patch("pathlib.Path.read_text") as mock_read:
+    ) as mock_glob, patch("pathlib.Path.read_text"):
 
         mock_exists.return_value = True
         p = MagicMock()
@@ -450,7 +458,6 @@ def test_render_clip(mock_deps):
 def test_render_approve(mock_deps):
     proj = mock_deps["project"]
     proj.root = Path("/tmp/proj")
-    clip_path = proj.root / "prompts" / "clips" / "c1.yaml"
 
     with patch("pathlib.Path.exists") as mock_exists, patch(
         "pathlib.Path.read_text"
@@ -564,14 +571,10 @@ def test_render_approve_warning(mock_deps):
             return False
         return True
 
-    with patch(
-        "pathlib.Path.exists", autospec=True, side_effect=side_effect
-    ) as mock_exists, patch(
+    with patch("pathlib.Path.exists", autospec=True, side_effect=side_effect), patch(
         "pathlib.Path.read_text",
         return_value="render: {strategy: v2v}\noutputs: {mp4: out.mp4}",
-    ), patch(
-        "pathlib.Path.write_text"
-    ):
+    ), patch("pathlib.Path.write_text"):
 
         res = runner.invoke(app, ["render", "approve", "s", "c1", "--strategy", "v2v"])
         assert "Warning" in res.stdout

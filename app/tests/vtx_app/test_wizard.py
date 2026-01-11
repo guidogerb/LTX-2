@@ -8,6 +8,7 @@ import yaml
 from typer.testing import CliRunner
 
 from vtx_app.cli import app
+from vtx_app.integrations.civitai import CivitAIClient
 from vtx_app.wizards.proposal import ProposalGenerator
 
 runner = CliRunner()
@@ -15,7 +16,7 @@ runner = CliRunner()
 
 @pytest.fixture
 def mock_openai():
-    with patch("vtx_app.wizards.proposal.ProposalGenerator._client") as mock:
+    with patch("vtx_app.wizards.proposal.ProposalGenerator._client"):
         client = MagicMock()
         # Mocking the complex response structure is tedious, so we mock analyze_concept directly if possible,
         # but let's mock the keys needed for the method if we want to test logic.
@@ -39,7 +40,6 @@ def mock_analyze_concept(monkeypatch):
 
 @pytest.fixture
 def mock_civitai(monkeypatch):
-    from vtx_app.integrations.civitai import CivitAIClient
 
     def mock_search(self, query, limit=3):
         return [

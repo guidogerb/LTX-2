@@ -133,18 +133,16 @@ def test_create_proposal_flow(generator):
         assert "suggested_loras" in proposal["resources"]
         loras = proposal["resources"]["suggested_loras"]
         # Expected: StyleLora (extra) + SearchLora (search result)
-        assert any(l["name"] == "StyleLora" for l in loras)
+        assert any(item["name"] == "StyleLora" for item in loras)
 
         # NOTE: mock civitai result list order is appended after extra_loras
-        assert any(l["name"] == "SearchLora" for l in loras)
+        assert any(item["name"] == "SearchLora" for item in loras)
 
 
 def test_create_proposal_legacy_style(generator):
     with patch("vtx_app.tags_manager.TagManager") as MockTM, patch(
         "vtx_app.style_manager.StyleManager"
-    ) as MockSM, patch(
-        "vtx_app.wizards.proposal.CivitAIClient"
-    ) as MockCivit, patch.object(
+    ) as MockSM, patch("vtx_app.wizards.proposal.CivitAIClient"), patch.object(
         generator, "analyze_concept"
     ) as mock_analyze:
 
@@ -175,9 +173,7 @@ def test_create_proposal_legacy_style(generator):
 def test_create_proposal_no_style(generator):
     with patch("vtx_app.tags_manager.TagManager") as MockTM, patch(
         "vtx_app.style_manager.StyleManager"
-    ) as MockSM, patch(
-        "vtx_app.wizards.proposal.CivitAIClient"
-    ) as MockCivit, patch.object(
+    ), patch("vtx_app.wizards.proposal.CivitAIClient"), patch.object(
         generator, "analyze_concept"
     ) as mock_analyze:
 

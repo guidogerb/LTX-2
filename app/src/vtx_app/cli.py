@@ -764,7 +764,7 @@ def _get_slug(slug: str | None) -> str:
             rich_print(
                 "[red]Missing argument 'SLUG'. Not in a project directory.[/red]"
             )
-            raise typer.Exit(code=1)
+            raise typer.Exit(code=1) from None
 
     if str(rel) == ".":
         rich_print(
