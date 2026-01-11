@@ -15,7 +15,8 @@ class StyleManager:
     """Manages reusable visual styles stored in _global/styles."""
 
     def __init__(self):
-        self.root = Settings.from_env().app_home / "styles"
+        # We now store styles under tags/style for unification
+        self.root = Settings.from_env().app_home / "tags" / "style"
         self.root.mkdir(parents=True, exist_ok=True)
 
     def save_style(

@@ -59,7 +59,8 @@ class ProposalGenerator:
                     {
                         "role": "system",
                         "content": (
-                            "You are a movie producer. Analyze the user's movie idea."
+                            "You are a movie producer. Analyze the user's movie idea. "
+                            "Return JSON that matches the provided JSON Schema exactly."
                         ),
                     },
                     {
@@ -69,17 +70,21 @@ class ProposalGenerator:
                         ),
                     },
                 ],
-                functions=[
-                    {"name": "set_metadata", "parameters": schema}
-                ],  # Using functions for older models compatibility or structured output
-                function_call={"name": "set_metadata"},
+                response_format={
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "proposal_metadata",
+                        "strict": True,
+                        "schema": schema,
+                    },
+                },
                 temperature=0.7,
             )
-            # Adapt to whichever API style (Structured Outputs is preferred but check support)
-            # The prompt "responses.create" was used in StoryBuilder, but standard chat completion is safer if sdk version varies.
-            # actually StoryBuilder used client.responses.create which is very new. I will stick to tools/functions or json mode.
 
-            args = json.loads(resp.choices[0].message.function_call.arguments)
+            content = resp.choices[0].message.content
+            if not content:
+                raise ValueError("Empty response from OpenAI")
+            args = json.loads(content)
             return args
         except Exception as e:
             print(f"[red]OpenAI analysis failed:[/red] {e}")
@@ -96,14 +101,45 @@ class ProposalGenerator:
         import re
 
         from vtx_app.style_manager import StyleManager
+        from vtx_app.tags_manager import TagManager
 
-        # Check for [style] tag
-        style_match = re.match(r"^\[([\w\-_]+)\]\s*(.*)", concept_text, re.DOTALL)
+        # 1. Expand Tags
+        # This replaces [group_tag] with the content from the yaml 'prompt' field.
+        tm = TagManager()
+        concept_text = tm.process_prompt(concept_text)
+
+        # 2. Check for [style] or [movie-style] tag for setting global preset
+        # We accept [style_name] or [movie-style_name].
         style_name = None
-        if style_match:
-            style_name = style_match.group(1)
-            concept_text = style_match.group(2)  # Remove tag from concept
+
+        # Regex to find [style_SOMETHING] or [movie-style_SOMETHING] anywhere
+        # These tags might remain if they had no 'prompt' content in the YAML.
+        style_matches = list(
+            re.finditer(r"\[(?:movie-)?style_([\w\-]+)\]", concept_text)
+        )
+
+        if style_matches:
+            # Take the first one as the primary preset
+            match = style_matches[0]
+            style_name = match.group(1)
             print(f"[blue]Detected style preset:[/blue] {style_name}")
+
+            # Remove all style tags from text so they don't pollute the story analysis
+            concept_text = re.sub(
+                r"\[(?:movie-)?style_[\w\-]+\]", "", concept_text
+            ).strip()
+
+        # Legacy fallback: check for [style] at start of string if no style found yet
+        if not style_name:
+            style_match = re.match(r"^\[([\w\-_]+)\]\s*(.*)", concept_text, re.DOTALL)
+            if style_match:
+                potential_name = style_match.group(1)
+                # Verify it exists as a style
+                mgr = StyleManager()
+                if mgr.load_style(potential_name):
+                    style_name = potential_name
+                    concept_text = style_match.group(2)
+                    print(f"[blue]Detected legacy style preset:[/blue] {style_name}")
 
         print("[blue]Analyzing concept...[/blue]")
         analysis = self.analyze_concept(concept_text)
