@@ -8,3 +8,6 @@ black src tests --preview
 
 echo "Running isort..."
 isort src tests
+
+echo "Running Ruff..."
+ruff check --fix .

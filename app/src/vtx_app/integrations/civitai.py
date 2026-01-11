@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import httpx
-from rich import print
+from rich import print as rich_print
 
 
 @dataclass
@@ -52,5 +52,5 @@ class CivitAIClient:
                 return results
 
         except Exception as e:
-            print(f"[yellow]CivitAI search failed:[/yellow] {e}")
+            rich_print(f"[yellow]CivitAI search failed:[/yellow] {e}")
             return []

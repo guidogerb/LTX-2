@@ -25,6 +25,7 @@ dev = [
     "isort>=5.0.0",
     "flake8>=6.0.0",
     "mypy>=1.0.0",
+    "ruff>=0.1.0",
 ]
 
 [project.scripts]
@@ -36,3 +37,19 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "E",       # pycodestyle errors
+    "F",       # pyflakes
+    "PLC0415", # import-outside-top-level
+    "A004",    # builtin-variable-shadowing
+    "PT011",   # pytest-raises-too-broad
+    "ANN401",  # any-type
+    "T201",    # print
+    "B904",    # raise-without-from-inside-except
+]
+

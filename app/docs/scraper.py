@@ -1,10 +1,12 @@
-import os
 import argparse
-import requests
 import hashlib
+import os
 from urllib.parse import urljoin, urlparse
+
+import requests
 from bs4 import BeautifulSoup
 from markdownify import markdownify as md
+from rich import print as rprint
 
 
 def get_filename_from_url(url, content):
@@ -33,7 +35,7 @@ def download_resource(url, base_url, media_folder):
         with open(file_path, 'wb') as f:
             f.write(response.content)
         return filename
-    except Exception as e:
+    except Exception:
         # Silently fail on bad images or print warning
         return None
 
@@ -47,12 +49,12 @@ def scrape_page_to_markdown(url, output_folder="output"):
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
     }
 
-    print(f"Fetching {url}...")
+    rprint(f"Fetching {url}...")
     try:
         response = requests.get(url, headers=headers, timeout=15)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching page: {e}")
+        rprint(f"Error fetching page: {e}")
         return
 
     soup = BeautifulSoup(response.content, 'html.parser')
@@ -60,7 +62,7 @@ def scrape_page_to_markdown(url, output_folder="output"):
     for tag in soup(['script', 'style', 'noscript', 'iframe', 'svg']):
         tag.decompose()
 
-    print("Processing images...")
+    rprint("Processing images...")
     images = soup.find_all('img')
 
     for img in images:
@@ -73,7 +75,7 @@ def scrape_page_to_markdown(url, output_folder="output"):
             if img.has_attr('srcset'):
                 del img['srcset']
 
-    print("Converting to Markdown...")
+    rprint("Converting to Markdown...")
     markdown_content = md(str(soup), heading_style="ATX")
 
     page_title = soup.title.string if soup.title else "scraped_page"
@@ -84,7 +86,7 @@ def scrape_page_to_markdown(url, output_folder="output"):
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(markdown_content)
 
-    print(f"Success! Saved to {output_path}")
+    rprint(f"Success! Saved to {output_path}")
 
 
 if __name__ == "__main__":

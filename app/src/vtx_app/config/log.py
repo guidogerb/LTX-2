@@ -26,7 +26,7 @@ def configure_logging(verbose: bool = False) -> None:
             logging.config.dictConfig(config)
             return
         except Exception as e:
-            print(f"Failed to load logging config: {e}")
+            logging.error(f"Failed to load logging config: {e}")
 
     # Fallback / Default
     level = logging.DEBUG if verbose else logging.INFO

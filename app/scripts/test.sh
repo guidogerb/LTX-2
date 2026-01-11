@@ -4,4 +4,4 @@ set -e
 cd "$(dirname "$0")/.."
 
 echo "Running Pytest..."
-PYTHONPATH=src pytest tests
+PYTHONPATH=src pytest --cov=vtx_app --cov-report=term-missing tests

@@ -1,19 +1,31 @@
 from __future__ import annotations
 
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+from dataclasses import asdict
 from pathlib import Path
 from typing import Optional
 
 import typer
-from rich import print
+import yaml
+from rich import print as rich_print
+from rich.table import Table
 
 from vtx_app.config.env_layers import load_env
 from vtx_app.config.log import configure_logging
 from vtx_app.config.settings import Settings
+from vtx_app.producer import Director
 from vtx_app.project.loader import ProjectLoader
 from vtx_app.registry.db import Registry
+from vtx_app.render.assembler import Assembler
 from vtx_app.render.renderer import RenderController
 from vtx_app.story.openai_builder import StoryBuilder
+from vtx_app.style_manager import StyleManager
 from vtx_app.tags_commands import tags_app
+from vtx_app.wizards.proposal import ProposalGenerator
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -42,48 +54,38 @@ app.add_typer(tags_app, name="tags")
 @app.command("clean")
 def clean() -> None:
     """Clean global cache files (e.g. __pycache__)."""
-    import shutil
-    from pathlib import Path
-
     root = Path.cwd()
     count = 0
     for p in root.rglob("__pycache__"):
         if p.is_dir():
             shutil.rmtree(p)
             count += 1
-    print(f"[green]Removed {count} __pycache__ directories.[/green]")
+    rich_print(f"[green]Removed {count} __pycache__ directories.[/green]")
 
 
 @app.command("list-styles")
 def list_styles() -> None:
     """List available styles in _global/styles."""
-    from vtx_app.style_manager import StyleManager
-
     mgr = StyleManager()
     styles = mgr.list_styles()
 
     if not styles:
-        print("[yellow]No styles found.[/yellow]")
+        rich_print("[yellow]No styles found.[/yellow]")
         return
 
-    print(f"[bold]Available Styles ({len(styles)}):[/bold]")
+    rich_print(f"[bold]Available Styles ({len(styles)}):[/bold]")
     for s in styles:
         data = mgr.load_style(s) or {}
         desc = data.get("meta", {}).get("description")
         if desc:
-            print(f" - [bold]{s}[/bold]: {desc}")
+            rich_print(f" - [bold]{s}[/bold]: {desc}")
         else:
-            print(f" - {s}")
+            rich_print(f" - {s}")
 
 
 @app.command("review")
 def review(slug: str) -> None:
     """Open the assembled final_cut.mp4."""
-    import os
-    import shutil
-    import subprocess
-    import sys
-
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)
     proj = loader.load(slug)
@@ -96,10 +98,10 @@ def review(slug: str) -> None:
             break
 
     if not found:
-        print(f"[red]No video found in {proj.root}[/red]")
+        rich_print(f"[red]No video found in {proj.root}[/red]")
         return
 
-    print(f"Opening {found}...")
+    rich_print(f"Opening {found}...")
     try:
         if sys.platform == "darwin":
             subprocess.run(["open", str(found)])
@@ -128,8 +130,6 @@ def produce(
     render: bool = typer.Option(False, "--render", help="Immediately run rendering"),
 ) -> None:
     """Automated movie production (Zero to Finished)."""
-    # Local import to avoid circular imports or early init
-    from vtx_app.producer import Director
 
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)
@@ -152,8 +152,6 @@ def create_style(
     Extract a reusable style style from an existing project.
     Usage: vtx create-style <style_name> [project_slug] [description]
     """
-    from vtx_app.style_manager import StyleManager
-
     slug = _get_slug(project)
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)
@@ -162,8 +160,8 @@ def create_style(
     mgr = StyleManager()
     out_path = mgr.save_style(style_name, proj.root, description=description)
 
-    print(f"[green]Style '{style_name}' saved to {out_path}[/green]")
-    print(
+    rich_print(f"[green]Style '{style_name}' saved to {out_path}[/green]")
+    rich_print(
         f'Use it in a new proposal: vtx create-movie new_movie "[{style_name}] my movie idea..."'
     )
 
@@ -173,13 +171,11 @@ def delete_style(
     style_name: str = typer.Argument(..., help="Name of style to delete")
 ) -> None:
     """Deletes a style from the global style registry."""
-    from vtx_app.style_manager import StyleManager
-
     mgr = StyleManager()
     if mgr.delete_style(style_name):
-        print(f"[green]Style '{style_name}' deleted.[/green]")
+        rich_print(f"[green]Style '{style_name}' deleted.[/green]")
     else:
-        print(f"[red]Style '{style_name}' not found.[/red]")
+        rich_print(f"[red]Style '{style_name}' not found.[/red]")
 
 
 @app.command("update-style-desc")
@@ -188,13 +184,11 @@ def update_style_desc(
     description: str = typer.Argument(..., help="New description for the style"),
 ) -> None:
     """Updates the description of an existing style."""
-    from vtx_app.style_manager import StyleManager
-
     mgr = StyleManager()
     if mgr.update_description(style_name, description):
-        print(f"[green]Style '{style_name}' updated.[/green]")
+        rich_print(f"[green]Style '{style_name}' updated.[/green]")
     else:
-        print(f"[red]Style '{style_name}' not found.[/red]")
+        rich_print(f"[red]Style '{style_name}' not found.[/red]")
 
 
 @app.command("render-reviews")
@@ -208,7 +202,7 @@ def render_reviews(
 
     clips_dir = proj.root / "prompts" / "clips"
     if not clips_dir.exists():
-        print(f"[red]No clips found in {slug}[/red]")
+        rich_print(f"[red]No clips found in {slug}[/red]")
         return
 
     clip_files = sorted(clips_dir.glob("*.yaml"))
@@ -217,10 +211,10 @@ def render_reviews(
     clip_files = [p for p in clip_files if not p.name.startswith(".")]
 
     if not clip_files:
-        print(f"[red]No clips found in {slug}[/red]")
+        rich_print(f"[red]No clips found in {slug}[/red]")
         return
 
-    print(f"Rendering {len(clip_files)} clips for review (low-res)...")
+    rich_print(f"Rendering {len(clip_files)} clips for review (low-res)...")
 
     controller = RenderController(project=proj, registry=reg)
     out_dir = proj.root / "renders" / "low-res"
@@ -234,13 +228,13 @@ def render_reviews(
         if "__" in cid:
             cid = cid.split("__")[0]
 
-        print(f"Rendering {cid}...")
+        rich_print(f"Rendering {cid}...")
         try:
             controller.render_clip(
                 clip_id=cid, resolution_scale=0.5, output_dir=out_dir
             )
         except Exception as e:
-            print(f"[red]Failed to render {cid}: {e}[/red]")
+            rich_print(f"[red]Failed to render {cid}: {e}[/red]")
 
 
 @app.command("render-review")
@@ -261,13 +255,13 @@ def render_review(
     if "__" in clip_name:
         clip_name = clip_name.split("__")[0]
 
-    print(f"Rendering {clip_name} for review...")
+    rich_print(f"Rendering {clip_name} for review...")
     try:
         controller.render_clip(
             clip_id=clip_name, resolution_scale=0.5, output_dir=out_dir
         )
     except Exception as e:
-        print(f"[red]Failed to render {clip_name}: {e}[/red]")
+        rich_print(f"[red]Failed to render {clip_name}: {e}[/red]")
 
 
 @app.command("render-full")
@@ -281,12 +275,12 @@ def render_full(
 
     clips_dir = proj.root / "prompts" / "clips"
     if not clips_dir.exists():
-        print(f"[red]No clips found in {slug}[/red]")
+        rich_print(f"[red]No clips found in {slug}[/red]")
         return
 
     clip_files = sorted(clips_dir.glob("*.yaml"))
 
-    print(f"Rendering {len(clip_files)} clips at FULL resolution...")
+    rich_print(f"Rendering {len(clip_files)} clips at FULL resolution...")
 
     controller = RenderController(project=proj, registry=reg)
     out_dir = proj.root / "renders" / "high-res"
@@ -297,7 +291,7 @@ def render_full(
         if "__" in cid:
             cid = cid.split("__")[0]
 
-        print(f"Rendering {cid}...")
+        rich_print(f"Rendering {cid}...")
         try:
             controller.render_clip(
                 clip_id=cid, preset="final", resolution_scale=1.0, output_dir=out_dir
@@ -311,8 +305,6 @@ def assemble(
     slug: str = typer.Argument(..., help="Project slug"),
 ) -> None:
     """Assembles clips from renders/high-res into final_cut.mp4."""
-    from vtx_app.render.assembler import Assembler
-
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)
     proj = loader.load(slug)
@@ -321,10 +313,10 @@ def assemble(
     high_res = proj.root / "renders" / "high-res"
 
     if high_res.exists():
-        print(f"Assembling from {high_res}...")
+        rich_print(f"Assembling from {high_res}...")
         asm.assemble(clips_dir=high_res)
     else:
-        print(
+        rich_print(
             "[yellow]High-res folder not found, assembling available clips...[/yellow]"
         )
         asm.assemble()
@@ -336,19 +328,8 @@ def create_movie(
     prompt: str = typer.Argument(..., help="Prompt including concept, style, etc."),
 ) -> None:
     """Automated end-to-end creation flow: idea -> plan -> project -> story artifacts."""
-    import shutil
-    from pathlib import Path
-
-    import yaml
-
-    from vtx_app.config.settings import Settings
-    from vtx_app.project.loader import ProjectLoader
-    from vtx_app.registry.db import Registry
-    from vtx_app.story.openai_builder import StoryBuilder
-    from vtx_app.wizards.proposal import ProposalGenerator
-
     # 1. Proposal
-    print(f"[bold blue]Step 1: Generating proposal for '{slug}'...[/bold blue]")
+    rich_print(f"[bold blue]Step 1: Generating proposal for '{slug}'...[/bold blue]")
     s = Settings.from_env()
     gen = ProposalGenerator(settings=s)
     proposal = gen.create_proposal(prompt)
@@ -361,19 +342,19 @@ def create_movie(
     plan_filename = f"{slug}_plan.yaml"
     plan_path = Path.cwd() / plan_filename
     plan_path.write_text(yaml.safe_dump(proposal, sort_keys=False))
-    print(f"[green]Plan saved to {plan_path}[/green]")
+    rich_print(f"[green]Plan saved to {plan_path}[/green]")
 
     # 2. Create Project
-    print(f"\n[bold blue]Step 2: Creating project from plan...[/bold blue]")
+    rich_print("\n[bold blue]Step 2: Creating project from plan...[/bold blue]")
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)
 
     title = proposal["meta"].get("title", slug)
     try:
         path = loader.create_project(slug=slug, title=title)
-        print(f"[green]Created project {slug}[/green] at {path}")
+        rich_print(f"[green]Created project {slug}[/green] at {path}")
     except FileExistsError:
-        print(f"[yellow]Project {slug} already exists, updating files...[/yellow]")
+        rich_print(f"[yellow]Project {slug} already exists, updating files...[/yellow]")
         proj = loader.load(slug)
         path = proj.root
 
@@ -381,20 +362,20 @@ def create_movie(
     dest_plan = path / plan_filename
     if plan_path.resolve() != dest_plan.resolve():
         shutil.move(str(plan_path), str(dest_plan))
-        print(f"Moved plan to {dest_plan}")
+        rich_print(f"Moved plan to {dest_plan}")
 
     # Write brief
     brief = proposal.get("story", {}).get("brief")
     if brief:
         (path / "story" / "00_brief.md").write_text(brief)
-        print("Updated story/00_brief.md")
+        rich_print("Updated story/00_brief.md")
 
     # Hydrate Style Bible
-    print("[blue]Generating Style Bible...[/blue]")
+    rich_print("[blue]Generating Style Bible...[/blue]")
     proj = loader.load(slug)
     builder = StoryBuilder(project=proj)
     builder.generate_style_bible()
-    print("Updated prompts/style_bible.yaml")
+    rich_print("Updated prompts/style_bible.yaml")
 
     # Update Resources (LoRAs)
     suggested_loras = proposal.get("resources", {}).get("suggested_loras", [])
@@ -418,32 +399,32 @@ def create_movie(
         bundles["civitai_candidates"] = candidates
         current_loras["bundles"] = bundles
         loras_file.write_text(yaml.safe_dump(current_loras, sort_keys=False))
-        print(f"Added {len(candidates)} LoRA candidates to prompts/loras.yaml")
+        rich_print(f"Added {len(candidates)} LoRA candidates to prompts/loras.yaml")
 
     # 3. Story Generation Loop
-    print(f"\n[bold blue]Step 3: Generating Story Artifacts...[/bold blue]")
+    rich_print("\n[bold blue]Step 3: Generating Story Artifacts...[/bold blue]")
 
     builder = StoryBuilder(project=proj)
 
-    print("Generating Outline...")
+    rich_print("Generating Outline...")
     builder.generate_outline()
-    print("[green]Wrote[/green] story/01_outline.yaml")
+    rich_print("[green]Wrote[/green] story/01_outline.yaml")
 
-    print("Generating Treatment...")
+    rich_print("Generating Treatment...")
     builder.generate_treatment()
-    print("[green]Wrote[/green] story/02_treatment.md")
+    rich_print("[green]Wrote[/green] story/02_treatment.md")
 
-    print("Generating Shotlist...")
+    rich_print("Generating Shotlist...")
     builder.generate_shotlist()
-    print("[green]Wrote[/green] story/04_shotlist.yaml")
+    rich_print("[green]Wrote[/green] story/04_shotlist.yaml")
 
-    print("Generating Clip Specs...")
+    rich_print("Generating Clip Specs...")
     builder.generate_clip_specs()
-    print("[green]Generated[/green] prompts/clips/*.yaml")
+    rich_print("[green]Generated[/green] prompts/clips/*.yaml")
 
-    print(f"\n[bold green]Movie '{slug}' created successfully![/bold green]")
-    print(f"Project location: {path}")
-    print(f"Next step: cd projects/{slug}")
+    rich_print(f"\n[bold green]Movie '{slug}' created successfully![/bold green]")
+    rich_print(f"Project location: {path}")
+    rich_print(f"Next step: cd projects/{slug}")
 
 
 @app.command("create-movie-all")
@@ -452,25 +433,13 @@ def create_movie_all(
     prompt: str = typer.Argument(..., help="Prompt including concept, style, etc."),
 ) -> None:
     """Automated end-to-end creation flow including rendering and assembly, bypassing reviews."""
-    import shutil
-    from pathlib import Path
-
-    import yaml
-
-    from vtx_app.config.settings import Settings
-    from vtx_app.project.loader import ProjectLoader
-    from vtx_app.registry.db import Registry
-    from vtx_app.render.assembler import Assembler
-    from vtx_app.story.openai_builder import StoryBuilder
-    from vtx_app.wizards.proposal import ProposalGenerator
-
     # Reuse create-movie logic logic but since create_movie is a command,
     # we can't easily call it directly if it has typer specific decorators/context,
     # or we can refactor. For now, duplication with extended steps is safer/clearer
     # given the prompt structure, or I can call it via a helper.
     # However, create_movie has heavy print logic. Let's replicate the flow.
     # 1. Proposal
-    print(f"[bold blue]Step 1: Generating proposal for '{slug}'...[/bold blue]")
+    rich_print(f"[bold blue]Step 1: Generating proposal for '{slug}'...[/bold blue]")
     s = Settings.from_env()
     gen = ProposalGenerator(settings=s)
     proposal = gen.create_proposal(prompt)
@@ -486,7 +455,7 @@ def create_movie_all(
     print(f"[green]Plan saved to {plan_path}[/green]")
 
     # 2. Create Project
-    print(f"\n[bold blue]Step 2: Creating project from plan...[/bold blue]")
+    print("\n[bold blue]Step 2: Creating project from plan...[/bold blue]")
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)
 
@@ -539,33 +508,33 @@ def create_movie_all(
         loras_file.write_text(yaml.safe_dump(current_loras, sort_keys=False))
 
     # 3. Story Generation Loop
-    print(f"\n[bold blue]Step 3: Generating Story Artifacts...[/bold blue]")
+    rich_print("\n[bold blue]Step 3: Generating Story Artifacts...[/bold blue]")
     builder = StoryBuilder(project=proj)
 
-    print("Generating Outline...")
+    rich_print("Generating Outline...")
     builder.generate_outline()
-    print("Generating Treatment...")
+    rich_print("Generating Treatment...")
     builder.generate_treatment()
-    print("Generating Shotlist...")
+    rich_print("Generating Shotlist...")
     builder.generate_shotlist()
-    print("Generating Clip Specs...")
+    rich_print("Generating Clip Specs...")
     builder.generate_clip_specs()
     # End of create-movie equivalent
 
     # 4. Render Full (Equivalent to render-full)
-    print(f"\n[bold blue]Step 4: Rendering Full Resolution...[/bold blue]")
+    rich_print("\n[bold blue]Step 4: Rendering Full Resolution...[/bold blue]")
 
     # Reload project to ensure paths are correct if things moved
     proj = loader.load(slug)
 
     clips_dir = proj.root / "prompts" / "clips"
     if not clips_dir.exists():
-        print(f"[red]No clips found in {slug}[/red]")
+        rich_print(f"[red]No clips found in {slug}[/red]")
         return
 
     clip_files = sorted(clips_dir.glob("*.yaml"))
     # Debug print
-    print(f"DEBUG: Found clip files: {[p.name for p in clip_files]}")
+    rich_print(f"DEBUG: Found clip files: {[p.name for p in clip_files]}")
     # Filter hidden
     clip_files = [p for p in clip_files if not p.name.startswith(".")]
 
@@ -578,28 +547,28 @@ def create_movie_all(
         if "__" in cid:
             cid = cid.split("__")[0]
 
-        print(f"Rendering {cid} (Full Res)...")
+        rich_print(f"Rendering {cid} (Full Res)...")
         try:
             controller.render_clip(
                 clip_id=cid, preset="final", resolution_scale=1.0, output_dir=out_dir
             )
         except Exception as e:
-            print(f"[red]Failed to render {cid}: {e}[/red]")
+            rich_print(f"[red]Failed to render {cid}: {e}[/red]")
 
     # 5. Assemble (Equivalent to assemble)
-    print(f"\n[bold blue]Step 5: Assembling Final Cut...[/bold blue]")
+    rich_print("\n[bold blue]Step 5: Assembling Final Cut...[/bold blue]")
     asm = Assembler(project=proj)
 
     if out_dir.exists():
         asm.assemble(clips_dir=out_dir)
     else:
-        print(
+        rich_print(
             "[yellow]High-res folder not found, attempting assembly of any available clips...[/yellow]"
         )
         asm.assemble()
 
-    print(f"\n[bold green]Movie '{slug}' COMPLETED![/bold green]")
-    print(f"Final video: {path}/final_cut.mp4")
+    rich_print(f"\n[bold green]Movie '{slug}' COMPLETED![/bold green]")
+    rich_print(f"Final video: {path}/final_cut.mp4")
 
 
 @projects_app.command("list")
@@ -609,7 +578,7 @@ def projects_list() -> None:
     loader = ProjectLoader(registry=reg)
     loader.sync_all_projects()
     for p in reg.list_projects():
-        print(f"[bold]{p['slug']}[/bold]  {p['title']}  (path={p['path']})")
+        rich_print(f"[bold]{p['slug']}[/bold]  {p['title']}  (path={p['path']})")
 
 
 @projects_app.command("new")
@@ -621,7 +590,7 @@ def projects_new(
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)
     path = loader.create_project(slug=slug, title=title)
-    print(f"[green]Created[/green] {slug} at {path}")
+    rich_print(f"[green]Created[/green] {slug} at {path}")
 
 
 @projects_app.command("propose")
@@ -630,12 +599,6 @@ def projects_propose(
     out: str = typer.Option("proposal.yaml", "--out", help="Output YAML file"),
 ) -> None:
     """Generate a project proposal with resource suggestions from CivitAI."""
-    from pathlib import Path
-
-    import yaml
-
-    from vtx_app.config.settings import Settings
-    from vtx_app.wizards.proposal import ProposalGenerator
 
     # Load concept text
     p = Path(concept)
@@ -655,8 +618,8 @@ def projects_propose(
         out = f"{slug}_plan.yaml"
 
     Path(out).write_text(yaml.safe_dump(proposal, sort_keys=False))
-    print(f"[green]Proposal written to {out}[/green]")
-    print(f"Edit this file, then run: vtx projects create-from-plan {out}")
+    rich_print(f"[green]Proposal written to {out}[/green]")
+    rich_print(f"Edit this file, then run: vtx projects create-from-plan {out}")
 
 
 @projects_app.command("create-from-plan")
@@ -664,13 +627,10 @@ def projects_create_from_plan(
     plan: str = typer.Argument(..., help="Path to proposal.yaml"),
 ) -> None:
     """Create a project and resources from a proposal file."""
-    from pathlib import Path
-
-    import yaml
 
     p = Path(plan)
     if not p.exists():
-        print(f"[red]Plan file not found: {plan}[/red]")
+        rich_print(f"[red]Plan file not found: {plan}[/red]")
         raise typer.Exit(1)
 
     data = yaml.safe_load(p.read_text()) or {}
@@ -679,7 +639,7 @@ def projects_create_from_plan(
     title = meta.get("title")
 
     if not slug:
-        print("[red]Missing meta.slug in plan[/red]")
+        rich_print("[red]Missing meta.slug in plan[/red]")
         raise typer.Exit(1)
 
     # Create project
@@ -687,33 +647,30 @@ def projects_create_from_plan(
     loader = ProjectLoader(registry=reg)
     try:
         path = loader.create_project(slug=slug, title=title or slug)
-        print(f"[green]Created project {slug}[/green] at {path}")
+        rich_print(f"[green]Created project {slug}[/green] at {path}")
     except FileExistsError:
-        print(f"[yellow]Project {slug} already exists, updating files...[/yellow]")
+        rich_print(f"[yellow]Project {slug} already exists, updating files...[/yellow]")
         proj = loader.load(slug)
         path = proj.root
 
     # Move the plan file to the project root
     dest_plan = path / p.name
     if p.resolve() != dest_plan.resolve():
-        import shutil
-
         shutil.copy2(p, dest_plan)
-        print(f"Copied plan to {dest_plan}")
+        rich_print(f"Copied plan to {dest_plan}")
 
     # Write brief
     brief = data.get("story", {}).get("brief")
     if brief:
         (path / "story" / "00_brief.md").write_text(brief)
-        print("Updated story/00_brief.md")
+        rich_print("Updated story/00_brief.md")
 
     # Generate Style Bible (Hydrate from brief)
-    from vtx_app.story.openai_builder import StoryBuilder
 
     builder = StoryBuilder(project=loader.load(slug))
-    print("[blue]Generating Style Bible...[/blue]")
+    rich_print("[blue]Generating Style Bible...[/blue]")
     builder.generate_style_bible()
-    print("Updated prompts/style_bible.yaml")
+    rich_print("Updated prompts/style_bible.yaml")
 
     # Update resources/loras
     suggested_loras = data.get("resources", {}).get("suggested_loras", [])
@@ -762,9 +719,6 @@ def project_export(
     output: str = typer.Option(None, "--output"),
 ) -> None:
     """Export project to a zip file (excluding .venv)."""
-    import shutil
-    import tempfile
-    from pathlib import Path
 
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)
@@ -790,7 +744,7 @@ def project_export(
             root_dir=tmp_dir,
             base_dir=slug,
         )
-        print(f"[green]Exported[/green] to {archive}")
+        rich_print(f"[green]Exported[/green] to {archive}")
 
 
 def _get_slug(slug: str | None) -> str:
@@ -807,15 +761,19 @@ def _get_slug(slug: str | None) -> str:
         try:
             rel = cwd.relative_to(s.projects_root)
         except ValueError:
-            print("[red]Missing argument 'SLUG'. Not in a project directory.[/red]")
+            rich_print(
+                "[red]Missing argument 'SLUG'. Not in a project directory.[/red]"
+            )
             raise typer.Exit(code=1)
 
     if str(rel) == ".":
-        print("[red]Missing argument 'SLUG'. Cannot infer from project root.[/red]")
+        rich_print(
+            "[red]Missing argument 'SLUG'. Cannot infer from project root.[/red]"
+        )
         raise typer.Exit(code=1)
 
     inferred = rel.parts[0]
-    print(f"[dim]Inferred project: {inferred}[/dim]")
+    rich_print(f"[dim]Inferred project: {inferred}[/dim]")
     return inferred
 
 
@@ -829,7 +787,7 @@ def story_outline(slug: Optional[str] = typer.Argument(None)) -> None:
 
     builder = StoryBuilder(project=proj)
     builder.generate_outline()
-    print("[green]Wrote[/green] story/01_outline.yaml")
+    rich_print("[green]Wrote[/green] story/01_outline.yaml")
 
 
 @story_app.command("treatment")
@@ -842,7 +800,7 @@ def story_treatment(slug: Optional[str] = typer.Argument(None)) -> None:
 
     builder = StoryBuilder(project=proj)
     builder.generate_treatment()
-    print("[green]Wrote[/green] story/02_treatment.md")
+    rich_print("[green]Wrote[/green] story/02_treatment.md")
 
 
 @story_app.command("screenplay")
@@ -855,7 +813,7 @@ def story_screenplay(slug: Optional[str] = typer.Argument(None)) -> None:
 
     builder = StoryBuilder(project=proj)
     builder.generate_screenplay()
-    print("[green]Wrote[/green] story/03_screenplay.yaml")
+    rich_print("[green]Wrote[/green] story/03_screenplay.yaml")
 
 
 @story_app.command("characters")
@@ -868,7 +826,7 @@ def story_characters(slug: Optional[str] = typer.Argument(None)) -> None:
 
     builder = StoryBuilder(project=proj)
     builder.generate_characters()
-    print("[green]Wrote[/green] prompts/characters.yaml")
+    rich_print("[green]Wrote[/green] prompts/characters.yaml")
 
 
 @story_app.command("locations")
@@ -881,7 +839,7 @@ def story_locations(slug: Optional[str] = typer.Argument(None)) -> None:
 
     builder = StoryBuilder(project=proj)
     builder.generate_locations()
-    print("[green]Wrote[/green] prompts/locations.yaml")
+    rich_print("[green]Wrote[/green] prompts/locations.yaml")
 
 
 @story_app.command("shotlist")
@@ -894,7 +852,7 @@ def story_shotlist(slug: Optional[str] = typer.Argument(None)) -> None:
 
     builder = StoryBuilder(project=proj)
     builder.generate_shotlist()
-    print("[green]Wrote[/green] story/04_shotlist.yaml")
+    rich_print("[green]Wrote[/green] story/04_shotlist.yaml")
 
 
 @story_app.command("clips")
@@ -912,15 +870,12 @@ def story_clips(
 
     builder = StoryBuilder(project=proj)
     builder.generate_clip_specs(overwrite=overwrite, act=act, scene=scene)
-    print("[green]Generated[/green] prompts/clips/*.yaml")
+    rich_print("[green]Generated[/green] prompts/clips/*.yaml")
 
 
 @render_app.command("status")
 def render_status(slug: str) -> None:
     """Show render status for project clips."""
-    import yaml
-    from rich import print
-    from rich.table import Table
 
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)
@@ -933,7 +888,7 @@ def render_status(slug: str) -> None:
 
     clips_dir = proj.root / "prompts" / "clips"
     if not clips_dir.exists():
-        print(f"[yellow]No clips found in {clips_dir}[/yellow]")
+        rich_print(f"[yellow]No clips found in {clips_dir}[/yellow]")
         return
 
     for p in sorted(clips_dir.glob("*.yaml")):
@@ -956,7 +911,7 @@ def render_status(slug: str) -> None:
         except Exception as e:
             table.add_row(p.stem, "Error", f"[red]{e}[/red]")
 
-    print(table)
+    rich_print(table)
 
 
 @render_app.command("clip")
@@ -983,7 +938,6 @@ def render_approve(
     strategy: str = typer.Option("t2v", help="Final strategy: t2v or v2v"),
 ) -> None:
     """Mark a clip as approved and plan its final render strategy."""
-    import yaml
 
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)
@@ -996,7 +950,7 @@ def render_approve(
         if matches:
             clip_path = matches[0]
         else:
-            print(f"[red]Clip {clip_id} not found[/red]")
+            rich_print(f"[red]Clip {clip_id} not found[/red]")
             raise typer.Exit(1)
 
     data = yaml.safe_load(clip_path.read_text()) or {}
@@ -1008,7 +962,7 @@ def render_approve(
         draft_exists = (proj.root / out_mp4).exists()
 
     if strategy == "v2v" and not draft_exists:
-        print(
+        rich_print(
             f"[yellow]Warning: Strategy is v2v but no draft render found at {out_mp4}[/yellow]"
         )
 
@@ -1023,7 +977,7 @@ def render_approve(
 
     data["render"] = render_config
     clip_path.write_text(yaml.safe_dump(data, sort_keys=False))
-    print(f"[green]Approved[/green] {clip_id} for {strategy}")
+    rich_print(f"[green]Approved[/green] {clip_id} for {strategy}")
 
 
 @render_app.command("resume")
@@ -1046,8 +1000,6 @@ def render_assemble(
     loader = ProjectLoader(registry=reg)
     proj = loader.load(slug)
 
-    from vtx_app.render.assembler import Assembler
-
     asm = Assembler(project=proj)
     asm.assemble(output_name=output)
 
@@ -1055,10 +1007,6 @@ def render_assemble(
 @config_app.command("show")
 def config_show(slug: str = typer.Option(None, "--project", "-p")) -> None:
     """Show effective settings. If project is set, includes project setup."""
-    from dataclasses import asdict
-
-    from vtx_app.config.env_layers import load_env
-    from vtx_app.config.settings import Settings
 
     if slug:
         reg = Registry.load()
@@ -1077,4 +1025,4 @@ def config_show(slug: str = typer.Option(None, "--project", "-p")) -> None:
     if "openai_api_key" in data:
         data["openai_api_key"] = "sk-..."
 
-    print(data)
+    rich_print(data)

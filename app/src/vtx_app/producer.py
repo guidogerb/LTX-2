@@ -4,10 +4,11 @@ import os
 import stat
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Callable
 
 from rich import print
 
+from vtx_app.project.layout import Project
 from vtx_app.project.loader import ProjectLoader
 from vtx_app.registry.db import Registry
 from vtx_app.story.openai_builder import StoryBuilder
@@ -24,7 +25,7 @@ class Director:
         concept: str,
         title: str | None = None,
         auto_render: bool = False,
-    ) -> ProjectLoader:
+    ) -> None:
         """
         Orchestrates a full production from a brief concept.
         1. Creates project
@@ -86,7 +87,7 @@ class Director:
             asm.assemble()
             print("[bold green]✅ Production Complete![/bold green] (final_cut.mp4)")
 
-    def _step(self, name: str, func) -> None:
+    def _step(self, name: str, func: Callable[[], None]) -> None:
         print(f"[cyan]Generating {name}...[/cyan]")
         try:
             func()
@@ -94,7 +95,7 @@ class Director:
         except Exception as e:
             print(f"[red]Failed {name}: {e}[/red]")
 
-    def _generate_render_script(self, proj: Any, script_path: Path) -> None:
+    def _generate_render_script(self, proj: Project, script_path: Path) -> None:
         """Writes a bash script to render all clips found in prompts/clips."""
         # Note: proj.slug doesn't exist on Project layout, assume metadata has it or pass it in.
         # But we assume calling code passed slug.

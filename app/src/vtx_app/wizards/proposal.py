@@ -1,15 +1,17 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
-import yaml
-from rich import print
+from openai import OpenAI
+from rich import print as rich_print
 
 from vtx_app.config.settings import Settings
 from vtx_app.integrations.civitai import CivitAIClient
+from vtx_app.style_manager import StyleManager
+from vtx_app.tags_manager import TagManager
 
 
 @dataclass
@@ -17,8 +19,6 @@ class ProposalGenerator:
     settings: Settings
 
     def _client(self):
-        from openai import OpenAI
-
         return OpenAI()
 
     def analyze_concept(self, text: str) -> dict[str, Any]:
@@ -87,7 +87,7 @@ class ProposalGenerator:
             args = json.loads(content)
             return args
         except Exception as e:
-            print(f"[red]OpenAI analysis failed:[/red] {e}")
+            rich_print(f"[red]OpenAI analysis failed:[/red] {e}")
             # Fallback
             return {
                 "title": "Untitled",
@@ -98,10 +98,6 @@ class ProposalGenerator:
             }
 
     def create_proposal(self, concept_text: str) -> dict[str, Any]:
-        import re
-
-        from vtx_app.style_manager import StyleManager
-        from vtx_app.tags_manager import TagManager
 
         # 1. Expand Tags
         # This replaces [group_tag] with the content from the yaml 'prompt' field.
@@ -122,7 +118,7 @@ class ProposalGenerator:
             # Take the first one as the primary preset
             match = style_matches[0]
             style_name = match.group(1)
-            print(f"[blue]Detected style preset:[/blue] {style_name}")
+            rich_print(f"[blue]Detected style preset:[/blue] {style_name}")
 
             # Remove all style tags from text so they don't pollute the story analysis
             concept_text = re.sub(
@@ -139,9 +135,11 @@ class ProposalGenerator:
                 if mgr.load_style(potential_name):
                     style_name = potential_name
                     concept_text = style_match.group(2)
-                    print(f"[blue]Detected legacy style preset:[/blue] {style_name}")
+                    rich_print(
+                        f"[blue]Detected legacy style preset:[/blue] {style_name}"
+                    )
 
-        print("[blue]Analyzing concept...[/blue]")
+        rich_print("[blue]Analyzing concept...[/blue]")
         analysis = self.analyze_concept(concept_text)
 
         # Inject style keywords if present
@@ -150,7 +148,7 @@ class ProposalGenerator:
             mgr = StyleManager()
             keywords = mgr.get_style_keywords(style_name)
             if keywords:
-                print(f"[dim]Injecting style keywords: {keywords}[/dim]")
+                rich_print(f"[dim]Injecting style keywords: {keywords}[/dim]")
                 analysis["visual_style_keywords"] = (
                     keywords + analysis["visual_style_keywords"]
                 )
@@ -159,7 +157,7 @@ class ProposalGenerator:
             style_data = mgr.load_style(style_name) or {}
             extra_loras = style_data.get("resources", {}).get("bundles", [])
 
-        print(
+        rich_print(
             f"[blue]Searching CivitAI for styles: {analysis['visual_style_keywords']}...[/blue]"
         )
         civitai = CivitAIClient()

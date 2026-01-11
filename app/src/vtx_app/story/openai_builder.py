@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 import yaml
+from openai import OpenAI
+from rich import print as rich_print
 
 from vtx_app.project.layout import Project
 
@@ -21,8 +24,6 @@ def _load_yaml(path: Path) -> dict[str, Any]:
 
 
 def _slugify(text: str) -> str:
-    import re
-
     s = (text or "").strip().lower()
     s = re.sub(r"[^a-z0-9]+", "_", s)
     s = re.sub(r"_+", "_", s).strip("_")
@@ -36,8 +37,6 @@ class StoryBuilder:
     def _client(self):
         # OPENAI_API_KEY is read automatically by the official SDK when present.
         # If missing, OpenAI() will raise.
-        from openai import OpenAI
-
         return OpenAI()
 
     def _call_structured(
@@ -191,9 +190,7 @@ For each shot:
             )
             shotlist_path.write_text(yaml.safe_dump(data, sort_keys=False))
         except Exception as e:
-            from rich import print
-
-            print(f"[red]Shotlist Generation Error:[/red] {e}")
+            rich_print(f"[red]Shotlist Generation Error:[/red] {e}")
             if not shotlist_path.exists():
                 shotlist_path.write_text("version: 1\nscenes: []\n")
 
@@ -258,9 +255,7 @@ For each shot:
                 )
             )
         except Exception as e:
-            from rich import print
-
-            print(f"[red]Char Generation Error:[/red] {e}")
+            rich_print(f"[red]Char Generation Error:[/red] {e}")
             if not out_path.exists():
                 out_path.write_text("characters: {}\n")
 
@@ -295,9 +290,7 @@ For each shot:
                 yaml.safe_dump({"version": 1, "locations": locs_dict}, sort_keys=False)
             )
         except Exception as e:
-            from rich import print
-
-            print(f"[red]Loc Generation Error:[/red] {e}")
+            rich_print(f"[red]Loc Generation Error:[/red] {e}")
             if not out_path.exists():
                 out_path.write_text("locations: {}\n")
 

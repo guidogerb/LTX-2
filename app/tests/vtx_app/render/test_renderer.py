@@ -2,6 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 import yaml
+from jsonschema.exceptions import ValidationError
 
 from vtx_app.project.layout import Project
 from vtx_app.render.renderer import RenderController
@@ -29,7 +30,7 @@ def test_render_clip_validation(project):
     # Needs to mock compile_prompt and run?
     # Validation happens before compile_prompt
 
-    with pytest.raises(Exception) as excinfo:
+    with pytest.raises(ValidationError) as excinfo:
         controller.render_clip(clip_id=clip_id)
 
     # Should be validation error
