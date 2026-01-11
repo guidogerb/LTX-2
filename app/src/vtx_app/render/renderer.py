@@ -15,6 +15,7 @@ from vtx_app.registry.db import Registry
 from vtx_app.render.presets import get_preset
 from vtx_app.story.duration_estimator import estimate_seconds
 from vtx_app.story.prompt_compiler import compile_prompt
+from vtx_app.utils.model_downloader import ModelDownloader
 from vtx_app.utils.timecode import now_iso
 from vtx_app.utils.validation import validate_clip_spec
 
@@ -158,13 +159,17 @@ class RenderController:
 
         # Build args from env + clip + detected capabilities
         args: list[str] = []
+        downloader = ModelDownloader(s)
 
         # Shared model paths
         if s.checkpoint_path:
+            downloader.ensure_model("LTX_CHECKPOINT_PATH")
             args += ["--checkpoint-path", s.checkpoint_path]
         if s.spatial_upsampler_path:
+            downloader.ensure_model("LTX_SPATIAL_UPSAMPLER_PATH")
             args += ["--spatial-upsampler-path", s.spatial_upsampler_path]
         if s.gemma_root:
+            downloader.ensure_model("LTX_GEMMA_ROOT")
             args += ["--gemma-root", s.gemma_root]
 
         # V2V Input
@@ -195,6 +200,13 @@ class RenderController:
                     weight = item.get("weight", 0.8)
                     if not env_name:
                         continue
+
+                    # Try to ensure model exists if it's one of our known ones
+                    try:
+                        downloader.ensure_model(env_name)
+                    except Exception:
+                        pass  # Squelch errors here for custom User loras avoiding hard crashes if unregistered
+
                     path = os.getenv(env_name) or ""
                     if path:
                         args += [distilled_flag, path, str(weight)]

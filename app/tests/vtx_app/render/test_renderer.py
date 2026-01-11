@@ -37,12 +37,13 @@ def test_render_clip_validation(project):
     assert "render" in str(excinfo.value) or "validation" in str(excinfo.value).lower()
 
 
+@patch("vtx_app.render.renderer.ModelDownloader")
 @patch("vtx_app.render.renderer.run")
 @patch("vtx_app.render.renderer.compile_prompt")
 @patch(
     "vtx_app.render.renderer.validate_clip_spec"
 )  # Mock validation to skip schema check for input test (or provide valid spec)
-def test_render_clip_inputs(mock_val, mock_compile, mock_run, project):
+def test_render_clip_inputs(mock_val, mock_compile, mock_run, mock_downloader, project):
     clip_id = "c2"
 
     # Valid clip with inputs
