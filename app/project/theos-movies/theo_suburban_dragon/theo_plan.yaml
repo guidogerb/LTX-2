@@ -1,0 +1,43 @@
+meta:
+  title: Theo and the Suburban Dragon
+  slug: theo_suburban_dragon
+  logline: A young boy named Theo battles an evil dragon in suburbia.
+story:
+  brief: Theo, a seemingly ordinary young boy living in a quiet suburban neighborhood,
+    discovers that a malevolent dragon has set up its lair in the abandoned lot down
+    the street. Initially dismissed by the adults who believe he is just imagining
+    things, Theo takes it upon himself to confront the dragon and protect his community.
+    Armed with courage, creativity, and the help of his loyal friends, Theo embarks
+    on a thrilling adventure blending the mundane with the magical. As he learns to
+    outsmart the dragon and uncover its weaknesses, Theo also discovers his own hidden
+    strengths, proving that even the most unexpected heroes can emerge from the most
+    ordinary places.
+resources:
+  suggested_loras:
+  - name: Liminal Suburbs 2 Electric Boogaloo
+    url: https://civitai.com/models/1357899
+    download_url: https://civitai.com/api/download/models/1624858
+    description: <p>Here is the home of the zoo for the liminal suburbs contest winner
+      loras.</p><p>Prompt using "liminal", "suburban", "suburban liminal", and many
+      variations. It's tagged with plain English unless sp
+  - name: Suburban Industrial / Suburban Decay
+    url: https://civitai.com/models/2191833
+    download_url: https://civitai.com/api/download/models/2467945
+    description: <p>This model was trained on over 300 of my own photos. It's intended
+      to create an aesthetic I haven't really seen elsewhere, which is of out-of-the-way
+      and behind-the-scenes places in suburban areas-
+  - name: "\u30E9\u30F3\u30BF\u30CA / Lantana(\u30B0\u30E9\u30F3\u30D6\u30EB\u30FC\
+      \u30D5\u30A1\u30F3\u30BF\u30B8\u30FC / Granblue Fantasy)"
+    url: https://civitai.com/models/2294138
+    download_url: https://civitai.com/api/download/models/2581576
+    description: "<p><strong>Body</strong>\uFF1Afacepaint,dark skin,blue eyes,orange\
+      \ hair,short hair,spiked hair,ponytail,sideburns,facial hair,goatee,pointy ears,cow\
+      \ ears,cow horns,draph,bara,muscular,</p><p></p><p><strong"
+  - name: Another World - Swamp V
+    url: https://civitai.com/models/2295834
+    download_url: https://civitai.com/api/download/models/2583403
+    description: <p>Here is "Swamp V", without it, after this one I'm not sure if
+      I'll make a VI.</p><p></p><p><strong>Trigger words:</strong> Another World,
+      fantasy swamp, water, tropical swamp, tropical swamp plants
+instructions: 'Review this file. To create project, run: vtx projects create-from-plan
+  proposal.yaml'

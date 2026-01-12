@@ -1,0 +1,13 @@
+project_id: df742946-d08c-43d7-8f42-5321e954bd38
+slug: test_movie
+title: Test Movie
+logline: A one-sentence logline.
+acts_enabled: true
+defaults:
+  pipeline: ti2vid_two_stages
+  fps: 16
+  aspect: 2.39:1
+  width: 1920
+  height: 800
+  max_seconds: 15
+updated_at: '2026-01-11T22:25:55Z'

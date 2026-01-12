@@ -10,7 +10,7 @@ No questions needed — you’ve given enough constraints to design a solid, rep
 
 * **App code**: lives under `packages/app/src/vtx_app/`
 * **Shared configuration** (global + model paths): lives under `packages/app/config/`
-* **Projects (movies)**: live under `packages/app/projects/` (or elsewhere via env var)
+* **Projects (movies)**: live under `packages/app/project/` (or elsewhere via env var)
 * **Global registry/state**: lives under `packages/app/_global/` (or elsewhere via env var)
 
 **Pipeline abstraction**
@@ -83,7 +83,7 @@ LTX-2/
               notes/
             logs/
 
-      projects/
+      project/
         <project_slug>/
           metadata.yaml
           project.env
@@ -238,7 +238,7 @@ VTX_MAX_PARALLEL_JOBS=1
 
 ### 3.3 Project-specific env vars (inside each project)
 
-File: `projects/<slug>/project.env`
+File: `project/<slug>/project.env`
 
 ```bash
 PROJECT_TITLE="My Feature Film"
@@ -268,7 +268,7 @@ OpenAI calls will use the official SDK and **Responses API**. ([OpenAI Platform]
 ## 4) Per-project environment creation (as you requested)
 
 Each project has its own env spec at:
-`projects/<slug>/env/requirements.txt` (+ optional `constraints.txt`)
+`project/<slug>/env/requirements.txt` (+ optional `constraints.txt`)
 
 Example `requirements.txt`:
 
@@ -288,7 +288,7 @@ python -m vtx_app.cli project env-create <project_slug>
 ```
 
 which creates:
-`projects/<slug>/.venv/` and installs from that project’s env files.
+`project/<slug>/.venv/` and installs from that project’s env files.
 
 This satisfies: **“environment created from a file belonging to a distinct project.”**
 
@@ -300,7 +300,7 @@ To keep your projects compatible, every project produces the same canonical arti
 
 ### 5.1 `metadata.yaml` (project identity + production settings)
 
-Location: `projects/<slug>/metadata.yaml`
+Location: `project/<slug>/metadata.yaml`
 
 Key fields:
 
@@ -381,7 +381,7 @@ status:
 
 ### 5.4 Shared “consistency” files
 
-Location: `projects/<slug>/prompts/`
+Location: `project/<slug>/prompts/`
 
 * `style_bible.yaml`
 

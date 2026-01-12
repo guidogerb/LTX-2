@@ -1,0 +1,274 @@
+scenes:
+- act: 1
+  scene: 1
+  slug: A01_S01
+  title: An Ordinary Day
+  summary: Theo rides his bike through the neighborhood, greeting neighbors and noticing
+    the eerie abandoned lot.
+  location_key: Theo's Suburban Neighborhood
+  time_of_day: Late Afternoon
+  shots:
+  - clip_id: A01_S01_SH001
+    description: Wide aerial shot of the suburban neighborhood, children playing,
+      and Theo biking down the street.
+    duration_hint_seconds: 0
+    negative_prompt: dark, gloomy
+  - clip_id: A01_S01_SH002
+    description: Close-up of Theo waving to a neighbor and stopping to pet a friendly
+      golden retriever.
+    duration_hint_seconds: 0
+    negative_prompt: aggressive dog
+  - clip_id: A01_S01_SH003
+    description: Medium shot of Theo slowing down as he passes the abandoned lot,
+      looking intrigued.
+    duration_hint_seconds: 0
+    negative_prompt: busy street
+- act: 1
+  scene: 2
+  slug: A01_S02
+  title: The Mysterious Sight
+  summary: Theo peers through the fence of the abandoned lot, witnessing smoke and
+    a dragon's tail.
+  location_key: The Abandoned Lot
+  time_of_day: Late Afternoon
+  shots:
+  - clip_id: A01_S02_SH001
+    description: Close-up of Theo peering through the fence, eyes widening in surprise.
+    duration_hint_seconds: 0
+    negative_prompt: crowded scene
+  - clip_id: A01_S02_SH002
+    description: Medium shot of smoke rising from the lot, accompanied by a low growl.
+    duration_hint_seconds: 0
+    negative_prompt: clear sky
+  - clip_id: A01_S02_SH003
+    description: Quick shot of a dragon's tail flicking into view and disappearing
+      into shadows.
+    duration_hint_seconds: 0
+    negative_prompt: clear view
+- act: 1
+  scene: 3
+  slug: A01_S03
+  title: Dismissed Warnings
+  summary: Theo rushes home to tell his parents about the dragon, but they dismiss
+    his story. His friends are intrigued.
+  location_key: Theo's Suburban Neighborhood
+  time_of_day: Evening
+  shots:
+  - clip_id: A01_S03_SH001
+    description: Medium shot of Theo bursting into his house, breathless with excitement.
+    duration_hint_seconds: 0
+    negative_prompt: calm demeanor
+  - clip_id: A01_S03_SH002
+    description: Close-up of Theo's parents laughing off his story, shaking their
+      heads.
+    duration_hint_seconds: 0
+    negative_prompt: serious faces
+  - clip_id: A01_S03_SH003
+    description: Wide shot of Theo's friends gathered in his room, leaning in as he
+      recounts his tale.
+    duration_hint_seconds: 0
+    negative_prompt: disinterested friends
+- act: 2
+  scene: 1
+  slug: A02_S01
+  title: Gathering Allies
+  summary: Theo shares his plan with friends in a treehouse, each contributing unique
+    skills.
+  location_key: Theo's Secret Hideout
+  time_of_day: Afternoon
+  shots:
+  - clip_id: A02_S01_SH001
+    description: Wide shot of the treehouse exterior, nestled among trees, with voices
+      heard inside.
+    duration_hint_seconds: 0
+    negative_prompt: empty treehouse
+  - clip_id: A02_S01_SH002
+    description: Medium shot inside the treehouse, friends huddled around a map, pointing
+      and discussing.
+    duration_hint_seconds: 0
+    negative_prompt: silent group
+  - clip_id: A02_S01_SH003
+    description: Close-up of the map with a bold red X marking the dragon's lair.
+    duration_hint_seconds: 0
+    negative_prompt: blank map
+- act: 2
+  scene: 2
+  slug: A02_S02
+  title: Preparing for Battle
+  summary: The group gathers supplies and practices stealth, preparing for their mission.
+  location_key: Theo's Suburban Neighborhood
+  time_of_day: Afternoon
+  shots:
+  - clip_id: A02_S02_SH001
+    description: Medium shot of the group packing backpacks with ropes, flashlights,
+      and snacks.
+    duration_hint_seconds: 0
+    negative_prompt: empty backpacks
+  - clip_id: A02_S02_SH002
+    description: Close-up of the tech-savvy friend demonstrating the makeshift dragon
+      trap.
+    duration_hint_seconds: 0
+    negative_prompt: broken trap
+  - clip_id: A02_S02_SH003
+    description: Wide shot of the group practicing sneaking through the neighborhood,
+      crouching and hiding.
+    duration_hint_seconds: 0
+    negative_prompt: visible group
+- act: 2
+  scene: 3
+  slug: A02_S03
+  title: First Encounter
+  summary: The group approaches the lot at dusk, hearing the dragon's roar and seeing
+    its fiery breath.
+  location_key: The Abandoned Lot
+  time_of_day: Dusk
+  shots:
+  - clip_id: A02_S03_SH001
+    description: Wide shot of the group approaching the lot, silhouetted against the
+      setting sun.
+    duration_hint_seconds: 0
+    negative_prompt: bright daylight
+  - clip_id: A02_S03_SH002
+    description: Medium shot of the group reacting to the dragon's roar, looking both
+      scared and determined.
+    duration_hint_seconds: 0
+    negative_prompt: calm expressions
+  - clip_id: A02_S03_SH003
+    description: Close-up of Theo stepping forward, trying to communicate with the
+      dragon.
+    duration_hint_seconds: 0
+    negative_prompt: hesitant Theo
+- act: 3
+  scene: 1
+  slug: A03_S01
+  title: Facing the Dragon
+  summary: Theo and friends set the trap; the dragon emerges, and Theo signals it
+    with a flashlight.
+  location_key: The Abandoned Lot
+  time_of_day: Night
+  shots:
+  - clip_id: A03_S01_SH001
+    description: Wide shot of the group setting up the trap under moonlight.
+    duration_hint_seconds: 0
+    negative_prompt: daylight
+  - clip_id: A03_S01_SH002
+    description: Medium shot of the dragon emerging, scales shimmering in the moonlight.
+    duration_hint_seconds: 0
+    negative_prompt: small creature
+  - clip_id: A03_S01_SH003
+    description: Close-up of Theo using a flashlight to signal the dragon, beam cutting
+      through the darkness.
+    duration_hint_seconds: 0
+    negative_prompt: no flashlight
+- act: 3
+  scene: 2
+  slug: A03_S02
+  title: Outsmarting the Beast
+  summary: The dragon chases the group; they lead it into the trap and use distractions
+    to confuse it.
+  location_key: The Abandoned Lot
+  time_of_day: Night
+  shots:
+  - clip_id: A03_S02_SH001
+    description: Wide shot of the dragon chasing the group, who scatter in different
+      directions.
+    duration_hint_seconds: 0
+    negative_prompt: calm scene
+  - clip_id: A03_S02_SH002
+    description: Medium shot of the dragon momentarily caught in the trap, struggling
+      to break free.
+    duration_hint_seconds: 0
+    negative_prompt: empty trap
+  - clip_id: A03_S02_SH003
+    description: Close-up of the friends using various distractions, like throwing
+      objects and making noise.
+    duration_hint_seconds: 0
+    negative_prompt: silent scene
+- act: 3
+  scene: 3
+  slug: A03_S03
+  title: Uncovering Strengths
+  summary: Theo plays his harmonica, calming the dragon and revealing its misunderstood
+    nature.
+  location_key: The Abandoned Lot
+  time_of_day: Night
+  shots:
+  - clip_id: A03_S03_SH001
+    description: Close-up of Theo pulling out a harmonica and starting to play a soothing
+      tune.
+    duration_hint_seconds: 0
+    negative_prompt: no harmonica
+  - clip_id: A03_S03_SH002
+    description: Medium shot of the dragon pausing, its fierce demeanor softening.
+    duration_hint_seconds: 0
+    negative_prompt: aggressive dragon
+  - clip_id: A03_S03_SH003
+    description: Wide shot of the group watching in awe as the dragon calms down,
+      revealing a gentler side.
+    duration_hint_seconds: 0
+    negative_prompt: uninterested group
+- act: 4
+  scene: 1
+  slug: A04_S01
+  title: A New Understanding
+  summary: Theo and the dragon reach a peaceful agreement; friends celebrate their
+    victory.
+  location_key: The Abandoned Lot
+  time_of_day: Morning
+  shots:
+  - clip_id: A04_S01_SH001
+    description: Medium shot of Theo and the dragon facing each other, nodding in
+      mutual understanding.
+    duration_hint_seconds: 0
+    negative_prompt: hostile interaction
+  - clip_id: A04_S01_SH002
+    description: Wide shot of the friends cheering and celebrating their success.
+    duration_hint_seconds: 0
+    negative_prompt: silent scene
+  - clip_id: A04_S01_SH003
+    description: Close-up of the dragon showing gratitude with a gentle gesture.
+    duration_hint_seconds: 0
+    negative_prompt: aggressive gesture
+- act: 4
+  scene: 2
+  slug: A04_S02
+  title: Heroes of the Neighborhood
+  summary: The kids return home as heroes; Theo's parents express pride in him.
+  location_key: Theo's Suburban Neighborhood
+  time_of_day: Morning
+  shots:
+  - clip_id: A04_S02_SH001
+    description: Wide shot of the kids walking home, greeted by cheering peers.
+    duration_hint_seconds: 0
+    negative_prompt: empty street
+  - clip_id: A04_S02_SH002
+    description: Medium shot of Theo's parents hugging him, expressing pride and apology.
+    duration_hint_seconds: 0
+    negative_prompt: distant parents
+  - clip_id: A04_S02_SH003
+    description: Close-up of Theo smiling, feeling accomplished and proud.
+    duration_hint_seconds: 0
+    negative_prompt: sad expression
+- act: 4
+  scene: 3
+  slug: A04_S03
+  title: Looking to the Future
+  summary: Theo and friends plan their next adventure; the dragon flies off into the
+    sunset.
+  location_key: Theo's Secret Hideout
+  time_of_day: Evening
+  shots:
+  - clip_id: A04_S03_SH001
+    description: Wide shot of the group in the treehouse, excitedly planning their
+      next adventure.
+    duration_hint_seconds: 0
+    negative_prompt: silent group
+  - clip_id: A04_S03_SH002
+    description: Medium shot of the dragon flying off into the sunset, a majestic
+      silhouette.
+    duration_hint_seconds: 0
+    negative_prompt: grounded dragon
+  - clip_id: A04_S03_SH003
+    description: Close-up of Theo smiling, looking towards the horizon with hope.
+    duration_hint_seconds: 0
+    negative_prompt: worried expression

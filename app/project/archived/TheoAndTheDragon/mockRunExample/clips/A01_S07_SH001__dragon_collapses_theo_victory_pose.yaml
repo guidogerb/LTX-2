@@ -1,0 +1,33 @@
+Prompt: |
+  16:9 wide shot: the dragon collapses unconscious onto the street with a heavy thud, sending a stylized dust
+  puff outward in a neat ring. Theo climbs onto the dragon’s mighty head, and the camera drops into a heroic low
+  angle that makes him look larger despite his small frame. He lifts his plastic sword overhead and freezes in a
+  triumphant pose, wearing a broad victorious smile while his oversized helmet sits comically askew. The
+  orchestra holds a proud sustained note, creating a classic animated ‘hero moment’ beat.
+
+Negative: |
+  photorealistic live-action look; modern ultra-detailed CGI; hyper-real skin pores; realistic hair strand
+  simulation; gritty realistic violence; blood; gore; injury detail; horror tone; harsh contrast teal-orange
+  grading; excessive lens flare; extreme depth-of-field blur; unstable character identity; inconsistent
+  clothing; duplicate Theo; extra parents; extra dragons; crowded streets full of people; modern brand logos;
+  readable signage; subtitles; watermarks; UI overlays; glitch artifacts; warped faces; broken anatomy; extra
+  limbs/fingers; melting objects; jittery teleporting motion; chaotic fast camera spins; aggressive handheld
+  shake; extreme motion blur; strobing lights; noisy particle storms that obscure the action; fire/explosions
+  filling the entire frame; lots of on-screen text; credits crawl. Avoid: blood, wounds, or realistic suffering;
+  keep dragon simply unconscious.
+
+Duration: 8  # seconds (<=10)
+AspectRatio: "16:9"
+Act: "A01"
+Scene: "S07"
+Shot: "SH001"
+Description: "dragon_collapses_theo_victory_pose"
+Characters:
+  - Theo
+  - Dragon
+Location: "Suburbia_Street_Storm"
+ContinuityNotes: |
+  Maintain early-era 3D animation look: slightly plasticky materials, gentle squash-and-stretch, readable
+  staging. Keep Theo’s helmet noticeably too large whenever he is wearing it. Dragon is threatening but family-
+  friendly; no gore, no injury detail. Action must stay readable: controlled fire, controlled lightning, no
+  chaotic camera spins.

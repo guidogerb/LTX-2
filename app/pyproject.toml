@@ -2,7 +2,12 @@
 name = "vtx-app"
 version = "0.1.0"
 description = "Longform orchestration app for LTX-2/VTX-2 pipelines"
+readme = "README.md"
+authors = [
+    { name = "Gary Gerber", email = "contact@garygerber.com" }
+]
 requires-python = ">=3.12"
+
 dependencies = [
   "typer>=0.12.0",
   "rich>=13.0.0",
@@ -10,6 +15,18 @@ dependencies = [
   "python-dotenv>=1.0.0",
   "PyYAML>=6.0.0",
   "openai>=1.0.0",
+  "jsonschema>=4.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "isort>=5.0.0",
+    "flake8>=6.0.0",
+    "mypy>=1.0.0",
+    "ruff>=0.1.0",
 ]
 
 [project.scripts]
@@ -21,3 +38,16 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "E",       # pycodestyle errors
+    "F",       # pyflakes
+    "PLC0415", # import-outside-top-level
+    "PT011",   # pytest-raises-too-broad
+    "B904",    # raise-without-from-inside-except
+]
+

@@ -1,0 +1,13 @@
+project_id: 161dbbe2-5101-4691-8ae6-7bc76a64d33f
+slug: slug
+title: Title
+logline: A one-sentence logline.
+acts_enabled: true
+defaults:
+  pipeline: ti2vid_two_stages
+  fps: 16
+  aspect: 2.39:1
+  width: 1920
+  height: 800
+  max_seconds: 15
+updated_at: '2026-01-11T12:58:54Z'

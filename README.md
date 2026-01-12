@@ -24,6 +24,26 @@ uv sync --frozen
 source .venv/bin/activate
 ```
 
+### 🛠️ Workspace Commands
+
+This project uses `uv` for dependency management and workspace operations. You can run these commands from the root directory:
+
+#### Dependency Management
+* `uv sync`: Sync all workspace dependencies.
+* `uv sync --extra gpu`: Sync dependencies including `flash-attn` for GPU acceleration.
+* `uv tree`: View the dependency tree for the entire workspace.
+* `uv lock`: Update the `uv.lock` file.
+
+#### Development & Testing
+* `uv run pytest`: Run tests across the entire workspace (or specific paths).
+* `uv run ruff check .`: Lint all Python files in the workspace.
+* `uv run ruff format .`: Format all Python files.
+* `uv run isort .`: Sort imports across all projects.
+
+#### Applications
+* `uv run vtx`: Run the VTX App CLI.
+* `uv run python -m dreamidv_wan.inference`: Run DreamID-V inference (example module).
+
 ### Required Models
 
 Download the following models from the [LTX-2 HuggingFace repository](https://huggingface.co/Lightricks/LTX-2):
@@ -99,20 +119,23 @@ LTX-2 pipelines support automatic prompt enhancement via an `enhance_prompt` par
 
 To use our model with ComfyUI, please follow the instructions at <https://github.com/Lightricks/ComfyUI-LTXVideo/>.
 
-## 📦 Packages
+## 📦 Packages & Workspace Structure
 
-This repository is organized as a monorepo with three main packages:
+This repository is organized as a monorepo managed by `uv`.
 
-* **[ltx-core](packages/ltx-core/)** - Core model implementation, inference stack, and utilities
-* **[ltx-pipelines](packages/ltx-pipelines/)** - High-level pipeline implementations for text-to-video, image-to-video, and other generation modes
-* **[ltx-trainer](packages/ltx-trainer/)** - Training and fine-tuning tools for LoRA, full fine-tuning, and IC-LoRA
+### Core LTX Libraries (in `LTX/`)
+* **[ltx-core](LTX/packages/ltx-core/)** - Core model implementation, inference stack, and utilities
+* **[ltx-pipelines](LTX/packages/ltx-pipelines/)** - High-level pipeline implementations
+* **[ltx-trainer](LTX/packages/ltx-trainer/)** - Training and fine-tuning tools
 
-Each package has its own README and documentation. See the [Documentation](#-documentation) section below.
+### Applications
+* **[app](app/)** - Production Video Generation Application (VTX App)
+* **[DreamID-V](DreamID-V/)** - Identity-Preserving Video Generation Model
 
 ## 📚 Documentation
 
-Each package includes comprehensive documentation:
-
-* **[LTX-Core README](packages/ltx-core/README.md)** - Core model implementation, inference stack, and utilities
-* **[LTX-Pipelines README](packages/ltx-pipelines/README.md)** - High-level pipeline implementations and usage guides
-* **[LTX-Trainer README](packages/ltx-trainer/README.md)** - Training and fine-tuning documentation with detailed guides
+* **[LTX-Core README](LTX/packages/ltx-core/README.md)**
+* **[LTX-Pipelines README](LTX/packages/ltx-pipelines/README.md)**
+* **[LTX-Trainer README](LTX/packages/ltx-trainer/README.md)**
+* **[App Documentation](app/README.md)**
+* **[DreamID-V Documentation](DreamID-V/README.md)**

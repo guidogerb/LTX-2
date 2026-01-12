@@ -3,7 +3,11 @@ ltx-core = { workspace = true }
 ltx-pipelines = { workspace = true }
 
 [tool.uv.workspace]
-members = ["packages/*"]
+members = [
+  "LTX/packages/ltx-*",
+  "app",
+  "DreamID-V",
+]
 
 [[tool.uv.index]]
 name = "pypi"
@@ -17,7 +21,7 @@ dev = [
 ]
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py312"
 line-length = 120
 exclude = []
 
@@ -59,4 +63,37 @@ ignore = [
 max-args = 10
 
 [tool.ruff.lint.isort]
-known-first-party = ["ltx_core", "ltx_pipelines", "ltx_trainer"]
+known-first-party = [
+    "ltx_core",
+    "ltx_pipelines",
+    "ltx_trainer",
+    "vtx_app",
+    "dreamidv_wan",
+    "dreamidv_wan_faster",
+    "express_adaption",
+    "pose",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"DreamID-V/**" = [
+    "ANN", # missing type annotations
+    "T201", # print statements
+    "N", # naming conventions
+    "PTH", # use pathlib
+    "ERA", # commented out code
+    "PL", # pylint
+    "C4", # flake8-comprehensions
+    "ARG", # unused arguments
+    "RUF", # ruff specific
+    "B", # bugbear
+    "E", # pycodestyle errors
+    "W", # pycodestyle warnings
+    "SIM", # simplify
+    "F", # pyflakes
+    "PT", # pytest
+    "DTZ", # datetime
+    "A", # builtins
+    "PIE", # misc
+]
+"tests/**" = ["ANN", "S101", "SLF001"]
+

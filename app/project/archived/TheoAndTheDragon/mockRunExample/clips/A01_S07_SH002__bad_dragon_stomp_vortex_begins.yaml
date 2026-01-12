@@ -1,0 +1,33 @@
+Prompt: |
+  Same 16:9 angle, still in early-era CG: Theo turns sternly playful and shouts, “BAD DRAGON!” He raises one
+  foot high and stomps the top of the dragon’s head, and at the impact point a bright magical energy burst
+  erupts and spirals into a tight vortex. Theo immediately jumps off and tumbles safely to the side in a clean,
+  readable roll, shielding his face from the glow. The sound design layers a punchy cartoon stomp with an
+  electric humming swirl as the vortex strengthens.
+
+Negative: |
+  photorealistic live-action look; modern ultra-detailed CGI; hyper-real skin pores; realistic hair strand
+  simulation; gritty realistic violence; blood; gore; injury detail; horror tone; harsh contrast teal-orange
+  grading; excessive lens flare; extreme depth-of-field blur; unstable character identity; inconsistent
+  clothing; duplicate Theo; extra parents; extra dragons; crowded streets full of people; modern brand logos;
+  readable signage; subtitles; watermarks; UI overlays; glitch artifacts; warped faces; broken anatomy; extra
+  limbs/fingers; melting objects; jittery teleporting motion; chaotic fast camera spins; aggressive handheld
+  shake; extreme motion blur; strobing lights; noisy particle storms that obscure the action; fire/explosions
+  filling the entire frame; lots of on-screen text; credits crawl. Avoid: explosive gore; avoid energy effects
+  that fill the entire frame; keep vortex clean and readable.
+
+Duration: 9  # seconds (<=10)
+AspectRatio: "16:9"
+Act: "A01"
+Scene: "S07"
+Shot: "SH002"
+Description: "bad_dragon_stomp_vortex_begins"
+Characters:
+  - Theo
+  - Dragon
+Location: "Suburbia_Street_Storm"
+ContinuityNotes: |
+  Maintain early-era 3D animation look: slightly plasticky materials, gentle squash-and-stretch, readable
+  staging. Keep Theo’s helmet noticeably too large whenever he is wearing it. Dragon is threatening but family-
+  friendly; no gore, no injury detail. Action must stay readable: controlled fire, controlled lightning, no
+  chaotic camera spins.

@@ -1,0 +1,116 @@
+Version: 1.0
+Project: "Theo vs. The Dragon (Retro CG Short)"
+Notes: |
+  These LoRA recommendations are aimed at achieving an early-2000s family-friendly 3D animation movie look
+  (rounded forms, smooth shading, toy-like materials, clean color palettes). Use them for look-dev frames,
+  key art, or reference images that you then match in your video pipeline.
+
+  Compatibility reminder: LoRAs generally must match the base model family (e.g., SD 1.x LoRAs with SD 1.x models,
+  SDXL LoRAs with SDXL models, FLUX LoRAs with FLUX base). If your video model doesn't support LoRAs directly,
+  use LoRAs to generate consistent reference frames and enforce the style via prompting/conditioning.
+
+LoRAs:
+  - Name: "Animation2k-FLUX"
+    Type: "Style LoRA"
+    BaseModel: "Flux.1 D"
+    SourcePlatform: "CivitAI (mirrored/archived)"
+    TriggerWords: []   # no trigger required
+    RecommendedWeight: 1.2
+    KeyTips:
+      - "No trigger required; use natural prompting."
+      - "Blends well with other LoRAs."
+    References:
+      - "CivArchive modelVersionId=739660 (includes 'Use it at 1.2 strength' and 'No trigger required')."
+
+  - Name: "Flux 3D Animation Style LoRA"
+    Type: "Style LoRA"
+    BaseModel: "Flux.1 D"
+    SourcePlatform: "CivitAI (mirrored/archived)"
+    TriggerWords: []   # not necessary
+    RecommendedWeightRange: [0.5, 0.8]
+    SuggestedSampler: "Euler"
+    SuggestedSteps: 25
+    SuggestedCFG: 3.0
+    Notes: |
+      The listing is flagged NSFW on the archive, but the style itself can be used safely with family-friendly prompts.
+    References:
+      - "CivArchive modelVersionId=922267 (includes weight range 0.5–0.8, Euler, 25 steps, CFG 3.0)."
+
+  - Name: "LH Pixar 3D Style"
+    Type: "Style LoRA"
+    BaseModel: "Flux.1 D"
+    SourcePlatform: "CivitAI (mirrored/archived)"
+    TriggerWords: ["Pixar3D_flx"]
+    SuggestedStepsRange: [20, 30]
+    SuggestedCFGRange: [1.0, 1.5]
+    IdealSizes: ["1024x1024", "1024x1536"]
+    Notes: |
+      Pushes a polished, heartwarming rounded 3D character aesthetic. Use moderately so you don't lose the
+      'slightly retro' feel. Keep branding out of frames; this is only a style direction.
+    References:
+      - "CivArchive modelVersionId=1039709 (includes trigger Pixar3D_flx, steps 20–30, CFG 1.0–1.5, size guidance)."
+
+  - Name: "Pixar Style Lora - lora128"
+    Type: "Style LoRA"
+    BaseModel: "SD 1.5"
+    SourcePlatform: "CivitAI (mirrored/archived)"
+    TriggerWords: ["(pixarstyle:1.25)"]
+    Notes: |
+      Lightweight SD1.5 style LoRA extracted from a Pixar-style checkpoint. Consider testing with and without a VAE,
+      as the listing suggests a VAE may not be recommended for this project.
+    References:
+      - "CivArchive modelVersionId=20450 (includes trigger (pixarstyle:1.25) and VAE caution)."
+
+  - Name: "Pixar Style SDXL (pixar-sdxl-lora)"
+    Type: "Style LoRA"
+    BaseModel: "SDXL 1.0"
+    SourcePlatform: "CivitAI (referenced via Hugging Face mirror)"
+    TriggerWords: ["pixar style"]
+    Notes: |
+      The Hugging Face card describes it as adapted from a Civitai model and designed for image-to-image style transfer.
+      Use for reference frames and character look-dev; keep prompts focused on 'early-era 3D animation' to avoid looking too modern.
+    References:
+      - "Hugging Face: animte/pixar-sdxl-lora (mentions origin and trigger words)."
+
+RecommendedStacks:
+  # Best overall: "early 2000s animation movie" + "smooth 3D animation look"
+  - StackName: "FLUX_Primary_RetroCG"
+    Goal: "Early-2000s 3D animated movie vibe with smooth stylized shading"
+    UseWhen: "Your base model is Flux.1 D (or compatible) and you want the closest match to the prescribed style."
+    LoRAs:
+      - { Name: "Animation2k-FLUX", Weight: 1.1 }
+      - { Name: "Flux 3D Animation Style LoRA", Weight: 0.7 }
+    TriggerWordsToInclude: []
+    Notes: |
+      Keep the total stylization moderate. If faces become too uniform or plasticky, reduce the 3D Animation Style LoRA first.
+
+  - StackName: "FLUX_Heartwarming_Polished"
+    Goal: "More heartwarming rounded 3D character appeal while retaining a slightly retro feel"
+    UseWhen: "You want the 'classic lamp-intro era' mood, but not a modern glossy render."
+    LoRAs:
+      - { Name: "LH Pixar 3D Style", Weight: 0.6 }
+      - { Name: "Animation2k-FLUX", Weight: 0.9 }
+    TriggerWordsToInclude: ["Pixar3D_flx"]
+    Notes: |
+      If the look becomes too polished or too on-the-nose, lower LH Pixar 3D Style weight to 0.4–0.5.
+
+  - StackName: "SD15_ConceptFrames"
+    Goal: "Quick SD1.5 concept frames for storyboards and style references"
+    UseWhen: "You have SD1.5 tooling and want fast iterations."
+    LoRAs:
+      - { Name: "Pixar Style Lora - lora128", Weight: 0.8 }
+    TriggerWordsToInclude: ["(pixarstyle:1.25)"]
+
+  - StackName: "SDXL_ConceptFrames"
+    Goal: "Higher-res SDXL concept frames for key art and look-dev"
+    UseWhen: "You have SDXL 1.0 tooling and want clean 3D cartoon reference images."
+    LoRAs:
+      - { Name: "Pixar Style SDXL (pixar-sdxl-lora)", Weight: 0.7 }
+    TriggerWordsToInclude: ["pixar style"]
+
+UsageTips:
+  Prompting:
+    - "Emphasize: early-era 3D animation, slightly plasticky materials, squash-and-stretch, clean simple sets, family-friendly."
+    - "De-emphasize: photoreal, ultra-detailed textures, sharp cinematic lighting."
+  NegativePrompting:
+    - "Use strong negatives for: photoreal skin pores, real hair strands, brand logos, readable signage, excessive text."

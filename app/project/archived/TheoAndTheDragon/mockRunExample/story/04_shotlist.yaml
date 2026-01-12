@@ -1,0 +1,536 @@
+project:
+  title: Theo vs. the Bad Dragon
+  aspect_ratio: '16:9'
+  shot_max_duration_seconds: 10
+  notes:
+  - Each shot is written as a single flowing paragraph for LTX-2.
+  - Dialogue is included in quotes inside the prompt when present.
+  - Use the same negative prompt for consistency unless you have per-shot overrides.
+style_header: Early-era 3D animated short; 16:9; subtle film grain; toy-like plasticky
+  materials; squash-and-stretch; clean readable staging; family-friendly orchestral
+  cartoon score.
+negative_global: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin
+  pores, realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+  tone, excessive lens flare, extreme depth-of-field blur, unstable character identity,
+  inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons, crowded
+  streets full of people, modern brand logos, readable signage, subtitles, watermarks,
+  UI overlays, glitch artifacts, warped faces, broken anatomy, extra limbs/fingers,
+  chaotic fast camera spins, aggressive shaky cam, extreme motion blur, strobing lights,
+  particle storms that obscure action, fire filling the entire frame.'
+shots:
+- id: A01_S01_SH001
+  act: A01
+  scene: A01_S01
+  shot: SH001
+  slug: lamp_intro_hop_and_bounce
+  duration_seconds: 8
+  template:
+    Prompt: '16:9 retro 3D animation on a clean neutral stage: a small, generic white
+      desk lamp hops into frame with springy squash-and-stretch, landing with a soft
+      rubbery squeak and a cheerful orchestral jingle. The camera holds a simple medium-wide
+      framing as the lamp bounces twice more, its shade “looking” around by tilting
+      left and right. The bulb flickers playfully like it’s excited to begin, and
+      the jingle swells in brightness. The lamp settles, facing the camera, as if
+      preparing a transition.'
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 8s
+- id: A01_S01_SH002
+  act: A01
+  scene: A01_S01
+  shot: SH002
+  slug: lamp_light_wipe_to_home
+  duration_seconds: 7
+  template:
+    Prompt: In 16:9 widescreen, the lamp leans forward and clicks on with a crisp
+      “tink,” projecting a warm cone of light toward camera. The beam blooms until
+      it fills the screen, creating a bright wipe transition as the orchestral jingle
+      resolves. Inside the light, the audio crossfades into cozy household ambience—soft
+      room tone, distant clinks, and gentle morning birds outside a window. The wipe
+      completes into the next interior scene seamlessly.
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 7s
+- id: A01_S01_SH003
+  act: A01
+  scene: A01_S01
+  shot: SH003
+  slug: theo_declares_quest
+  duration_seconds: 10
+  template:
+    Prompt: '16:9 interior, warm morning light and simple retro CG textures: Theo,
+      an 8-year-old boy in play armor, stands centered in a medium-wide shot with
+      a helmet slightly too large that dips low on his brow. He grips a plastic sword
+      and shield with proud posture—feet wide, chest puffed, eyes bright beneath the
+      helmet’s rim. He raises his voice with excited certainty and says, “Mom, Dad,
+      I am going outside to fight the evil dragon that is destroying the neighborhood.”
+      The camera slowly dollies in just a little to emphasize his heroic seriousness,
+      while a playful adventure motif begins under his words.'
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 10s
+- id: A01_S01_SH004
+  act: A01
+  scene: A01_S01
+  shot: SH004
+  slug: parents_smile_and_allow
+  duration_seconds: 9
+  template:
+    Prompt: 'Cut to a 16:9 medium shot that includes Jordie and Alex in the background
+      of their daily routines: Jordie is busy with housework, and Alex sits at a computer,
+      both smiling as they watch Theo’s performance. They glance at each other, share
+      a brief laugh, and nod permission with affectionate expressions, their shoulders
+      relaxed and faces warmly amused. The music stays light and supportive, like
+      a parent-approved quest theme, and you hear a soft chuckle from Alex. They return
+      their attention to chores and the computer as the moment ends, keeping Theo’s
+      imagination treated as something wonderful.'
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 9s
+- id: A01_S01_SH005
+  act: A01
+  scene: A01_S01
+  shot: SH005
+  slug: theo_to_door_sunlight_spill
+  duration_seconds: 9
+  template:
+    Prompt: '16:9 camera at child-height, gently tracking: Theo shuffles toward the
+      front door, his oversized helmet wobbling comically and partially blocking his
+      view so he tilts his head to see. The plastic sword bumps lightly against his
+      shield with each step, making toy-like clacks. He pushes the door open with
+      determined effort, and bright sunlight spills across the floor in a warm rectangular
+      patch. Outdoor ambience—breezy leaves and distant birds—begins to creep in as
+      the door swings wide.'
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 9s
+- id: A01_S01_SH006
+  act: A01
+  scene: A01_S01
+  shot: SH006
+  slug: theo_exits_parents_return
+  duration_seconds: 8
+  template:
+    Prompt: From a 16:9 interior angle facing the door, Theo steps outside and the
+      door closes with a soft, satisfying click. Jordie resumes housework and Alex
+      refocuses on his computer, both still smiling faintly as if the moment brightened
+      their day. The camera remains steady and calm, emphasizing the normalcy inside.
+      The orchestral theme lightly pivots from cozy to adventurous as the soundscape
+      transitions fully outdoors.
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 8s
+- id: A01_S02_SH007
+  act: A01
+  scene: A01_S02
+  shot: SH007
+  slug: suburbia_establishing
+  duration_seconds: 9
+  template:
+    Prompt: '16:9 wide establishing shot of well-kept suburbia: neat lawns, clean
+      sidewalks, tidy houses, and bright morning colors with simple retro CG geometry.
+      Theo appears small in frame, marching down the street with exaggerated heroic
+      determination, sword held forward like a knight on patrol. The camera holds
+      wide and stable to clearly establish location and scale. Ambient birdsong and
+      a gentle breeze create peaceful contrast with Theo’s serious mission energy.'
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 9s
+- id: A01_S02_SH008
+  act: A01
+  scene: A01_S02
+  shot: SH008
+  slug: tracking_clouds_gather
+  duration_seconds: 10
+  template:
+    Prompt: Cut to a 16:9 side-tracking shot at Theo’s height as he continues down
+      the street, helmet still too large and bobbing with each step. The lighting
+      subtly cools as clouds gather overhead, the sky darkening gradually rather than
+      suddenly, and the cheerful ambience thins. Theo raises his shield slightly,
+      posture tightening in visible readiness. The music shifts to a low suspenseful
+      pulse under the still-peaceful neighborhood sounds.
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 10s
+- id: A01_S02_SH009
+  act: A01
+  scene: A01_S02
+  shot: SH009
+  slug: tilt_up_shadow_rumble
+  duration_seconds: 9
+  template:
+    Prompt: In 16:9, the camera starts on Theo in a medium shot and slowly tilts up
+      to the sky as the clouds thicken into dramatic gray. A distant shadow crosses
+      the cloud layer, accompanied by a deep rumble that feels like far-off thunder.
+      Theo’s helmeted head follows upward, his stance widening as if bracing for something
+      real. The orchestral score holds a tense sustained note as the shadow grows
+      larger.
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 9s
+- id: A02_S01_SH010
+  act: A02
+  scene: A02_S01
+  shot: SH010
+  slug: dragon_descends_fire
+  duration_seconds: 10
+  template:
+    Prompt: The dragon descends into a 16:9 wide shot, wings beating with heavy animated
+      weight and glossy highlights on its scales. It exhales a bright, cartoon-readable
+      stream of fire above the street, illuminating rooftops in warm flicker without
+      turning the action visually chaotic. Theo snaps into action—shield up, sword
+      forward—and charges with a high-pitched battle yell, tiny but fearless beneath
+      the looming villain. The camera pulls back slightly to keep both hero and dragon
+      in frame as the score surges into full action.
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 10s
+- id: A02_S01_SH011
+  act: A02
+  scene: A02_S01
+  shot: SH011
+  slug: theo_blocks_flame
+  duration_seconds: 9
+  template:
+    Prompt: '16:9 medium-wide staging: the dragon blasts a short burst of flame toward
+      Theo, and Theo braces behind his plastic shield, the toy surface catching a
+      warm orange reflection. He leans into the impact, feet sliding a little on the
+      pavement in exaggerated cartoon friction. The flame dissipates quickly in a
+      controlled, readable effect as Theo peeks around the shield edge, determined
+      rather than frightened. The music hits rhythmic action accents timed to each
+      movement.'
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 9s
+- id: A02_S01_SH012
+  act: A02
+  scene: A02_S01
+  shot: SH012
+  slug: claw_swipe_pavement_crack_counter
+  duration_seconds: 10
+  template:
+    Prompt: Cut to a 16:9 wide shot as the dragon swipes a claw into the street, cracking
+      the pavement in chunky, stylized pieces. Theo darts to the side, helmet wobbling
+      so he has to correct his footing to see, which adds comedic charm without undermining
+      his bravery. He counters with quick sword taps at the dragon’s forelimb, toy-light
+      but heroically timed, punctuated by crisp plastic tock sounds. The dragon recoils
+      with an annoyed growl, and the camera subtly tracks to keep the choreography
+      centered.
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 10s
+- id: A02_S01_SH013
+  act: A02
+  scene: A02_S01
+  shot: SH013
+  slug: theo_rolls_pops_up
+  duration_seconds: 9
+  template:
+    Prompt: 'In 16:9, the dragon lunges forward and Theo commits to a clean dodge:
+      he rolls across the pavement, shield tucked in, then pops up into a brave stance.
+      His helmet slips slightly lower during the roll, and he gives a quick head jerk
+      to clear his view, showing determination through action. The camera follows
+      with a small handheld-style sway to add urgency while staying readable. The
+      score rises, then pauses just enough to spotlight Theo’s next move.'
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 9s
+- id: A02_S01_SH014
+  act: A02
+  scene: A02_S01
+  shot: SH014
+  slug: final_jab_dragon_buckles
+  duration_seconds: 10
+  template:
+    Prompt: '16:9 medium-wide: Theo jabs upward beneath the dragon’s jawline with
+      a decisive thrust, and the dragon staggers back, wings flaring for balance.
+      Theo plants his feet and pushes forward with both hands on the sword grip, posture
+      straining visibly as he commits everything to the final effort. The dragon’s
+      roar breaks into a surprised grunt, then its legs buckle. The music hits a victorious
+      crescendo as the villain teeters, about to fall.'
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 10s
+- id: A02_S01_SH015
+  act: A02
+  scene: A02_S01
+  shot: SH015
+  slug: dragon_down_hero_pose
+  duration_seconds: 9
+  template:
+    Prompt: In 16:9, the dragon collapses unconscious onto the street with a heavy
+      thud, sending a stylized dust puff outward. Theo climbs onto the dragon’s mighty
+      head, the camera in a heroic low angle that makes him look bigger despite his
+      small frame and oversized helmet. He lifts his plastic sword high overhead and
+      holds the pose, smiling with triumph as the orchestra sustains a proud note.
+      The moment is clear, still, and celebratory—an instant of classic animated hero
+      freeze before the twist.
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 9s
+- id: A02_S01_SH016
+  act: A02
+  scene: A02_S01
+  shot: SH016
+  slug: bad_dragon_stomp_vortex_begins
+  duration_seconds: 9
+  template:
+    Prompt: Theo’s expression turns sternly playful as he shouts, “BAD DRAGON!” and
+      lifts one foot high over the dragon’s head. He stomps down, and at the impact
+      point a bright, mysterious energy burst erupts—swirling into a tight vortex
+      that wraps around the dragon’s body in clean spirals. Theo jumps off immediately,
+      landing in a quick, safe tumble to the side as the vortex intensifies. The sound
+      design layers a magical electric hum with a punchy cartoon impact hit.
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 9s
+- id: A02_S01_SH017
+  act: A02
+  scene: A02_S01
+  shot: SH017
+  slug: dragon_spirals_up_lightning
+  duration_seconds: 10
+  template:
+    Prompt: '16:9 wide shot: the vortex lifts the dragon upward, spinning it into
+      the dark sky while lightning bolts flicker rhythmically around the spiral. Theo
+      rolls once more on the pavement and ends on his side, shielding his eyes from
+      the brightness as the dragon vanishes into the clouds. A strong thunder-crack
+      marks the moment the vortex consumes the villain completely. The clouds rapidly
+      settle back to normal, and the audio drops into calm, letting the victory land.'
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 10s
+- id: A02_S02_SH018
+  act: A02
+  scene: A02_S02
+  shot: SH018
+  slug: sun_returns_theo_stands_proud
+  duration_seconds: 9
+  template:
+    Prompt: In 16:9, the clouds part and sunlight pours through, restoring the neighborhood’s
+      bright, peaceful color palette. Theo lies on the ground for a beat, then sits
+      up and stands, smiling wide as he straightens his play armor with proud little
+      pats. His helmet is still noticeably too large and slightly crooked, adding
+      gentle comedy to the heroic image. The camera dollies in subtly as the orchestral
+      music resolves into a warm triumphant theme.
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 9s
+- id: A02_S02_SH019
+  act: A02
+  scene: A02_S02
+  shot: SH019
+  slug: birds_thank_theo
+  duration_seconds: 10
+  template:
+    Prompt: Three blue birds flutter into the 16:9 frame, circling Theo once in a
+      playful loop with light chirps. One bird lands delicately on the tip of Theo’s
+      sword and speaks in a tiny high-pitched birdlike voice, “Thanks Theo! You saved
+      us all!” Theo looks at the bird with delighted surprise and a proud grin, holding
+      very still so the moment reads clearly. The bird hops off, rejoins its friends,
+      and they fly alongside Theo as he continues walking home.
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 10s
+- id: A02_S02_SH020
+  act: A02
+  scene: A02_S02
+  shot: SH020
+  slug: theo_enters_removes_armor_fixed_cam
+  duration_seconds: 9
+  template:
+    Prompt: '16:9 interior, fixed camera near the front door like a classic animated
+      short: Theo enters the house, shuts the door, and exhales with satisfied relief.
+      He removes his oversized helmet and sets it down, then slips off his play armor
+      pieces one by one, placing them neatly in view with soft plastic clacks. The
+      room feels cozy and safe, with warm indoor lighting and quiet household ambience
+      returning. The adventurous score softens into a gentle home motif.'
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 9s
+- id: A02_S02_SH021
+  act: A02
+  scene: A02_S02
+  shot: SH021
+  slug: dinner_line_and_run_past_camera
+  duration_seconds: 10
+  template:
+    Prompt: From the same fixed 16:9 camera position, Theo pauses, tilts his head
+      toward the other room, and calls loudly, “What’s for dinner, Mom?” Offscreen,
+      Jordie answers warmly and clearly, “macaroni and cheese.” Theo’s face breaks
+      into a huge grin, and he suddenly sprints past the camera with quick footsteps,
+      excitement turning the heroic ending into a kid’s dinner victory. The audio
+      ends on a cheerful musical button as his footsteps fade.
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 10s
+- id: A02_S02_SH022
+  act: A02
+  scene: A02_S02
+  shot: SH022
+  slug: end_title_fade
+  duration_seconds: 10
+  template:
+    Prompt: 16:9 fixed shot stays on the quiet entryway where Theo left his helmet
+      and play armor, now still and peaceful. The room tone is soft, and the music
+      resolves into a final gentle chord. A simple centered end title appears and
+      fades in smoothly—“The End”—then holds briefly before fading out. The picture
+      fades to black with a subtle film-grain texture lingering for a beat, followed
+      by a tiny orchestral stinger to close.
+    Negative: 'Avoid: photorealism, modern ultra-detailed CGI, hyper-real skin pores,
+      realistic hair strand simulation, gore/horror, blood, injury detail, ultra-gritty
+      tone, excessive lens flare, extreme depth-of-field blur, unstable character
+      identity, inconsistent helmet/armor, duplicate Theo, extra parents, extra dragons,
+      crowded streets full of people, modern brand logos, readable signage, subtitles,
+      watermarks, UI overlays, glitch artifacts, warped faces, broken anatomy, extra
+      limbs/fingers, chaotic fast camera spins, aggressive shaky cam, extreme motion
+      blur, strobing lights, particle storms that obscure action, fire filling the
+      entire frame.'
+    Duration: 10s

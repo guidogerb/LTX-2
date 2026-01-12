@@ -18,6 +18,8 @@ checkpoints/
 # Other files
 .DS_Store
 tmp
+*.sqlite
+*_cache/
 .wandb
 
 # Model checkpoints
@@ -39,4 +41,10 @@ tmp
 *.png
 *.wav
 *.webp
-/app/projects/project_slug/prompts/clips/...
+/app/project/project_slug/prompts/clips/...
+
+*:Zone.Identifier
+*_Zone.Identifier
+
+
+<MagicMock*

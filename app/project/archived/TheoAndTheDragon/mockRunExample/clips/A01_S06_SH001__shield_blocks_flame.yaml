@@ -1,0 +1,33 @@
+Prompt: |
+  16:9 medium-wide staging with clean retro CG: the dragon blasts a short burst of flame toward Theo, and Theo
+  braces behind his plastic shield, its toy surface reflecting warm orange light. He leans into the ‘impact’
+  with exaggerated cartoon friction, feet sliding a little but not losing ground. The flame dissipates quickly
+  in a controlled effect, and Theo peeks out with determined eyes and a clenched jaw. The music hits crisp
+  action accents timed to shield raise, flame burst, and Theo’s steady recovery.
+
+Negative: |
+  photorealistic live-action look; modern ultra-detailed CGI; hyper-real skin pores; realistic hair strand
+  simulation; gritty realistic violence; blood; gore; injury detail; horror tone; harsh contrast teal-orange
+  grading; excessive lens flare; extreme depth-of-field blur; unstable character identity; inconsistent
+  clothing; duplicate Theo; extra parents; extra dragons; crowded streets full of people; modern brand logos;
+  readable signage; subtitles; watermarks; UI overlays; glitch artifacts; warped faces; broken anatomy; extra
+  limbs/fingers; melting objects; jittery teleporting motion; chaotic fast camera spins; aggressive handheld
+  shake; extreme motion blur; strobing lights; noisy particle storms that obscure the action; fire/explosions
+  filling the entire frame; lots of on-screen text; credits crawl. Avoid: long continuous flamethrower; avoid
+  excessive smoke particles obscuring Theo.
+
+Duration: 8  # seconds (<=10)
+AspectRatio: "16:9"
+Act: "A01"
+Scene: "S06"
+Shot: "SH001"
+Description: "shield_blocks_flame"
+Characters:
+  - Theo
+  - Dragon
+Location: "Suburbia_Street_Storm"
+ContinuityNotes: |
+  Maintain early-era 3D animation look: slightly plasticky materials, gentle squash-and-stretch, readable
+  staging. Keep Theo’s helmet noticeably too large whenever he is wearing it. Dragon is threatening but family-
+  friendly; no gore, no injury detail. Action must stay readable: controlled fire, controlled lightning, no
+  chaotic camera spins.

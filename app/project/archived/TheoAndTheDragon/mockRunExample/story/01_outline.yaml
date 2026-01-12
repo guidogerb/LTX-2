@@ -1,0 +1,104 @@
+project:
+  title: Theo vs. the Bad Dragon
+  short_title: Bad Dragon!
+  version: '1.0'
+  format:
+    aspect_ratio: '16:9'
+    target_runtime_seconds: 150
+    shot_max_duration_seconds: 10
+    style: early-era 3D animated short; toy-like materials; squash-and-stretch; clean
+      readable staging; family-friendly
+  tone:
+  - whimsical
+  - heroic-kid-adventure
+  - cozy
+  - comedic-button
+  themes:
+  - imagination made real
+  - courage in small bodies
+  - kindness over violence
+  - home as safe harbor
+characters:
+  Theo:
+    role: protagonist
+    age_range: 7–9
+    look: play armor, plastic sword + shield, helmet slightly too large and low on
+      brow
+    traits:
+    - fearless
+    - earnest
+    - imaginative
+    - kid-logic decisive
+    arc: proves his courage; defeats the threat without cruelty; returns to being
+      a kid
+  Dragon:
+    role: villain
+    look: large fire-breathing dragon; cartoon-readable scales; heavy wings
+    traits:
+    - threatening
+    - loud
+    - physically dominant
+    defeat: banished via magical vortex triggered by Theo's stomp
+  Jordie:
+    role: supporting
+    look: casual homewear; busy with housework
+    traits:
+    - warm
+    - supportive
+    - amused
+    - grounded
+  Alex:
+    role: supporting
+    look: casual; at computer workstation
+    traits:
+    - supportive
+    - amused
+    - calm
+locations:
+  Neutral_Intro_Stage:
+    type: stylized
+    notes: clean empty stage for generic bouncing lamp intro, no logos
+  Family_Home_Interior:
+    type: interior
+    notes: warm morning light, cozy, uncluttered, readable blocking
+  Suburban_Street:
+    type: exterior
+    notes: well-kept suburbia; clear establishing geometry; sky shifts from bright
+      to stormy and back
+structure:
+  acts:
+  - act: A01
+    label: Setup and Call to Adventure
+    scenes:
+    - scene: S01
+      title: 'Opening: Lamp Intro → Theo Declares the Quest'
+      beats:
+      - Generic bouncing lamp performs playful intro and wipes into the story world.
+      - Theo, in oversized play armor, announces to Jordie and Alex that he will fight
+        the dragon.
+      - Parents smile, exchange a glance, and grant permission; Theo exits.
+    - scene: S02
+      title: 'The Street: Peaceful Suburbia Turns Ominous'
+      beats:
+      - Theo marches down the street with heroic determination; helmet blocks his
+        view slightly.
+      - The sky darkens; suspense builds; a shadow and rumble hint at the dragon.
+  - act: A02
+    label: Confrontation and Resolution
+    scenes:
+    - scene: S01
+      title: Dragon Attack and Battle
+      beats:
+      - Dragon descends through storm clouds, breathes fire, and roars.
+      - Theo fights with clear, readable moves; dodges, blocks, counters.
+      - Theo wins; dragon collapses unconscious.
+      - Theo chooses scolding over slaying; stomp triggers magical vortex; dragon
+        is banished; storm clears.
+    - scene: S02
+      title: 'Finale: Thanks, Theo → Mac and Cheese → The End'
+      beats:
+      - Sun returns; Theo straightens armor; three blue birds appear.
+      - A bird thanks Theo; Theo walks home.
+      - Theo enters, removes armor, asks dinner; Jordie answers 'macaroni and cheese.'
+      - Theo runs off excitedly; fixed camera holds on armor; 'The End' fade; fade
+        to black.

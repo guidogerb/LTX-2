@@ -6,16 +6,17 @@ from pathlib import Path
 
 import yaml
 from rich import print
-
-from vtx_app.project.layout import Project
-from vtx_app.registry.db import Registry
-from vtx_app.story.prompt_compiler import compile_prompt
-from vtx_app.story.duration_estimator import estimate_seconds
 from vtx_app.pipelines.base import PipelineCommand
 from vtx_app.pipelines.capabilities import detect_capabilities, first_supported
 from vtx_app.pipelines.runner_subprocess import run
+from vtx_app.project.layout import Project
+from vtx_app.registry.db import Registry
+from vtx_app.render.presets import get_preset
+from vtx_app.story.duration_estimator import estimate_seconds
+from vtx_app.story.prompt_compiler import compile_prompt
+from vtx_app.utils.model_downloader import ModelDownloader
 from vtx_app.utils.timecode import now_iso
-
+from vtx_app.utils.validation import validate_clip_spec
 
 PIPELINE_MODULES = {
     "ti2vid_two_stages": "ltx_pipelines.ti2vid_two_stages",
@@ -31,12 +32,21 @@ class RenderController:
     project: Project | None
     registry: Registry
 
-    def render_clip(self, *, clip_id: str) -> None:
+    def render_clip(
+        self,
+        *,
+        clip_id: str,
+        preset: str | None = None,
+        output_dir: Path | None = None,
+        resolution_scale: float = 1.0,
+    ) -> None:
         if self.project is None:
             raise ValueError("RenderController.project is required for render_clip()")
 
         proj = self.project
         s = proj.settings()
+
+        preset_cfg = get_preset(preset) if preset else {}
 
         clip_path = proj.root / "prompts" / "clips" / f"{clip_id}.yaml"
         if not clip_path.exists():
@@ -48,24 +58,79 @@ class RenderController:
                 raise FileNotFoundError(f"No clip spec found for {clip_id}")
 
         clip = yaml.safe_load(clip_path.read_text()) or {}
+
+        # Validation
+        validate_clip_spec(clip)
+
         pack = compile_prompt(project_root=proj.root, clip_spec=clip)
 
         out_rel = (clip.get("outputs") or {}).get("mp4")
         if not out_rel:
             raise ValueError(f"Clip spec missing outputs.mp4: {clip_path}")
+
         out_path = proj.root / out_rel
+
+        if output_dir:
+            out_path = output_dir / out_path.name
+
         out_path.parent.mkdir(parents=True, exist_ok=True)
 
         pipeline_key = (clip.get("render") or {}).get("pipeline") or s.default_pipeline
+
+        # Strategy override handling (V2V)
+        # If finalizing with V2V, we need a V2V-capable pipeline (e.g. ic_lora)
+        # unless current pipeline supports input video.
+        final_strategy = (clip.get("render") or {}).get("final_strategy")
+        if preset == "final" and final_strategy == "v2v":
+            # Switch specific to V2V pipeline if not already
+            # For LTX, ic_lora is a good candidate for v2v style transfer/refinement
+            pipeline_key = "ic_lora"
+
         if pipeline_key not in PIPELINE_MODULES:
             raise KeyError(f"Unknown pipeline key: {pipeline_key}")
         module = PIPELINE_MODULES[pipeline_key]
         cap = detect_capabilities(module)
 
         # Resolution / fps defaults
-        fps = int((clip.get("render") or {}).get("fps") or os.getenv("PROJECT_FPS") or s.default_fps)
-        width = int((clip.get("render") or {}).get("width") or os.getenv("PROJECT_WIDTH") or s.default_width)
-        height = int((clip.get("render") or {}).get("height") or os.getenv("PROJECT_HEIGHT") or s.default_height)
+        fps = int(
+            preset_cfg.get("fps") or (clip.get("render") or {}).get("fps") or os.getenv("PROJECT_FPS") or s.default_fps
+        )
+        base_width = int((clip.get("render") or {}).get("width") or os.getenv("PROJECT_WIDTH") or s.default_width)
+        base_height = int((clip.get("render") or {}).get("height") or os.getenv("PROJECT_HEIGHT") or s.default_height)
+
+        # Scaling logic
+        width = int(base_width * resolution_scale)
+        height = int(base_height * resolution_scale)
+
+        if preset == "draft":
+            # "Exactly half of the target resolution" if not scaled by resolution_scale
+            # If resolution_scale is passed, we respect it.
+            # If resolution_scale is 1.0 (default), but preset is draft, we apply preset logic?
+            # actually let's respect resolution_scale multiply.
+            # But earlier logic was:
+            # width = base_width // 2
+            # Let's keep existing behavior if resolution_scale is 1.0, otherwise combine?
+            # The prompt requested "half the target resolution" for render-reviews.
+            # I will pass resolution_scale=0.5 from CLI.
+
+            # Legacy preset handling:
+            if resolution_scale == 1.0:
+                width = base_width // 2
+                height = base_height // 2
+
+            # Draft writes to separate file to preserve as input for final
+            # If output_dir is set, we don't necessarily need the suffix, but
+            # let's keep it if output_dir is NOT set.
+            if not output_dir:
+                out_path = out_path.with_name(f"{out_path.stem}_draft{out_path.suffix}")
+
+        elif preset == "final":
+            # Use full res
+            pass  # width/height are already set * scale
+
+        # Force even dimensions (ffmpeg requirement often)
+        width = (width // 2) * 2
+        height = (height // 2) * 2
 
         # Duration -> frames (content-driven via story beats + prompt)
         seconds = estimate_seconds(clip)
@@ -82,14 +147,33 @@ class RenderController:
 
         # Build args from env + clip + detected capabilities
         args: list[str] = []
+        downloader = ModelDownloader(s)
 
         # Shared model paths
         if s.checkpoint_path:
+            downloader.ensure_model("LTX_CHECKPOINT_PATH")
             args += ["--checkpoint-path", s.checkpoint_path]
         if s.spatial_upsampler_path:
+            downloader.ensure_model("LTX_SPATIAL_UPSAMPLER_PATH")
             args += ["--spatial-upsampler-path", s.spatial_upsampler_path]
         if s.gemma_root:
+            downloader.ensure_model("LTX_GEMMA_ROOT")
             args += ["--gemma-root", s.gemma_root]
+
+        # V2V Input
+        if preset == "final" and final_strategy == "v2v":
+            draft_input = out_path.with_name(f"{out_path.stem}_draft{out_path.suffix}")
+            if not draft_input.exists():
+                # Checking if maybe the user manually approved a non-_draft file?
+                # Fallback to standard convention?
+                pass
+
+            # Add input video arg (ic_lora usually takes --input-video-path or similar)
+            iv_flag = first_supported(cap, "--input-video-path", "--input_video_path", "--input-video")
+            if iv_flag and draft_input.exists():
+                args += [iv_flag, str(draft_input)]
+                # Also likely need conditioning strength?
+                args += ["--conditioning-strength", "0.6"]  # sane default
 
         # LoRAs: prefer explicit clip loras, else fallback to shared distilled lora env
         # Clip schema supports: loras: [{env: "LTX_DISTILLED_LORA_PATH", weight: 0.8}, ...]
@@ -102,6 +186,13 @@ class RenderController:
                     weight = item.get("weight", 0.8)
                     if not env_name:
                         continue
+
+                    # Try to ensure model exists if it's one of our known ones
+                    try:
+                        downloader.ensure_model(env_name)
+                    except Exception:
+                        pass  # Squelch errors here for custom User loras avoiding hard crashes if unregistered
+
                     path = os.getenv(env_name) or ""
                     if path:
                         args += [distilled_flag, path, str(weight)]
@@ -131,13 +222,49 @@ class RenderController:
         if nflag and pack.negative:
             args += [nflag, pack.negative]
 
+        # Inputs (images/video)
+        inputs = clip.get("inputs", {})
+
+        # Reference image
+        ref_img = inputs.get("reference_image")
+        if ref_img:
+            fpath = Path(ref_img)
+            if not fpath.is_absolute():
+                fpath = proj.root / ref_img
+
+            # Warn if missing?
+            if not fpath.exists():
+                print(f"[yellow]Warning: Input image not found: {fpath}[/yellow]")
+
+            img_flag = first_supported(cap, "--image")
+            if img_flag:
+                # Default: frame 0, strength 1.0
+                args += [img_flag, str(fpath), "0", "1.0"]
+
+        # Input video (video-to-video / ICLora)
+        inp_vid = inputs.get("input_video")
+        if inp_vid:
+            fpath = Path(inp_vid)
+            if not fpath.is_absolute():
+                fpath = proj.root / inp_vid
+
+            if not fpath.exists():
+                print(f"[yellow]Warning: Input video not found: {fpath}[/yellow]")
+
+            vid_flag = first_supported(cap, "--video-conditioning", "--video_conditioning")
+            if vid_flag:
+                # Default strength 1.0
+                args += [vid_flag, str(fpath), "1.0"]
+
         # Prompt + output
         pflag = first_supported(cap, "--prompt")
         if pflag:
             args += [pflag, pack.positive]
         else:
             # Most pipelines use --prompt; if not, fail loudly
-            raise RuntimeError(f"Pipeline {module} appears to not support --prompt (detected flags: {sorted(cap.flags)[:20]})")
+            raise RuntimeError(
+                f"Pipeline {module} appears to not support --prompt (detected flags: {sorted(cap.flags)[:20]})"
+            )
 
         oflag = first_supported(cap, "--output-path", "--output_path")
         if oflag:

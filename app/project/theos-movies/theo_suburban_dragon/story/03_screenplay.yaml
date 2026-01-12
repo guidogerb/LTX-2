@@ -1,0 +1,127 @@
+screenplay:
+- act: 1
+  scene: 1
+  slug: EXT. SUBURBAN NEIGHBORHOOD - DAY
+  description: The sun shines brightly over a quiet suburban neighborhood. Birds chirp
+    as children play on the sidewalks. THEO, a curious and adventurous 10-year-old
+    boy, rides his bike down the street.
+  dialogue:
+  - 'THEO: (waving) Hi, Mrs. Jenkins!'
+  - 'MRS. JENKINS: (smiling) Hello, Theo!'
+  - 'THEO: (to a dog) Hey, Max!'
+- act: 1
+  scene: 2
+  slug: EXT. ABANDONED LOT - DAY
+  description: Theo stops his bike in front of an old, overgrown lot. The place looks
+    eerily quiet, a stark contrast to the lively neighborhood. Theo's curiosity gets
+    the better of him as he peers through a gap in the fence.
+  dialogue:
+  - 'THEO: (whispering to himself) What is that?'
+- act: 1
+  scene: 3
+  slug: EXT. ABANDONED LOT - CONTINUOUS
+  description: Theo squints, trying to make sense of what he's seeing. Smoke rises
+    from the center of the lot. A low growl echoes, sending a shiver down his spine.
+    Suddenly, a massive tail flicks into the shadows.
+  dialogue:
+  - 'THEO: (gasping) No way... a dragon!'
+- act: 1
+  scene: 4
+  slug: INT. THEO'S HOUSE - LIVING ROOM - DAY
+  description: Theo bursts into the living room where his parents are relaxing. He's
+    out of breath, eyes wide with excitement.
+  dialogue:
+  - 'THEO: Mom! Dad! There''s a dragon in the abandoned lot!'
+  - 'MOM: (chuckling) A dragon, huh?'
+  - 'DAD: (smiling) Sounds like quite the adventure, son.'
+  - 'THEO: I''m serious! I saw it!'
+- act: 1
+  scene: 5
+  slug: INT. THEO'S ROOM - DAY
+  description: Theo's friends gather in his room, sitting in a circle on the floor.
+    They're intrigued by Theo's story, hanging onto his every word.
+  dialogue:
+  - 'FRIEND 1: A real dragon?'
+  - 'FRIEND 2: Are you sure, Theo?'
+  - 'THEO: I know what I saw. We have to do something.'
+- act: 2
+  scene: 1
+  slug: EXT. TREEHOUSE - DAY
+  description: In a backyard treehouse, Theo and his friends sit around a makeshift
+    table. A map of the neighborhood is spread out before them, with the abandoned
+    lot marked in red.
+  dialogue:
+  - 'THEO: We need a plan. We can''t let the dragon stay there.'
+  - 'FRIEND 3: I can bring my dad''s old rope.'
+  - 'FRIEND 4: I''ll get some snacks. We might need energy.'
+  - 'THEO: Perfect. Let''s do this!'
+- act: 2
+  scene: 2
+  slug: EXT. NEIGHBORHOOD - DAY
+  description: The group moves through the neighborhood, gathering supplies. They
+    whisper and giggle, feeling like secret agents on a mission.
+  dialogue:
+  - 'FRIEND 3: (holding up a flashlight) Got the lights!'
+  - 'FRIEND 4: (with a backpack) And snacks!'
+  - 'THEO: (nodding) Great job, team.'
+- act: 2
+  scene: 3
+  slug: EXT. ABANDONED LOT - DUSK
+  description: The sky turns orange as the sun sets. The group stands at the edge
+    of the lot, feeling a mix of fear and excitement. The dragon's roar echoes, and
+    its fiery breath lights up the shadows.
+  dialogue:
+  - 'FRIEND 1: (nervously) Are you sure about this, Theo?'
+  - 'THEO: We have to try.'
+- act: 3
+  scene: 1
+  slug: EXT. ABANDONED LOT - NIGHT
+  description: The group sets the trap, working quickly and quietly. The dragon emerges,
+    its scales shimmering in the moonlight. It's a magnificent and terrifying sight.
+  dialogue:
+  - 'THEO: (whispering) Okay, everyone, get ready.'
+  - 'FRIEND 2: (nervously) It''s huge!'
+  - 'THEO: (raising a flashlight) Over here!'
+- act: 3
+  scene: 2
+  slug: EXT. ABANDONED LOT - NIGHT
+  description: The dragon roars, chasing the group through the lot. Theo leads it
+    into the trap, which holds it for a moment. The friends scatter, trying to confuse
+    the beast.
+  dialogue:
+  - 'FRIEND 3: (shouting) It''s working!'
+  - 'FRIEND 4: (laughing) Keep going!'
+- act: 3
+  scene: 3
+  slug: EXT. ABANDONED LOT - NIGHT
+  description: Theo, realizing the dragon's interest in sound, pulls out his harmonica.
+    He plays a gentle tune, and the dragon pauses, listening intently. Its demeanor
+    softens.
+  dialogue:
+  - 'THEO: (playing harmonica) Come on, work...'
+  - 'FRIEND 1: (amazed) It''s calming down!'
+- act: 4
+  scene: 1
+  slug: EXT. ABANDONED LOT - NIGHT
+  description: Theo approaches the dragon cautiously. The dragon, now calm, watches
+    him with curious eyes. They reach a silent understanding.
+  dialogue:
+  - 'THEO: (softly) We don''t want to hurt you. Can you leave us in peace?'
+- act: 4
+  scene: 2
+  slug: EXT. NEIGHBORHOOD - DAY
+  description: The next morning, the kids return home, greeted by their peers as heroes.
+    The neighborhood is abuzz with stories of their bravery.
+  dialogue:
+  - 'FRIEND 2: (grinning) We did it!'
+  - 'THEO: (smiling) Yeah, we did.'
+- act: 4
+  scene: 3
+  slug: EXT. SUBURBAN NEIGHBORHOOD - DAY
+  description: Theo and his friends gather at the park, planning their next adventure.
+    In the distance, the dragon is seen flying off into the sunset, a majestic silhouette
+    against the sky.
+  dialogue:
+  - 'THEO: (looking at the sky) There''s so much more out there.'
+  - 'FRIEND 3: (excited) Let''s find it!'
+  - 'THEO: (nodding) Yeah, let''s go.'

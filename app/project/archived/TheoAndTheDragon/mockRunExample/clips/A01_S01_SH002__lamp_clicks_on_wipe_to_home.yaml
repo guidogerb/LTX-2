@@ -1,0 +1,30 @@
+Prompt: |
+  Same retro CG look in 16:9: the lamp leans forward, clicks on with a crisp “tink,” and its warm beam blooms
+  toward the lens. The camera stays locked as the cone of light grows into a full-screen white wipe, keeping
+  motion clean and readable. The orchestral jingle resolves into a final chord while household ambience fades in
+  underneath—soft room tone, distant clinks, and faint morning birds. The wipe completes into the next interior
+  scene as if the lamp’s beam becomes the sunlight in a home window.
+
+Negative: |
+  photorealistic live-action look; modern ultra-detailed CGI; hyper-real skin pores; realistic hair strand
+  simulation; gritty realistic violence; blood; gore; injury detail; horror tone; harsh contrast teal-orange
+  grading; excessive lens flare; extreme depth-of-field blur; unstable character identity; inconsistent
+  clothing; duplicate Theo; extra parents; extra dragons; crowded streets full of people; modern brand logos;
+  readable signage; subtitles; watermarks; UI overlays; glitch artifacts; warped faces; broken anatomy; extra
+  limbs/fingers; melting objects; jittery teleporting motion; chaotic fast camera spins; aggressive handheld
+  shake; extreme motion blur; strobing lights; noisy particle storms that obscure the action; fire/explosions
+  filling the entire frame; lots of on-screen text; credits crawl. Avoid: harsh strobing, overexposed blowout
+  that loses all detail for too long.
+
+Duration: 6  # seconds (<=10)
+AspectRatio: "16:9"
+Act: "A01"
+Scene: "S01"
+Shot: "SH002"
+Description: "lamp_clicks_on_wipe_to_home"
+Characters:
+  - Lamp
+Location: "Neutral_Stage_to_HomeInterior"
+ContinuityNotes: |
+  Maintain early-era 3D animation look: slightly plasticky materials, gentle squash-and-stretch, readable
+  staging. Keep Theo’s helmet noticeably too large whenever he is wearing it.

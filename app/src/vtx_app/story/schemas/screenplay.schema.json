@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "properties": {
+    "screenplay": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "act": { "type": "integer" },
+          "scene": { "type": "integer" },
+          "slug": { "type": "string" },
+          "description": { "type": "string" },
+          "dialogue": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["act", "scene", "slug", "description", "dialogue"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["screenplay"],
+  "additionalProperties": false
+}

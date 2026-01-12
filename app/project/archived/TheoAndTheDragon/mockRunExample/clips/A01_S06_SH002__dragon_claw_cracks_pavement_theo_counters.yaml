@@ -1,0 +1,33 @@
+Prompt: |
+  Cut to a 16:9 wide shot: the dragon swipes a claw into the pavement, cracking the street into chunky stylized
+  pieces that pop upward and settle. Theo darts sideways, helmet wobbling so he has to correct his footing to
+  see, then counters with quick toy-sword taps at the dragon’s forelimb. Plastic “tock” sound effects punctuate
+  each strike while the dragon growls in annoyed surprise. The camera tracks just enough to keep both figures
+  centered and the choreography easy to follow.
+
+Negative: |
+  photorealistic live-action look; modern ultra-detailed CGI; hyper-real skin pores; realistic hair strand
+  simulation; gritty realistic violence; blood; gore; injury detail; horror tone; harsh contrast teal-orange
+  grading; excessive lens flare; extreme depth-of-field blur; unstable character identity; inconsistent
+  clothing; duplicate Theo; extra parents; extra dragons; crowded streets full of people; modern brand logos;
+  readable signage; subtitles; watermarks; UI overlays; glitch artifacts; warped faces; broken anatomy; extra
+  limbs/fingers; melting objects; jittery teleporting motion; chaotic fast camera spins; aggressive handheld
+  shake; extreme motion blur; strobing lights; noisy particle storms that obscure the action; fire/explosions
+  filling the entire frame; lots of on-screen text; credits crawl. Avoid: debris flying into the lens; avoid
+  ultra-realistic destruction; keep cracks stylized and clean.
+
+Duration: 9  # seconds (<=10)
+AspectRatio: "16:9"
+Act: "A01"
+Scene: "S06"
+Shot: "SH002"
+Description: "dragon_claw_cracks_pavement_theo_counters"
+Characters:
+  - Theo
+  - Dragon
+Location: "Suburbia_Street_Storm"
+ContinuityNotes: |
+  Maintain early-era 3D animation look: slightly plasticky materials, gentle squash-and-stretch, readable
+  staging. Keep Theo’s helmet noticeably too large whenever he is wearing it. Dragon is threatening but family-
+  friendly; no gore, no injury detail. Action must stay readable: controlled fire, controlled lightning, no
+  chaotic camera spins.

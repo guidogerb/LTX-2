@@ -7,11 +7,10 @@ from pathlib import Path
 
 import yaml
 from rich import print
-
 from vtx_app.config.env_layers import load_env
 from vtx_app.config.settings import Settings
-from vtx_app.registry.db import Registry
 from vtx_app.project.layout import Project
+from vtx_app.registry.db import Registry
 from vtx_app.utils.timecode import now_iso
 
 
@@ -62,12 +61,15 @@ class ProjectLoader:
         s = Settings.from_env()
         s.projects_root.mkdir(parents=True, exist_ok=True)
 
-        for p in sorted(s.projects_root.glob("*")):
+        for meta in sorted(s.projects_root.rglob("metadata.yaml")):
+            p = meta.parent
             if not p.is_dir():
                 continue
-            meta = p / "metadata.yaml"
-            if not meta.exists():
+
+            # Skip template if it's accidentally caught (though it's outside projects_root usually)
+            if "templates" in p.parts:
                 continue
+
             try:
                 data = yaml.safe_load(meta.read_text()) or {}
                 project_id = str(data.get("project_id"))
@@ -111,7 +113,24 @@ class ProjectLoader:
     def load(self, slug: str) -> Project:
         load_env(project_env_path=None)
         s = Settings.from_env()
+
+        # 1. Direct check (Fastest, usual case)
         path = s.projects_root / slug
-        if not path.exists():
-            raise FileNotFoundError(path)
-        return Project(root=path)
+        if path.exists() and (path / "metadata.yaml").exists():
+            return Project(root=path)
+
+        # 2. Registry check (Smart lookup)
+        if self.registry:
+            proj_data = self.registry.get_project_by_slug(slug)
+            if proj_data:
+                db_path = Path(proj_data["path"])
+                if db_path.exists() and (db_path / "metadata.yaml").exists():
+                    return Project(root=db_path)
+
+        # 3. Recursive fallback (Search entire tree)
+        # Useful if folder was moved manually but DB not synced
+        for candidate in s.projects_root.rglob(slug):
+            if candidate.is_dir() and (candidate / "metadata.yaml").exists():
+                return Project(root=candidate)
+
+        raise FileNotFoundError(f"Project '{slug}' not found in {s.projects_root}")

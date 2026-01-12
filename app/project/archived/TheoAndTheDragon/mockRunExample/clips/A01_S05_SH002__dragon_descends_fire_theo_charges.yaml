@@ -1,0 +1,33 @@
+Prompt: |
+  16:9 wide shot: a large fire-breathing dragon descends through the dark sky, wings beating with heavy animated
+  weight and glossy highlights on its scales. It exhales a bright, cartoon-readable stream of fire above the
+  street, casting warm flicker on rooftops without filling the whole frame. Theo charges forward with a high-
+  pitched battle yell, shield raised and plastic sword pointed up, tiny but fearless beneath the looming
+  villain. The camera pulls back slightly to keep both hero and dragon readable as the orchestral score surges
+  into full action.
+
+Negative: |
+  photorealistic live-action look; modern ultra-detailed CGI; hyper-real skin pores; realistic hair strand
+  simulation; gritty realistic violence; blood; gore; injury detail; horror tone; harsh contrast teal-orange
+  grading; excessive lens flare; extreme depth-of-field blur; unstable character identity; inconsistent
+  clothing; duplicate Theo; extra parents; extra dragons; crowded streets full of people; modern brand logos;
+  readable signage; subtitles; watermarks; UI overlays; glitch artifacts; warped faces; broken anatomy; extra
+  limbs/fingers; melting objects; jittery teleporting motion; chaotic fast camera spins; aggressive handheld
+  shake; extreme motion blur; strobing lights; noisy particle storms that obscure the action; fire/explosions
+  filling the entire frame; lots of on-screen text; credits crawl. Avoid: gore or realistic horror dragon; avoid
+  fire covering the entire frame; keep dragon threatening but family-friendly.
+
+Duration: 9  # seconds (<=10)
+AspectRatio: "16:9"
+Act: "A01"
+Scene: "S05"
+Shot: "SH002"
+Description: "dragon_descends_fire_theo_charges"
+Characters:
+  - Theo
+  - Dragon
+Location: "Suburbia_Street_Storm"
+ContinuityNotes: |
+  Maintain early-era 3D animation look: slightly plasticky materials, gentle squash-and-stretch, readable
+  staging. Keep Theo’s helmet noticeably too large whenever he is wearing it. Dragon is threatening but family-
+  friendly; no gore, no injury detail.

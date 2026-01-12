@@ -1,0 +1,40 @@
+[project]
+name = "dreamid-v"
+version = "0.1.0"
+description = "DreamID-V: An Identity-Preserving Video Generation Model"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.4.0",
+    "torchvision>=0.19.0",
+    "opencv-python>=4.9.0.80",
+    "diffusers==0.35.2",
+    "transformers==4.49.0",
+    "tokenizers==0.21.4",
+    "accelerate==1.11.0",
+    "tqdm",
+    "imageio",
+    "onnxruntime",
+    "easydict",
+    "ftfy",
+    "dashscope",
+    "imageio-ffmpeg",
+    "xfuser==0.4.4",
+    "mediapipe>=0.10.5", 
+    "numpy>=1.23.5,<2",
+]
+
+[project.optional-dependencies]
+gpu = ["flash_attn"]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = [
+    "dreamidv_wan", 
+    "dreamidv_wan_faster", 
+    "express_adaption", 
+    "pose"
+]

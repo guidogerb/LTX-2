@@ -38,8 +38,9 @@ class Settings:
 
     @staticmethod
     def from_env() -> "Settings":
-        app_home = Path(os.getenv("VTX_APP_HOME", "packages/app/_global"))
-        projects_root = Path(os.getenv("VTX_PROJECTS_ROOT", "packages/app/projects"))
+        app_root = Path(__file__).resolve().parents[3]
+        app_home = Path(os.getenv("VTX_APP_HOME", str(app_root / "_global")))
+        projects_root = Path(os.getenv("VTX_PROJECTS_ROOT", str(app_root / "project")))
 
         return Settings(
             app_home=app_home,
@@ -48,19 +49,16 @@ class Settings:
             produce_in_acts=get_bool("VTX_PRODUCE_IN_ACTS", False),
             max_parallel_jobs=int(os.getenv("VTX_MAX_PARALLEL_JOBS", "1")),
             fail_fast=get_bool("VTX_FAIL_FAST", False),
-
             # OpenAI
             openai_model=os.getenv("VTX_OPENAI_MODEL", "gpt-4o-2024-08-06"),
             openai_max_output_tokens=int(os.getenv("VTX_OPENAI_MAX_OUTPUT_TOKENS", "4096")),
             openai_temperature=float(os.getenv("VTX_OPENAI_TEMPERATURE", "0.4")),
-
             # Shared model locations
             checkpoint_path=os.getenv("LTX_CHECKPOINT_PATH"),
             distilled_lora_path=os.getenv("LTX_DISTILLED_LORA_PATH"),
             spatial_upsampler_path=os.getenv("LTX_SPATIAL_UPSAMPLER_PATH"),
             gemma_root=os.getenv("LTX_GEMMA_ROOT"),
             ic_lora_path=os.getenv("LTX_IC_LORA_PATH"),
-
             ltx_max_frames=int(os.getenv("LTX_MAX_FRAMES", "257")),
             default_fps=int(os.getenv("LTX_DEFAULT_FPS", "16")),
             default_max_seconds=int(os.getenv("LTX_DEFAULT_MAX_SECONDS", "15")),

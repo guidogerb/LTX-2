@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 import yaml
+from openai import OpenAI
+from rich import print as rich_print
 from vtx_app.project.layout import Project
 
 
@@ -20,7 +23,6 @@ def _load_yaml(path: Path) -> dict[str, Any]:
 
 
 def _slugify(text: str) -> str:
-    import re
     s = (text or "").strip().lower()
     s = re.sub(r"[^a-z0-9]+", "_", s)
     s = re.sub(r"_+", "_", s).strip("_")
@@ -34,20 +36,29 @@ class StoryBuilder:
     def _client(self):
         # OPENAI_API_KEY is read automatically by the official SDK when present.
         # If missing, OpenAI() will raise.
-        from openai import OpenAI
         return OpenAI()
 
     def _call_structured(self, *, schema: dict[str, Any], messages: list[dict[str, str]]) -> dict[str, Any]:
         s = self.project.settings()
         client = self._client()
-        resp = client.responses.create(
+        completion = client.chat.completions.create(
             model=s.openai_model,
-            input=messages,
+            messages=messages,
             temperature=s.openai_temperature,
-            max_output_tokens=s.openai_max_output_tokens,
-            text={"format": {"type": "json_schema", "strict": True, "schema": schema}},
+            max_tokens=s.openai_max_output_tokens,
+            response_format={
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "response",
+                    "strict": True,
+                    "schema": schema,
+                },
+            },
         )
-        return json.loads(resp.output_text)
+        content = completion.choices[0].message.content
+        if not content:
+            return {}
+        return json.loads(content)
 
     def generate_outline(self) -> None:
         """
@@ -74,15 +85,48 @@ Keep beats short and visual.
 """
 
         try:
-            data = self._call_structured(schema=schema, messages=[
-                {"role": "system", "content": system},
-                {"role": "user", "content": user},
-            ])
+            data = self._call_structured(
+                schema=schema,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+            )
             outline_path.write_text(yaml.safe_dump(data, sort_keys=False))
         except Exception:
             # Leave stub if API unavailable
             if not outline_path.exists():
                 outline_path.write_text("version: 1\nacts: []\n")
+
+    def generate_treatment(self) -> None:
+        """Writes story/02_treatment.md from outline/brief."""
+        treatment_path = self.project.root / "story" / "02_treatment.md"
+        outline_path = self.project.root / "story" / "01_outline.yaml"
+        brief_path = self.project.root / "story" / "00_brief.md"
+
+        outline = outline_path.read_text() if outline_path.exists() else ""
+        brief = brief_path.read_text() if brief_path.exists() else ""
+
+        schema_path = Path(__file__).parent / "schemas" / "treatment.schema.json"
+        schema = json.loads(schema_path.read_text())
+
+        system = "You are a screenwriter. Write a detailed film treatment (prose format) based on the outline."
+        user = f"Brief:\n{brief}\n\nOutline:\n{outline}\n\nWrite the treatment."
+
+        try:
+            data = self._call_structured(
+                schema=schema,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+            )
+            content = data.get("content", "")
+            title = data.get("title", "Treatment")
+            treatment_path.write_text(f"# {title}\n\n{content}")
+        except Exception:
+            if not treatment_path.exists():
+                treatment_path.write_text("# Treatment\n\n(Pending)\n")
 
     def generate_shotlist(self) -> None:
         """
@@ -130,16 +174,198 @@ For each shot:
 """
 
         try:
-            data = self._call_structured(schema=schema, messages=[
-                {"role": "system", "content": system},
-                {"role": "user", "content": user},
-            ])
+            data = self._call_structured(
+                schema=schema,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+            )
             shotlist_path.write_text(yaml.safe_dump(data, sort_keys=False))
-        except Exception:
+        except Exception as e:
+            rich_print(f"[red]Shotlist Generation Error:[/red] {e}")
             if not shotlist_path.exists():
                 shotlist_path.write_text("version: 1\nscenes: []\n")
 
-    def generate_clip_specs(self, *, overwrite: bool = False, act: int | None = None, scene: int | None = None) -> None:
+    def generate_screenplay(self) -> None:
+        """Writes story/03_screenplay.yaml from outline/brief."""
+        screenplay_path = self.project.root / "story" / "03_screenplay.yaml"
+        outline_path = self.project.root / "story" / "01_outline.yaml"
+        brief_path = self.project.root / "story" / "00_brief.md"
+
+        outline = outline_path.read_text() if outline_path.exists() else ""
+        brief = brief_path.read_text() if brief_path.exists() else ""
+
+        schema_path = Path(__file__).parent / "schemas" / "screenplay.schema.json"
+        schema = json.loads(schema_path.read_text())
+
+        system = (
+            "You are a professional screenwriter. Expand the outline into a detailed "
+            "screenplay format (slugs, description, dialogue)."
+        )
+        user = f"Brief:\n{brief}\n\nOutline:\n{outline}\n\nWrite the full screenplay in JSON."
+
+        try:
+            data = self._call_structured(
+                schema=schema,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+            )
+            screenplay_path.write_text(yaml.safe_dump(data, sort_keys=False))
+        except Exception:
+            if not screenplay_path.exists():
+                screenplay_path.write_text("screenplay: []\n")
+
+    def generate_characters(self) -> None:
+        """Writes prompts/characters.yaml from brief."""
+        out_path = self.project.root / "prompts" / "characters.yaml"
+        brief_path = self.project.root / "story" / "00_brief.md"
+        brief = brief_path.read_text() if brief_path.exists() else ""
+
+        schema_path = Path(__file__).parent / "schemas" / "characters.schema.json"
+        schema = json.loads(schema_path.read_text())
+
+        system = "You are a casting director. Create specific visual descriptions for characters."
+        user = f"Brief:\n{brief}\n\nExtract characters and their visual descriptions (key=name, value=description)."
+
+        try:
+            data = self._call_structured(
+                schema=schema,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+            )
+            # transform list to dict for yaml
+            chars_list = data.get("characters", [])
+            chars_dict = {}
+            for c in chars_list:
+                name = c.get("name", "Unknown")
+                chars_dict[name] = {"description": c.get("description", "")}
+
+            out_path.write_text(yaml.safe_dump({"version": 1, "characters": chars_dict}, sort_keys=False))
+        except Exception as e:
+            rich_print(f"[red]Char Generation Error:[/red] {e}")
+            if not out_path.exists():
+                out_path.write_text("characters: {}\n")
+
+    def generate_locations(self) -> None:
+        """Writes prompts/locations.yaml from brief."""
+        out_path = self.project.root / "prompts" / "locations.yaml"
+        brief_path = self.project.root / "story" / "00_brief.md"
+        brief = brief_path.read_text() if brief_path.exists() else ""
+
+        schema_path = Path(__file__).parent / "schemas" / "locations.schema.json"
+        schema = json.loads(schema_path.read_text())
+
+        system = "You are a location scout. Create specific visual descriptions for locations."
+        user = f"Brief:\n{brief}\n\nExtract locations and their visual descriptions (key=name, value=description)."
+
+        try:
+            data = self._call_structured(
+                schema=schema,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+            )
+            # transform list to dict for yaml
+            locs_list = data.get("locations", [])
+            locs_dict = {}
+            for loc in locs_list:
+                name = loc.get("name", "Unknown")
+                locs_dict[name] = {"description": loc.get("description", "")}
+
+            out_path.write_text(yaml.safe_dump({"version": 1, "locations": locs_dict}, sort_keys=False))
+        except Exception as e:
+            rich_print(f"[red]Loc Generation Error:[/red] {e}")
+            if not out_path.exists():
+                out_path.write_text("locations: {}\n")
+
+    def generate_style_bible(self) -> None:
+        """Writes prompts/style_bible.yaml from brief/proposal."""
+        out_path = self.project.root / "prompts" / "style_bible.yaml"
+        brief_path = self.project.root / "story" / "00_brief.md"
+        brief = brief_path.read_text() if brief_path.exists() else ""
+
+        # Check for style preset in plan
+        from vtx_app.style_manager import StyleManager  # noqa: PLC0415
+
+        style_preset = None
+        plan_files = list(self.project.root.glob("*_plan.yaml"))
+        if plan_files:
+            plan_data = _load_yaml(plan_files[0])
+            style_preset_name = plan_data.get("meta", {}).get("style_preset")
+            if style_preset_name:
+                print(f"[blue]Using style preset:[/blue] {style_preset_name}")
+                style_preset = StyleManager().load_style(style_preset_name)
+
+        schema = {
+            "type": "object",
+            "properties": {
+                "StyleBible": {
+                    "type": "object",
+                    "properties": {
+                        "Format": {
+                            "type": "object",
+                            "properties": {
+                                "AspectRatio": {"type": "string"},
+                                "OverallAesthetic": {"type": "string"},
+                            },
+                        },
+                        "CoreLook": {
+                            "type": "object",
+                            "properties": {
+                                "Rendering": {"type": "object"},
+                                "CharacterDesign": {"type": "object"},
+                            },
+                        },
+                        "LightingPlan": {"type": "object"},
+                        "AudioBible": {"type": "object"},
+                        "VFXGuidelines": {"type": "object"},
+                        "Dialogue": {"type": "object"},
+                    },
+                    "required": ["Format", "CoreLook"],
+                }
+            },
+        }
+
+        system = "You are a visual director. Create a comprehensive style guide (Style Bible) for the movie."
+        user = (
+            f"Brief:\n{brief}\n\nCreate a style bible defining the visual language, "
+            "rendering style, lighting, and audio mood."
+        )
+
+        if style_preset:
+            style_bible_data = style_preset.get("style_bible", {})
+            user += (
+                f"\n\nIMPORTANT: You MUST adapt the following Style Bible to the new story, but keep the core "
+                f"visual identity (Rendering, Aspect Ratio, Lighting Mood) identical.\n\n"
+                f"BASE STYLE:\n{json.dumps(style_bible_data, indent=2)}"
+            )
+
+        try:
+            data = self._call_structured(
+                schema=schema,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+            )
+            out_path.write_text(yaml.safe_dump(data, sort_keys=False))
+        except Exception:
+            if not out_path.exists():
+                out_path.write_text("StyleBible: {}\n")
+
+    def generate_clip_specs(
+        self,
+        *,
+        overwrite: bool = False,
+        act: int | None = None,
+        scene: int | None = None,
+    ) -> None:
         """
         Generates prompts/clips/*.yaml from story/04_shotlist.yaml.
 
@@ -205,7 +431,7 @@ For each shot:
             # If all clip files for this scene exist and overwrite is False, skip
             if not overwrite:
                 all_exist = True
-                for sh in (scene_obj.get("shots") or []):
+                for sh in scene_obj.get("shots") or []:
                     cid = sh.get("clip_id")
                     if not cid:
                         continue
@@ -225,10 +451,10 @@ For each shot:
 
             user = f"""Project prompt bible (for context only; do not copy verbatim into each clip prompt):
 GLOBAL_PREFIX:
-{style_bible.get("global_prefix","")}
+{style_bible.get("global_prefix", "")}
 
 PROFILE_PREFIX[{style_profile}]:
-{(style_bible.get("profiles",{}) or {}).get(style_profile,{}).get("prefix","")}
+{(style_bible.get("profiles", {}) or {}).get(style_profile, {}).get("prefix", "")}
 
 Characters dictionary (keys -> descriptions):
 {json.dumps(chars_doc.get("characters", {}), indent=2)}
@@ -245,7 +471,8 @@ Clip spec requirements:
 - continuity.shared_prompt_profile = "{style_profile}"
 - continuity.shared_loras_profile = "{loras_profile}"
 - continuity.characters and continuity.locations must use the keys from the shot.
-- prompt.positive must be shot-specific: camera framing/motion, subject actions, key props, lighting differences, emotion.
+- prompt.positive must be shot-specific: camera framing/motion, subject actions, key props, lighting differences,
+  emotion.
 - Keep prompts concise but vivid; avoid contradictions.
 - duration: if shot.duration_hint_seconds > 0, set render.duration.mode=fixed and duration.seconds=that value.
   Otherwise use render.duration.mode=auto with min_seconds>=2 and max_seconds<= {max_seconds}.
@@ -254,10 +481,13 @@ Clip spec requirements:
 """
 
             try:
-                batch = self._call_structured(schema=batch_schema, messages=[
-                    {"role": "system", "content": system},
-                    {"role": "user", "content": user},
-                ])
+                batch = self._call_structured(
+                    schema=batch_schema,
+                    messages=[
+                        {"role": "system", "content": system},
+                        {"role": "user", "content": user},
+                    ],
+                )
             except Exception:
                 # If the API isn't available, create minimal stubs for this scene
                 batch = {"version": 1, "clips": []}
@@ -267,7 +497,7 @@ Clip spec requirements:
                 clips = []
 
             # Post-process + write
-            shot_map = { (sh.get("clip_id") or ""): sh for sh in (scene_obj.get("shots") or []) if isinstance(sh, dict) }
+            shot_map = {(sh.get("clip_id") or ""): sh for sh in scene_obj.get("shots") or [] if isinstance(sh, dict)}
 
             for clip in clips:
                 if not isinstance(clip, dict):
@@ -291,7 +521,10 @@ Clip spec requirements:
                 continuity.setdefault("characters", sh.get("characters") or [])
                 continuity.setdefault("locations", sh.get("locations") or [])
 
-                clip.setdefault("story_beats", sh.get("action_beats") or scene_obj.get("beats") or [])
+                clip.setdefault(
+                    "story_beats",
+                    sh.get("action_beats") or scene_obj.get("beats") or [],
+                )
 
                 prompt = clip.setdefault("prompt", {})
                 prompt.setdefault("positive", sh.get("description") or "")
@@ -341,7 +574,7 @@ Clip spec requirements:
                         clip["loras"] = loras_list
 
                 outputs = clip.setdefault("outputs", {})
-                fname = f"{cid}__{_slugify(clip.get('title',''))}"
+                fname = f"{cid}__{_slugify(clip.get('title', ''))}"
                 outputs.setdefault("mp4", f"renders/clips/{fname}.mp4")
                 outputs.setdefault("json", f"renders/clips/{fname}.render.json")
 

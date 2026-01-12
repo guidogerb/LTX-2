@@ -1,0 +1,102 @@
+Version: 1.0
+Project: "Theo vs. The Dragon (Retro CG Short)"
+StyleBible:
+  Format:
+    AspectRatio: "16:9"
+    FrameRate: "24fps (suggested)"
+    ShotLengthRule: "Each shot targets 6–10 seconds; never exceed 10 seconds."
+    OverallAesthetic: |
+      Early-era 3D animated short / early 2000s family-friendly CG vibe: clean shapes, simple shaders,
+      slightly plasticky materials, gentle film grain, and classic comedic timing.
+
+  CoreLook:
+    Rendering:
+      TextureDetail: "Low-to-medium detail; avoid photoreal micro-textures."
+      Materials: "Toy-like plastics, soft specular highlights, simple diffuse shading."
+      FilmGrain: "Subtle, consistent; never VHS-heavy."
+      Color: |
+        Warm and optimistic overall. Use bright suburbia colors, then cool the palette during storm beats,
+        then return to warm daylight after victory.
+    CharacterDesign:
+      Proportions: "Slightly stylized; expressive faces without extreme realism."
+      Consistency: "Theo helmet must remain too large; dragon must remain family-friendly; birds remain cute."
+
+  AnimationPrinciples:
+    MotionStyle: |
+      Squash-and-stretch, clear anticipation, smooth ease-in/ease-out, readable arcs.
+      Comedy comes from timing and physical exaggeration, not from chaotic motion.
+    Staging:
+      Rule: "Keep one primary action per shot; avoid too many moving elements at once."
+      ActionReadability: "No rapid camera spins; avoid heavy motion blur; keep silhouettes clean."
+
+  CameraLanguage:
+    General:
+      Stability: "Mostly stable camera; gentle dolly/track/tilt only when motivated."
+      Handheld: "Only a tiny hint during battle urgency, never shaky or chaotic."
+      Composition: "Clear hero-villain staging; keep both in frame for choreography beats."
+    EndCap:
+      FixedCamera: |
+        The final home shots and end title use a fixed position camera, classic animated-short style,
+        holding on the entryway and armor pile.
+
+  LightingPlan:
+    HomeInterior:
+      Mood: "Cozy and safe."
+      Light: "Warm morning window light + soft fill."
+    SuburbiaDay:
+      Mood: "Bright, peaceful, well-kept."
+      Light: "Clean daylight with soft shadows."
+    StormAndDragon:
+      Mood: "Threatening but not horror."
+      Light: "Cool overcast with warm fire flicker; occasional lightning flicker but not strobing."
+    PostVictory:
+      Mood: "Relief, warmth, restoration."
+      Light: "Clouds part, sunbeams return; avoid blinding god-rays."
+
+  VFXGuidelines:
+    FireBreath:
+      Style: "Cartoon-readable flame, controlled size and duration."
+      Avoid: "Full-frame flames, thick smoke that hides characters."
+    VortexBanishment:
+      Style: "Clean spiral energy, readable motion, lightning flicker in rhythm."
+      Avoid: "Chaotic particle storms, fast strobe lightning, jittering geometry."
+
+  AudioBible:
+    Music:
+      Intro: "Short orchestral jingle synced to lamp hops."
+      Home: "Soft cozy motif."
+      Quest/Storm: "Playful-to-tense build, then orchestral action."
+      Victory: "Warm triumphant resolution."
+      End: "Gentle final chord + tiny stinger."
+    SFX:
+      TheoProps: "Plastic clacks, toy taps, light foot scuffs."
+      Dragon: "Deep roars and rumbles (no horror screams)."
+      Magic: "Electric hum swirl + punchy stomp impact."
+
+  Dialogue:
+    RequiredLines:
+      - Speaker: Theo
+        Line: "Mom, Dad, I am going outside to fight the evil dragon that is destroying the neighborhood."
+      - Speaker: Theo
+        Line: "BAD DRAGON!"
+      - Speaker: BlueBird
+        Line: "Thanks Theo! You saved us all!"
+      - Speaker: Theo
+        Line: "What's for dinner, Mom?"
+      - Speaker: Jordie
+        Line: "macaroni and cheese."
+    DeliveryNotes: |
+      Dialogue should be clean and clearly audible, with a friendly animated-short cadence.
+      Avoid adding extra lines beyond the script.
+
+  TextOnScreen:
+    Rule: "Minimize on-screen text; only use the simple end title."
+    EndTitle:
+      Text: "The End"
+      Placement: "Centered"
+      Style: "Large, minimal, high-contrast, short hold"
+      Warning: "If text becomes garbled, shorten the hold and keep it extremely simple."
+
+  SafetyAndCleanliness:
+    FamilyFriendly: "No gore, no injury detail, no horror imagery."
+    Branding: "No logos, no recognizable studio marks, no readable signage."

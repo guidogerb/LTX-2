@@ -1,10 +1,12 @@
-import os
 import argparse
-import requests
 import hashlib
+import os
 from urllib.parse import urljoin, urlparse
+
+import requests
 from bs4 import BeautifulSoup
 from markdownify import markdownify as md
+from rich import print as rprint
 
 
 def get_filename_from_url(url, content):
@@ -14,7 +16,7 @@ def get_filename_from_url(url, content):
     if not ext:
         ext = ".jpg"
     file_hash = hashlib.md5(content).hexdigest()[:8]
-    safe_name = "".join([c for c in name if c.isalnum() or c in (' ', '-', '_')]).strip()
+    safe_name = "".join([c for c in name if c.isalnum() or c in (" ", "-", "_")]).strip()
     if not safe_name:
         safe_name = "image"
     return f"{safe_name}_{file_hash}{ext}"
@@ -22,7 +24,10 @@ def get_filename_from_url(url, content):
 
 def download_resource(url, base_url, media_folder):
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+            "(KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
+        )
     }
     try:
         abs_url = urljoin(base_url, url)
@@ -30,10 +35,10 @@ def download_resource(url, base_url, media_folder):
         response.raise_for_status()
         filename = get_filename_from_url(abs_url, response.content)
         file_path = os.path.join(media_folder, filename)
-        with open(file_path, 'wb') as f:
+        with open(file_path, "wb") as f:
             f.write(response.content)
         return filename
-    except Exception as e:
+    except Exception:
         # Silently fail on bad images or print warning
         return None
 
@@ -44,47 +49,50 @@ def scrape_page_to_markdown(url, output_folder="output"):
     os.makedirs(media_path, exist_ok=True)
 
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+            "(KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
+        )
     }
 
-    print(f"Fetching {url}...")
+    rprint(f"Fetching {url}...")
     try:
         response = requests.get(url, headers=headers, timeout=15)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching page: {e}")
+        rprint(f"Error fetching page: {e}")
         return
 
-    soup = BeautifulSoup(response.content, 'html.parser')
+    soup = BeautifulSoup(response.content, "html.parser")
 
-    for tag in soup(['script', 'style', 'noscript', 'iframe', 'svg']):
+    for tag in soup(["script", "style", "noscript", "iframe", "svg"]):
         tag.decompose()
 
-    print("Processing images...")
-    images = soup.find_all('img')
+    rprint("Processing images...")
+    images = soup.find_all("img")
 
     for img in images:
-        src = img.get('src')
+        src = img.get("src")
         if not src:
             continue
         local_filename = download_resource(src, url, media_path)
         if local_filename:
-            img['src'] = f"{media_folder_name}/{local_filename}"
-            if img.has_attr('srcset'):
-                del img['srcset']
+            img["src"] = f"{media_folder_name}/{local_filename}"
+            if img.has_attr("srcset"):
+                del img["srcset"]
 
-    print("Converting to Markdown...")
+    rprint("Converting to Markdown...")
     markdown_content = md(str(soup), heading_style="ATX")
 
     page_title = soup.title.string if soup.title else "scraped_page"
-    safe_title = "".join([c for c in page_title if c.isalnum() or c in (' ', '-', '_')]).strip()
+    safe_title = "".join([c for c in page_title if c.isalnum() or c in (" ", "-", "_")]).strip()
     output_filename = f"{safe_title}.md"
     output_path = os.path.join(output_folder, output_filename)
 
-    with open(output_path, 'w', encoding='utf-8') as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         f.write(markdown_content)
 
-    print(f"Success! Saved to {output_path}")
+    rprint(f"Success! Saved to {output_path}")
 
 
 if __name__ == "__main__":

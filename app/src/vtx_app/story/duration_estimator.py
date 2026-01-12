@@ -1,16 +1,28 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
 from typing import Any
 
-
 _READ_HOLD_KEYWORDS = [
-    "read", "readable", "inscription", "plaque", "lettering", "caption", "text on", "clearly readable"
+    "read",
+    "readable",
+    "inscription",
+    "plaque",
+    "lettering",
+    "caption",
+    "text on",
+    "clearly readable",
 ]
 
 _SLOW_KEYWORDS = [
-    "slow", "lingers", "hold", "pensive", "smoke spirals", "volumetric", "eerie", "quiet"
+    "slow",
+    "lingers",
+    "hold",
+    "pensive",
+    "smoke spirals",
+    "volumetric",
+    "eerie",
+    "quiet",
 ]
 
 
@@ -44,7 +56,7 @@ def estimate_seconds(clip_spec: dict[str, Any]) -> float:
     max_s = float(dur.get("max_seconds", 15) or 15)
 
     # Keyword nudges (try to respect 'hold long enough to read' moments)
-    prompt_pos = ((clip_spec.get("prompt") or {}).get("positive") or "")
+    prompt_pos = (clip_spec.get("prompt") or {}).get("positive") or ""
     prompt_lc = prompt_pos.lower()
 
     if any(k in prompt_lc for k in _READ_HOLD_KEYWORDS):

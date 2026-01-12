@@ -1,0 +1,86 @@
+version: 1
+acts:
+- act: 1
+  title: The Discovery
+  scenes:
+  - scene: 1
+    title: An Ordinary Day
+    beats:
+    - Theo rides his bike through the neighborhood.
+    - He greets neighbors and pets a friendly dog.
+    - Theo notices the abandoned lot looking unusually eerie.
+  - scene: 2
+    title: The Mysterious Sight
+    beats:
+    - Theo peers through the fence of the abandoned lot.
+    - He sees smoke rising and hears a low growl.
+    - Theo spots the dragon's tail disappearing into the shadows.
+  - scene: 3
+    title: Dismissed Warnings
+    beats:
+    - Theo rushes home to tell his parents about the dragon.
+    - His parents laugh it off, thinking it's a game.
+    - Theo's friends gather in his room, intrigued by his story.
+- act: 2
+  title: The Plan
+  scenes:
+  - scene: 1
+    title: Gathering Allies
+    beats:
+    - Theo shares his plan with his friends in a treehouse.
+    - Each friend brings a unique skill to the team.
+    - They create a map of the neighborhood, marking the dragon's lair.
+  - scene: 2
+    title: Preparing for Battle
+    beats:
+    - 'The group collects supplies: ropes, flashlights, and snacks.'
+    - Theo's friend, an aspiring inventor, builds a makeshift dragon trap.
+    - They practice sneaking through the neighborhood undetected.
+  - scene: 3
+    title: First Encounter
+    beats:
+    - The group approaches the abandoned lot at dusk.
+    - They hear the dragon's roar and see its fiery breath.
+    - Theo bravely steps forward, trying to communicate with the dragon.
+- act: 3
+  title: The Confrontation
+  scenes:
+  - scene: 1
+    title: Facing the Dragon
+    beats:
+    - Theo and his friends set the trap in the lot.
+    - The dragon emerges, towering and intimidating.
+    - Theo uses a flashlight to signal the dragon, drawing its attention.
+  - scene: 2
+    title: Outsmarting the Beast
+    beats:
+    - The dragon chases the group through the lot.
+    - Theo leads it into the trap, which momentarily holds it.
+    - The friends work together to distract and confuse the dragon.
+  - scene: 3
+    title: Uncovering Strengths
+    beats:
+    - Theo realizes the dragon is drawn to music.
+    - He plays a tune on his harmonica, calming the dragon.
+    - The dragon reveals a softer side, showing it was misunderstood.
+- act: 4
+  title: Resolution
+  scenes:
+  - scene: 1
+    title: A New Understanding
+    beats:
+    - Theo and the dragon reach a peaceful agreement.
+    - The dragon agrees to leave the neighborhood in peace.
+    - Theo's friends celebrate their victory and newfound friendship.
+  - scene: 2
+    title: Heroes of the Neighborhood
+    beats:
+    - The kids return home, hailed as heroes by their peers.
+    - Theo's parents apologize for doubting him, proud of his bravery.
+    - The neighborhood feels safer and more magical than before.
+  - scene: 3
+    title: Looking to the Future
+    beats:
+    - Theo and his friends plan their next adventure.
+    - The dragon is seen flying off into the sunset.
+    - Theo smiles, knowing the magic of the world is real.

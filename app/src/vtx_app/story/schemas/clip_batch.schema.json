@@ -1,0 +1,27 @@
+{
+  "type": "object",
+  "properties": {
+    "clips": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "clip_id": { "type": "string" },
+          "prompt": {
+            "type": "object",
+            "properties": {
+              "positive": { "type": "string" },
+              "negative": { "type": "string" }
+            },
+            "required": ["positive"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["clip_id", "prompt"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["clips"],
+  "additionalProperties": false
+}

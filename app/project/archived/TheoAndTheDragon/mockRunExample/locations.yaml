@@ -1,0 +1,79 @@
+Version: 1.0
+Project: "Theo vs. The Dragon (Retro CG Short)"
+LocationGuide:
+  GeneralNotes: |
+    Locations should feel like early-era CG sets: clean geometry, readable layout, slightly simplified textures,
+    and warm family-friendly lighting. Avoid modern signage, brand logos, and clutter that blocks key action.
+
+Locations:
+  Neutral_Stage:
+    Type: "Abstract intro stage"
+    Description: |
+      A clean, neutral, studio-like stage used only for the lamp intro. Smooth floor and backdrop, subtle
+      film grain, simple lighting with soft shadows. No text, logos, or props.
+    Lighting: "Soft key light and gentle fill; warm lamp beam used for the wipe transition."
+    PromptAnchor: "clean neutral stage, simple backdrop, soft shadows, early-era 3D animation"
+
+  Home_LivingRoom:
+    Type: "Interior"
+    Description: |
+      Cozy suburban family room with a visible window casting warm morning light. Simple furnishings:
+      couch, side table, a small workstation for Alex, and space for Theo to stand heroically.
+      Jordie can be seen moving through chores with household items (laundry basket, towel, etc.).
+    Lighting: "Warm morning sunlight + soft interior fill; stable and consistent across shots."
+    Sound: "Soft room tone, faint household clinks, gentle morning ambience."
+    PromptAnchor: "cozy suburban living room, warm morning light, early-era CG, simple furniture"
+
+  Home_Entryway:
+    Type: "Interior (fixed camera end location)"
+    Description: |
+      The inside view of the front door and a small entry area where Theo removes his armor.
+      This area must remain uncluttered so the helmet and armor pile are clearly visible.
+      Used for the final comedic dinner beat and the closing end-card shot.
+    Lighting: "Warm indoor light, calm and steady."
+    Camera: "Fixed position, classic animated-short feel."
+    PromptAnchor: "fixed camera entryway, front door interior, warm light, armor pile visible"
+
+  Suburbia_Street_Day:
+    Type: "Exterior"
+    Description: |
+      A well-kept suburban neighborhood street: clean sidewalks, trimmed lawns, simple mailboxes,
+      tidy houses, and a bright pleasant daytime sky. Minimal pedestrians and vehicles (prefer none).
+    Lighting: "Bright daytime sun, soft shadows."
+    Sound: "Birds chirping, light breeze, distant neighborhood quiet."
+    PromptAnchor: "well-kept suburbia street, bright daytime, tidy lawns, early-era CG"
+
+  Suburbia_Street_Day_to_Overcast:
+    Type: "Exterior (transition mood)"
+    Description: |
+      Same street as Suburbia_Street_Day, but the sky gradually shifts as clouds gather.
+      The light cools and dims in a gradual, readable way.
+    Lighting: "Daylight cooling into overcast; no sudden jump to night."
+    PromptAnchor: "suburban street, clouds gathering, gradual dimming, readable mood shift"
+
+  Suburbia_Street_Storm:
+    Type: "Exterior (combat stage)"
+    Description: |
+      The same street now under dramatic gray storm clouds. The dragon descends overhead, but the
+      staging must remain readable: open street space, no crowds, minimal debris.
+      Fire and lightning effects should be stylized and controlled (not full-frame chaos).
+    Lighting: "Overcast storm light with occasional warm flicker from dragon fire."
+    Sound: "Low thunder rumble, wind, dragon roars, orchestral action score."
+    PromptAnchor: "stormy suburbia street, dramatic clouds, controlled lightning, stylized fire"
+
+  Suburbia_Street_Storm_to_Clear:
+    Type: "Exterior (banishment resolution)"
+    Description: |
+      The vortex and lightning lift the dragon upward, then the storm collapses and clears quickly.
+      Keep the transformation smooth: dark clouds settle, then brighten back to normal daylight.
+    Lighting: "Storm -> bright sunbeams; avoid strobe effects."
+    PromptAnchor: "vortex in sky, lightning flicker, clouds clearing, sun returning"
+
+  Suburbia_Street_Clear:
+    Type: "Exterior (peace restored)"
+    Description: |
+      The street is restored to its calm, bright state. Theo is lit by soft sunbeams and the three blue
+      birds can safely circle him. Keep colors cheerful and warm.
+    Lighting: "Bright daylight, gentle sunbeams, soft shadows."
+    Sound: "Birdsong returns, light breeze, warm triumphant music."
+    PromptAnchor: "sunny suburbia restored, bright colors, calm ambience"
