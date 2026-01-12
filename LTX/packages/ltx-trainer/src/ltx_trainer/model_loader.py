@@ -59,10 +59,7 @@ def load_transformer(
         Loaded LTXModel transformer
     """
     from ltx_core.loader.single_gpu_model_builder import SingleGPUModelBuilder
-    from ltx_core.model.transformer.model_configurator import (
-        LTXV_MODEL_COMFY_RENAMING_MAP,
-        LTXModelConfigurator,
-    )
+    from ltx_core.model.transformer.model_configurator import LTXV_MODEL_COMFY_RENAMING_MAP, LTXModelConfigurator
 
     return SingleGPUModelBuilder(
         model_path=str(checkpoint_path),

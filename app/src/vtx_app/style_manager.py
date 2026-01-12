@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import Any, Optional
 
 import yaml
-
 from vtx_app.config.settings import Settings
 
 
@@ -18,9 +17,7 @@ class StyleManager:
         self.root = Settings.from_env().app_home / "tags" / "style"
         self.root.mkdir(parents=True, exist_ok=True)
 
-    def save_style(
-        self, name: str, project_root: Path, description: str | None = None
-    ) -> Path:
+    def save_style(self, name: str, project_root: Path, description: str | None = None) -> Path:
         """Extracts style config from a project and saves it as a style preset."""
         # Load source files
         style_bible_path = project_root / "prompts" / "style_bible.yaml"
@@ -43,9 +40,7 @@ class StyleManager:
                 "description": description or "",
             },
             "style_bible": style_bible.get("StyleBible", {}),
-            "resources": {
-                "bundles": (loras.get("bundles") or {}).get("civitai_candidates", [])
-            },
+            "resources": {"bundles": (loras.get("bundles") or {}).get("civitai_candidates", [])},
         }
 
         out_path = self.root / f"{name}.yaml"

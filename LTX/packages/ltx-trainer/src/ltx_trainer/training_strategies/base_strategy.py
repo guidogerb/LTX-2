@@ -12,11 +12,7 @@ import torch
 from pydantic import BaseModel, ConfigDict, Field
 from torch import Tensor
 
-from ltx_core.components.patchifiers import (
-    AudioPatchifier,
-    VideoLatentPatchifier,
-    get_pixel_coords,
-)
+from ltx_core.components.patchifiers import AudioPatchifier, VideoLatentPatchifier, get_pixel_coords
 from ltx_core.model.transformer.modality import Modality
 from ltx_core.types import AudioLatentShape, SpatioTemporalScaleFactors, VideoLatentShape
 from ltx_trainer.timestep_samplers import TimestepSampler

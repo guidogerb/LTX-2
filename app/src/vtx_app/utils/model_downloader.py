@@ -7,9 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import requests
-from rich.progress import (BarColumn, DownloadColumn, Progress, TextColumn,
-                           TimeRemainingColumn, TransferSpeedColumn)
-
+from rich.progress import BarColumn, DownloadColumn, Progress, TextColumn, TimeRemainingColumn, TransferSpeedColumn
 from vtx_app.config.settings import Settings
 
 
@@ -60,9 +58,7 @@ class ModelDownloader:
         path_str = os.getenv(env_var_name)
 
         if not path_str:
-            print(
-                f"[yellow]Skipping download for {env_var_name}: Variable not set.[/yellow]"
-            )
+            print(f"[yellow]Skipping download for {env_var_name}: Variable not set.[/yellow]")
             return None
 
         path = Path(path_str)
@@ -72,18 +68,14 @@ class ModelDownloader:
         # 2. Find the spec
         spec = next((m for m in KNOWN_MODELS if m.env_var_name == env_var_name), None)
         if not spec:
-            print(
-                f"[red]Model missing at {path} and no download spec found for {env_var_name}.[/red]"
-            )
+            print(f"[red]Model missing at {path} and no download spec found for {env_var_name}.[/red]")
             raise FileNotFoundError(f"Missing model: {path}")
 
         # 3. Download
         return self._download_and_verify(spec, path)
 
     def _download_and_verify(self, spec: ModelSpec, dest: Path) -> Path:
-        print(
-            f"[bold cyan]Downloading missing model for {spec.env_var_name}...[/bold cyan]"
-        )
+        print(f"[bold cyan]Downloading missing model for {spec.env_var_name}...[/bold cyan]")
         dest.parent.mkdir(parents=True, exist_ok=True)
 
         # Prepare headers (e.g. for CivitAI or HF Auth)
@@ -115,9 +107,7 @@ class ModelDownloader:
                     "•",
                     TimeRemainingColumn(),
                 ) as progress:
-                    task = progress.add_task(
-                        "download", filename=spec.filename, total=total_size
-                    )
+                    task = progress.add_task("download", filename=spec.filename, total=total_size)
                     with open(temp_dest, "wb") as f:
                         for chunk in r.iter_content(chunk_size=8192):
                             f.write(chunk)
@@ -127,9 +117,7 @@ class ModelDownloader:
             print("Verifying SHA256...")
             file_hash = self._calculate_sha256(temp_dest)
             if spec.sha256 != "SKIP" and file_hash != spec.sha256:
-                print(
-                    f"[red]Hash mismatch! Expected {spec.sha256}, got {file_hash}[/red]"
-                )
+                print(f"[red]Hash mismatch! Expected {spec.sha256}, got {file_hash}[/red]")
                 # In strict mode we might delete. specific use case might want to keep it.
                 # raising error to trigger retry or stop.
                 raise ValueError(f"Hash mismatch for {spec.filename}")

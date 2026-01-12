@@ -3,7 +3,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 import yaml
 from typer.testing import CliRunner
-
 from vtx_app.cli import app
 from vtx_app.style_manager import StyleManager
 
@@ -37,10 +36,7 @@ def test_create_style(tmp_path, mock_style_manager):
     )
 
     # Mock ProjectLoader to return this path
-    with patch("vtx_app.cli.Registry.load"), patch(
-        "vtx_app.cli.ProjectLoader"
-    ) as MockLoader:
-
+    with patch("vtx_app.cli.Registry.load"), patch("vtx_app.cli.ProjectLoader") as MockLoader:
         mock_proj = MagicMock()
         mock_proj.root = proj_root
         MockLoader.return_value.load.return_value = mock_proj
@@ -73,14 +69,13 @@ def test_create_movie_automation(tmp_path, mock_style_manager):
     # In cli.py: from vtx_app.wizards.proposal import ProposalGenerator
     # So we patch vtx_app.wizards.proposal.ProposalGenerator.
 
-    with patch("vtx_app.cli.Settings") as MockSettings, patch(
-        "vtx_app.cli.ProposalGenerator"
-    ) as MockPropGen, patch("vtx_app.registry.db.Registry.load"), patch(
-        "vtx_app.cli.ProjectLoader"
-    ) as MockLoader, patch(
-        "vtx_app.cli.StoryBuilder"
-    ) as MockBuilder:
-
+    with (
+        patch("vtx_app.cli.Settings") as MockSettings,
+        patch("vtx_app.cli.ProposalGenerator") as MockPropGen,
+        patch("vtx_app.registry.db.Registry.load"),
+        patch("vtx_app.cli.ProjectLoader") as MockLoader,
+        patch("vtx_app.cli.StoryBuilder") as MockBuilder,
+    ):
         # 1. Settings
         mock_sets = MagicMock()
         MockSettings.from_env.return_value = mock_sets
@@ -157,21 +152,15 @@ def test_create_style_with_description(tmp_path, mock_style_manager):
     proj_root.mkdir(parents=True)
     (proj_root / "prompts").mkdir()
 
-    (proj_root / "prompts" / "style_bible.yaml").write_text(
-        yaml.safe_dump({"StyleBible": {}})
-    )
+    (proj_root / "prompts" / "style_bible.yaml").write_text(yaml.safe_dump({"StyleBible": {}}))
 
-    with patch("vtx_app.cli.Registry.load"), patch(
-        "vtx_app.cli.ProjectLoader"
-    ) as MockLoader:
+    with patch("vtx_app.cli.Registry.load"), patch("vtx_app.cli.ProjectLoader") as MockLoader:
         mock_proj = MagicMock()
         mock_proj.root = proj_root
         MockLoader.return_value.load.return_value = mock_proj
 
         with patch("vtx_app.cli._get_slug", return_value="p_desc"):
-            result = runner.invoke(
-                app, ["create-style", "desc_style", "p_desc", "A cool style"]
-            )
+            result = runner.invoke(app, ["create-style", "desc_style", "p_desc", "A cool style"])
 
             assert result.exit_code == 0
             assert "Style 'desc_style' saved" in result.stdout
@@ -208,9 +197,7 @@ def test_update_style_desc(tmp_path, mock_style_manager):
     """Test updating style description."""
     mgr = StyleManager()
     style_path = mgr.root / "to_update.yaml"
-    style_path.write_text(
-        yaml.safe_dump({"meta": {"name": "to_update", "description": "old"}})
-    )
+    style_path.write_text(yaml.safe_dump({"meta": {"name": "to_update", "description": "old"}}))
 
     assert style_path.exists()
 
@@ -234,18 +221,14 @@ def test_workflow_commands(tmp_path):
     proj_root.mkdir(parents=True)
     (proj_root / "prompts" / "clips").mkdir(parents=True)
 
-    (proj_root / "prompts" / "clips" / "C01__desc.yaml").write_text(
-        "render:\n  width: 1920\n  height: 1080\n"
-    )
+    (proj_root / "prompts" / "clips" / "C01__desc.yaml").write_text("render:\n  width: 1920\n  height: 1080\n")
 
     # Mock RenderController
     with patch("vtx_app.cli.RenderController") as MockController:
         mock_inst = MockController.return_value
 
         # Mock Registry/Loader
-        with patch("vtx_app.cli.Registry.load"), patch(
-            "vtx_app.cli.ProjectLoader"
-        ) as MockLoader:
+        with patch("vtx_app.cli.Registry.load"), patch("vtx_app.cli.ProjectLoader") as MockLoader:
             mock_proj = MagicMock()
             mock_proj.root = proj_root
             MockLoader.return_value.load.return_value = mock_proj
@@ -290,25 +273,19 @@ def test_assemble_command(tmp_path):
     (proj_root / "story").mkdir(parents=True)
     (proj_root / "story" / "04_shotlist.yaml").write_text("shots: []")
 
-    with patch("vtx_app.cli.Registry.load"), patch(
-        "vtx_app.cli.ProjectLoader"
-    ) as MockLoader:
+    with patch("vtx_app.cli.Registry.load"), patch("vtx_app.cli.ProjectLoader") as MockLoader:
         mock_proj = MagicMock()
         mock_proj.root = proj_root
         MockLoader.return_value.load.return_value = mock_proj
 
-        with patch(
-            "vtx_app.cli.Assembler"
-        ) as MockAsm:  # It is imported locally in cli function
+        with patch("vtx_app.cli.Assembler") as MockAsm:  # It is imported locally in cli function
             # The cli imports Assembler inside the function, so we patch where it is used.
             # vtx_app.render.assembler.Assembler
 
             result = runner.invoke(app, ["assemble", "asm_proj"])
             assert result.exit_code == 0
 
-            MockAsm.return_value.assemble.assert_called_with(
-                clips_dir=proj_root / "renders" / "high-res"
-            )
+            MockAsm.return_value.assemble.assert_called_with(clips_dir=proj_root / "renders" / "high-res")
 
 
 def test_create_movie_all(tmp_path):
@@ -325,18 +302,15 @@ def test_create_movie_all(tmp_path):
     # 3. Assemble (Assembler)
 
     # Note: We must patch the source modules because CLI command imports them locally
-    with patch("vtx_app.registry.db.Registry.load"), patch(
-        "vtx_app.cli.ProjectLoader"
-    ) as MockLoader, patch("vtx_app.config.settings.Settings.from_env"), patch(
-        "vtx_app.cli.ProposalGenerator"
-    ) as MockPropGen, patch(
-        "vtx_app.cli.StoryBuilder"
-    ) as MockBuilder, patch(
-        "vtx_app.cli.RenderController"
-    ) as MockController, patch(
-        "vtx_app.cli.Assembler"
-    ) as MockAsm:
-
+    with (
+        patch("vtx_app.registry.db.Registry.load"),
+        patch("vtx_app.cli.ProjectLoader") as MockLoader,
+        patch("vtx_app.config.settings.Settings.from_env"),
+        patch("vtx_app.cli.ProposalGenerator") as MockPropGen,
+        patch("vtx_app.cli.StoryBuilder") as MockBuilder,
+        patch("vtx_app.cli.RenderController") as MockController,
+        patch("vtx_app.cli.Assembler") as MockAsm,
+    ):
         # Setup mocks
         MockPropGen.return_value.create_proposal.return_value = {"meta": {}}
 
@@ -360,9 +334,7 @@ render:
         MockLoader.return_value.create_project.return_value = mock_proj.root
 
         # Invoke
-        result = runner.invoke(
-            app, ["create-movie-all", "all_full_movie", "A full movie"]
-        )
+        result = runner.invoke(app, ["create-movie-all", "all_full_movie", "A full movie"])
 
         print(result.stdout)
 

@@ -7,7 +7,6 @@ from unittest.mock import ANY, MagicMock, patch
 import pytest
 import yaml
 from typer.testing import CliRunner
-
 from vtx_app.cli import app
 
 runner = CliRunner()
@@ -23,45 +22,32 @@ class MockSettingsData:
 def mock_deps():
     # We need to patch sources for local imports, AND global references in cli.py
 
-    with patch("vtx_app.registry.db.Registry") as MockRegistrySource, patch(
-        "vtx_app.project.loader.ProjectLoader"
-    ) as MockLoaderSource, patch(
-        "vtx_app.story.openai_builder.StoryBuilder"
-    ) as MockBuilderSource, patch(
-        "vtx_app.render.renderer.RenderController"
-    ) as MockRendererSource, patch(
-        "vtx_app.config.settings.Settings"
-    ) as MockSettingsSource, patch(
-        "vtx_app.config.env_layers.load_env"
-    ) as MockLoadEnvSource, patch(
-        "vtx_app.render.assembler.Assembler"
-    ) as MockAssembler, patch(
-        "vtx_app.style_manager.StyleManager"
-    ) as MockStyleMgr, patch(
-        "vtx_app.producer.Director"
-    ) as MockDirector:
-
+    with (
+        patch("vtx_app.registry.db.Registry") as MockRegistrySource,
+        patch("vtx_app.project.loader.ProjectLoader") as MockLoaderSource,
+        patch("vtx_app.story.openai_builder.StoryBuilder") as MockBuilderSource,
+        patch("vtx_app.render.renderer.RenderController") as MockRendererSource,
+        patch("vtx_app.config.settings.Settings") as MockSettingsSource,
+        patch("vtx_app.config.env_layers.load_env") as MockLoadEnvSource,
+        patch("vtx_app.render.assembler.Assembler") as MockAssembler,
+        patch("vtx_app.style_manager.StyleManager") as MockStyleMgr,
+        patch("vtx_app.producer.Director") as MockDirector,
+    ):
         MockProposalGen = MagicMock()
 
         # Apply these mocks to vtx_app.cli globals as well
-        with patch("vtx_app.cli.Registry", MockRegistrySource), patch(
-            "vtx_app.cli.ProjectLoader", MockLoaderSource
-        ), patch("vtx_app.cli.StoryBuilder", MockBuilderSource), patch(
-            "vtx_app.cli.RenderController", MockRendererSource
-        ), patch(
-            "vtx_app.cli.Settings", MockSettingsSource
-        ), patch(
-            "vtx_app.cli.load_env", MockLoadEnvSource
-        ), patch(
-            "vtx_app.cli.StyleManager", MockStyleMgr
-        ), patch(
-            "vtx_app.cli.Assembler", MockAssembler
-        ), patch(
-            "vtx_app.cli.Director", MockDirector
-        ), patch(
-            "vtx_app.cli.ProposalGenerator", MockProposalGen
+        with (
+            patch("vtx_app.cli.Registry", MockRegistrySource),
+            patch("vtx_app.cli.ProjectLoader", MockLoaderSource),
+            patch("vtx_app.cli.StoryBuilder", MockBuilderSource),
+            patch("vtx_app.cli.RenderController", MockRendererSource),
+            patch("vtx_app.cli.Settings", MockSettingsSource),
+            patch("vtx_app.cli.load_env", MockLoadEnvSource),
+            patch("vtx_app.cli.StyleManager", MockStyleMgr),
+            patch("vtx_app.cli.Assembler", MockAssembler),
+            patch("vtx_app.cli.Director", MockDirector),
+            patch("vtx_app.cli.ProposalGenerator", MockProposalGen),
         ):
-
             reg = MockRegistrySource.load.return_value
             loader = MockLoaderSource.return_value
 
@@ -145,17 +131,13 @@ def test_review_not_found(mock_deps):
 def test_produce(mock_deps):
     result = runner.invoke(app, ["produce", "slug", "-c", "concept"])
     assert result.exit_code == 0
-    mock_deps["director"].produce.assert_called_with(
-        slug="slug", concept="concept", title=None, auto_render=False
-    )
+    mock_deps["director"].produce.assert_called_with(slug="slug", concept="concept", title=None, auto_render=False)
 
 
 def test_produce_auto_render(mock_deps):
     result = runner.invoke(app, ["produce", "slug", "-c", "concept", "--render"])
     assert result.exit_code == 0
-    mock_deps["director"].produce.assert_called_with(
-        slug="slug", concept="concept", title=None, auto_render=True
-    )
+    mock_deps["director"].produce.assert_called_with(slug="slug", concept="concept", title=None, auto_render=True)
 
 
 def test_create_style(mock_deps):
@@ -185,9 +167,7 @@ def test_render_reviews(mock_deps):
     proj = mock_deps["project"]
     proj.root = Path("/tmp/root")
 
-    with patch("pathlib.Path.exists") as mock_exists, patch(
-        "pathlib.Path.glob"
-    ) as mock_glob:
+    with patch("pathlib.Path.exists") as mock_exists, patch("pathlib.Path.glob") as mock_glob:
         mock_exists.return_value = True
         p1 = MagicMock()
         p1.name = "c1.yaml"
@@ -210,9 +190,7 @@ def test_render_review(mock_deps):
 
 
 def test_render_full(mock_deps):
-    with patch("pathlib.Path.exists") as mock_exists, patch(
-        "pathlib.Path.glob"
-    ) as mock_glob:
+    with patch("pathlib.Path.exists") as mock_exists, patch("pathlib.Path.glob") as mock_glob:
         mock_exists.return_value = True
         p1 = MagicMock()
         p1.name = "c1.yaml"
@@ -238,9 +216,7 @@ def test_create_movie(mock_deps):
     mock_deps["proposal_gen"].create_proposal.return_value = {
         "meta": {"slug": "slug", "title": "Title"},
         "story": {"brief": "Brief"},
-        "resources": {
-            "suggested_loras": [{"name": "L1", "url": "u1", "download_url": "d1"}]
-        },
+        "resources": {"suggested_loras": [{"name": "L1", "url": "u1", "download_url": "d1"}]},
     }
 
     with runner.isolated_filesystem():
@@ -286,9 +262,7 @@ def test_create_movie_merge_loras(mock_deps):
     mock_deps["proposal_gen"].create_proposal.return_value = {
         "meta": {"slug": "slug"},
         "story": {},
-        "resources": {
-            "suggested_loras": [{"name": "L2", "url": "u", "download_url": "d"}]
-        },
+        "resources": {"suggested_loras": [{"name": "L2", "url": "u", "download_url": "d"}]},
     }
 
     with runner.isolated_filesystem():
@@ -322,10 +296,10 @@ def test_create_movie_all(mock_deps):
         proj.root = cwd / "slug"
         mock_deps["loader"].load.return_value = proj
 
-        with patch.object(Path, "glob", return_value=[Path("c1.yaml")]), patch.object(
-            Path, "exists", return_value=True
+        with (
+            patch.object(Path, "glob", return_value=[Path("c1.yaml")]),
+            patch.object(Path, "exists", return_value=True),
         ):
-
             result = runner.invoke(app, ["create-movie-all", "slug", "prompt"])
             assert result.exit_code == 0
             mock_deps["renderer"].render_clip.assert_called()
@@ -336,9 +310,7 @@ def test_create_movie_all(mock_deps):
 
 
 def test_projects_list(mock_deps):
-    mock_deps["reg"].list_projects.return_value = [
-        {"slug": "p1", "title": "t1", "path": "path"}
-    ]
+    mock_deps["reg"].list_projects.return_value = [{"slug": "p1", "title": "t1", "path": "path"}]
     result = runner.invoke(app, ["projects", "list"])
     assert result.exit_code == 0
     assert "p1" in result.stdout
@@ -361,9 +333,7 @@ def test_projects_propose(mock_deps):
 def test_projects_create_from_plan(mock_deps):
     with runner.isolated_filesystem():
         p = Path("plan.yaml")
-        p.write_text(
-            yaml.dump({"meta": {"slug": "s", "title": "t"}, "story": {"brief": "b"}})
-        )
+        p.write_text(yaml.dump({"meta": {"slug": "s", "title": "t"}, "story": {"brief": "b"}}))
 
         cwd = Path.cwd()
         mock_deps["loader"].create_project.return_value = cwd / "s"
@@ -393,9 +363,7 @@ def test_project_export(mock_deps):
         proj_dir.mkdir()
         mock_deps["project"].root = proj_dir.resolve()
 
-        result = runner.invoke(
-            app, ["project", "export", "slug", "--output", "out.zip"]
-        )
+        result = runner.invoke(app, ["project", "export", "slug", "--output", "out.zip"])
         assert result.exit_code == 0
         assert Path("out.zip").exists()
 
@@ -422,9 +390,7 @@ def test_story_commands(mock_deps):
 def test_story_clips(mock_deps):
     result = runner.invoke(app, ["story", "clips", "slug", "--overwrite"])
     assert result.exit_code == 0
-    mock_deps["builder"].generate_clip_specs.assert_called_with(
-        overwrite=True, act=None, scene=None
-    )
+    mock_deps["builder"].generate_clip_specs.assert_called_with(overwrite=True, act=None, scene=None)
 
 
 # --- Render App ---
@@ -434,10 +400,11 @@ def test_render_status(mock_deps):
     proj = mock_deps["project"]
     proj.root = Path("/tmp/proj")
 
-    with patch("pathlib.Path.exists") as mock_exists, patch(
-        "pathlib.Path.glob"
-    ) as mock_glob, patch("pathlib.Path.read_text"):
-
+    with (
+        patch("pathlib.Path.exists") as mock_exists,
+        patch("pathlib.Path.glob") as mock_glob,
+        patch("pathlib.Path.read_text"),
+    ):
         mock_exists.return_value = True
         p = MagicMock()
         p.stem = "clip1"
@@ -459,10 +426,11 @@ def test_render_approve(mock_deps):
     proj = mock_deps["project"]
     proj.root = Path("/tmp/proj")
 
-    with patch("pathlib.Path.exists") as mock_exists, patch(
-        "pathlib.Path.read_text"
-    ) as mock_read, patch("pathlib.Path.write_text") as mock_write:
-
+    with (
+        patch("pathlib.Path.exists") as mock_exists,
+        patch("pathlib.Path.read_text") as mock_read,
+        patch("pathlib.Path.write_text") as mock_write,
+    ):
         mock_exists.return_value = True
         mock_read.return_value = "render: {approved: false}"
 
@@ -511,9 +479,7 @@ def test_review_platforms(mock_deps):
             m_run.assert_called_with(["open", ANY])
 
         # Win32
-        with patch("sys.platform", "win32"), patch(
-            "os.startfile", create=True
-        ) as m_start:
+        with patch("sys.platform", "win32"), patch("os.startfile", create=True) as m_start:
             runner.invoke(app, ["review", "s"])
             m_start.assert_called()
 
@@ -534,27 +500,20 @@ def test_render_reviews_no_clips(mock_deps):
         assert "No clips found" in res.stdout
 
     # CASE 2: clips dir exists but empty
-    with patch("pathlib.Path.exists", return_value=True), patch(
-        "pathlib.Path.glob", return_value=[]
-    ):
+    with patch("pathlib.Path.exists", return_value=True), patch("pathlib.Path.glob", return_value=[]):
         res = runner.invoke(app, ["render-reviews", "s"])
         assert "No clips found" in res.stdout
 
 
 def test_render_reviews_exception(mock_deps):
-    with patch("pathlib.Path.exists", return_value=True), patch(
-        "pathlib.Path.glob", return_value=[Path("c1.yaml")]
-    ):
-
+    with patch("pathlib.Path.exists", return_value=True), patch("pathlib.Path.glob", return_value=[Path("c1.yaml")]):
         mock_deps["renderer"].render_clip.side_effect = Exception("Boom")
         res = runner.invoke(app, ["render-reviews", "s"])
         assert "Failed to render" in res.stdout
 
 
 def test_render_full_exception(mock_deps):
-    with patch("pathlib.Path.exists", return_value=True), patch(
-        "pathlib.Path.glob", return_value=[Path("c1.yaml")]
-    ):
+    with patch("pathlib.Path.exists", return_value=True), patch("pathlib.Path.glob", return_value=[Path("c1.yaml")]):
         mock_deps["renderer"].render_clip.side_effect = Exception("Fail")
         res = runner.invoke(app, ["render-full", "s"])
         assert "Failed to render" in res.stdout
@@ -571,11 +530,14 @@ def test_render_approve_warning(mock_deps):
             return False
         return True
 
-    with patch("pathlib.Path.exists", autospec=True, side_effect=side_effect), patch(
-        "pathlib.Path.read_text",
-        return_value="render: {strategy: v2v}\noutputs: {mp4: out.mp4}",
-    ), patch("pathlib.Path.write_text"):
-
+    with (
+        patch("pathlib.Path.exists", autospec=True, side_effect=side_effect),
+        patch(
+            "pathlib.Path.read_text",
+            return_value="render: {strategy: v2v}\noutputs: {mp4: out.mp4}",
+        ),
+        patch("pathlib.Path.write_text"),
+    ):
         res = runner.invoke(app, ["render", "approve", "s", "c1", "--strategy", "v2v"])
         assert "Warning" in res.stdout
 

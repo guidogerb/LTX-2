@@ -3,14 +3,7 @@ This module provides a unified progress display for training and validation samp
 encapsulating all Rich progress bar logic in one place.
 """
 
-from rich.progress import (
-    BarColumn,
-    Progress,
-    TaskID,
-    TextColumn,
-    TimeElapsedColumn,
-    TimeRemainingColumn,
-)
+from rich.progress import BarColumn, Progress, TaskID, TextColumn, TimeElapsedColumn, TimeRemainingColumn
 
 
 class SamplingContext:

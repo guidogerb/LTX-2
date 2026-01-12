@@ -47,9 +47,7 @@ class Registry:
         conn.commit()
         return Registry(path=db_path, conn=conn)
 
-    def upsert_project(
-        self, *, project_id: str, slug: str, title: str, path: str, updated_at: str
-    ) -> None:
+    def upsert_project(self, *, project_id: str, slug: str, title: str, path: str, updated_at: str) -> None:
         self.conn.execute(
             "INSERT INTO projects(project_id, slug, title, path, updated_at) VALUES (?, ?, ?, ?, ?) "
             "ON CONFLICT(project_id) DO UPDATE SET "
@@ -59,9 +57,7 @@ class Registry:
         self.conn.commit()
 
     def list_projects(self) -> list[dict[str, Any]]:
-        cur = self.conn.execute(
-            "SELECT project_id, slug, title, path, updated_at FROM projects ORDER BY slug"
-        )
+        cur = self.conn.execute("SELECT project_id, slug, title, path, updated_at FROM projects ORDER BY slug")
         rows = cur.fetchall()
         return [
             {

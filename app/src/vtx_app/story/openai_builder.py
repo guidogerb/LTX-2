@@ -10,7 +10,6 @@ from typing import Any
 import yaml
 from openai import OpenAI
 from rich import print as rich_print
-
 from vtx_app.project.layout import Project
 
 
@@ -39,9 +38,7 @@ class StoryBuilder:
         # If missing, OpenAI() will raise.
         return OpenAI()
 
-    def _call_structured(
-        self, *, schema: dict[str, Any], messages: list[dict[str, str]]
-    ) -> dict[str, Any]:
+    def _call_structured(self, *, schema: dict[str, Any], messages: list[dict[str, str]]) -> dict[str, Any]:
         s = self.project.settings()
         client = self._client()
         completion = client.chat.completions.create(
@@ -147,12 +144,8 @@ Keep beats short and visual.
         schema = json.loads(schema_path.read_text())
 
         # Provide available keys for locations/characters so the model uses consistent identifiers.
-        chars = _load_yaml(self.project.root / "prompts" / "characters.yaml").get(
-            "characters", {}
-        )
-        locs = _load_yaml(self.project.root / "prompts" / "locations.yaml").get(
-            "locations", {}
-        )
+        chars = _load_yaml(self.project.root / "prompts" / "characters.yaml").get("characters", {})
+        locs = _load_yaml(self.project.root / "prompts" / "locations.yaml").get("locations", {})
 
         system = (
             "You are a director + cinematographer assistant. "
@@ -252,11 +245,7 @@ For each shot:
                 name = c.get("name", "Unknown")
                 chars_dict[name] = {"description": c.get("description", "")}
 
-            out_path.write_text(
-                yaml.safe_dump(
-                    {"version": 1, "characters": chars_dict}, sort_keys=False
-                )
-            )
+            out_path.write_text(yaml.safe_dump({"version": 1, "characters": chars_dict}, sort_keys=False))
         except Exception as e:
             rich_print(f"[red]Char Generation Error:[/red] {e}")
             if not out_path.exists():
@@ -289,9 +278,7 @@ For each shot:
                 name = loc.get("name", "Unknown")
                 locs_dict[name] = {"description": loc.get("description", "")}
 
-            out_path.write_text(
-                yaml.safe_dump({"version": 1, "locations": locs_dict}, sort_keys=False)
-            )
+            out_path.write_text(yaml.safe_dump({"version": 1, "locations": locs_dict}, sort_keys=False))
         except Exception as e:
             rich_print(f"[red]Loc Generation Error:[/red] {e}")
             if not out_path.exists():
@@ -389,9 +376,7 @@ For each shot:
         """
         shotlist_path = self.project.root / "story" / "04_shotlist.yaml"
         if not shotlist_path.exists():
-            raise FileNotFoundError(
-                "Missing story/04_shotlist.yaml. Run 'story shotlist' first."
-            )
+            raise FileNotFoundError("Missing story/04_shotlist.yaml. Run 'story shotlist' first.")
 
         shotlist = yaml.safe_load(shotlist_path.read_text()) or {}
         scenes = shotlist.get("scenes") or []
@@ -406,18 +391,11 @@ For each shot:
         self.project.settings()  # ensure env loaded
         style_profile = os.getenv("PROJECT_STYLE_PROFILE", "default")
         loras_profile = os.getenv("PROJECT_LORAS_PROFILE", "core")
-        pipeline_key = (
-            os.getenv("PROJECT_DEFAULT_PIPELINE")
-            or self.project.settings().default_pipeline
-        )
+        pipeline_key = os.getenv("PROJECT_DEFAULT_PIPELINE") or self.project.settings().default_pipeline
 
         fps = int(os.getenv("PROJECT_FPS", str(self.project.settings().default_fps)))
-        width = int(
-            os.getenv("PROJECT_WIDTH", str(self.project.settings().default_width))
-        )
-        height = int(
-            os.getenv("PROJECT_HEIGHT", str(self.project.settings().default_height))
-        )
+        width = int(os.getenv("PROJECT_WIDTH", str(self.project.settings().default_width)))
+        height = int(os.getenv("PROJECT_HEIGHT", str(self.project.settings().default_height)))
         max_seconds = float(self.project.settings().default_max_seconds)
 
         # Read prompt dictionaries for context
@@ -427,11 +405,7 @@ For each shot:
         loras_doc = _load_yaml(self.project.root / "prompts" / "loras.yaml")
 
         # Resolve LoRA bundle into clip.loras entries for determinism (optional but recommended)
-        bundles = (
-            (loras_doc.get("bundles") or {})
-            if isinstance(loras_doc.get("bundles"), dict)
-            else {}
-        )
+        bundles = (loras_doc.get("bundles") or {}) if isinstance(loras_doc.get("bundles"), dict) else {}
         bundle_items = bundles.get(loras_profile) or []
         if not isinstance(bundle_items, list):
             bundle_items = []
@@ -477,10 +451,10 @@ For each shot:
 
             user = f"""Project prompt bible (for context only; do not copy verbatim into each clip prompt):
 GLOBAL_PREFIX:
-{style_bible.get("global_prefix","")}
+{style_bible.get("global_prefix", "")}
 
 PROFILE_PREFIX[{style_profile}]:
-{(style_bible.get("profiles",{}) or {}).get(style_profile,{}).get("prefix","")}
+{(style_bible.get("profiles", {}) or {}).get(style_profile, {}).get("prefix", "")}
 
 Characters dictionary (keys -> descriptions):
 {json.dumps(chars_doc.get("characters", {}), indent=2)}
@@ -523,11 +497,7 @@ Clip spec requirements:
                 clips = []
 
             # Post-process + write
-            shot_map = {
-                (sh.get("clip_id") or ""): sh
-                for sh in scene_obj.get("shots") or []
-                if isinstance(sh, dict)
-            }
+            shot_map = {(sh.get("clip_id") or ""): sh for sh in scene_obj.get("shots") or [] if isinstance(sh, dict)}
 
             for clip in clips:
                 if not isinstance(clip, dict):
@@ -599,14 +569,12 @@ Clip spec requirements:
                         env_name = item.get("env")
                         weight = item.get("weight", 0.8)
                         if env_name:
-                            loras_list.append(
-                                {"env": env_name, "weight": float(weight)}
-                            )
+                            loras_list.append({"env": env_name, "weight": float(weight)})
                     if loras_list:
                         clip["loras"] = loras_list
 
                 outputs = clip.setdefault("outputs", {})
-                fname = f"{cid}__{_slugify(clip.get('title',''))}"
+                fname = f"{cid}__{_slugify(clip.get('title', ''))}"
                 outputs.setdefault("mp4", f"renders/clips/{fname}.mp4")
                 outputs.setdefault("json", f"renders/clips/{fname}.render.json")
 

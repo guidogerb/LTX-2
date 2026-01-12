@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import pytest
 from typer.testing import CliRunner
-
 from vtx_app.config.settings import Settings
 from vtx_app.tags_commands import tags_app
 from vtx_app.tags_manager import TagManager
@@ -69,9 +68,7 @@ def test_process_prompt(tag_manager):
     # Setup tags
     tag_manager.save_tag("style", "noir", {"prompt": "black and white, high contrast"})
     tag_manager.save_tag("shot", "wide", {"prompt": "wide angle shot"})
-    tag_manager.save_tag(
-        "meta", "only-desc", {"meta": {"description": "just description"}}
-    )
+    tag_manager.save_tag("meta", "only-desc", {"meta": {"description": "just description"}})
     tag_manager.save_tag("empty", "void", {})
 
     # Single replacement

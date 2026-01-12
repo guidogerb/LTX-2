@@ -13,7 +13,6 @@ import typer
 import yaml
 from rich import print as rich_print
 from rich.table import Table
-
 from vtx_app.config.env_layers import load_env
 from vtx_app.config.log import configure_logging
 from vtx_app.config.settings import Settings
@@ -121,12 +120,8 @@ def review(slug: str) -> None:
 @app.command("produce")
 def produce(
     slug: str = typer.Argument(..., help="Project slug"),
-    concept: str = typer.Option(
-        ..., "--concept", "-c", help="Short story brief/concept"
-    ),
-    title: str = typer.Option(
-        None, "--title", help="Project title (default: slugified)"
-    ),
+    concept: str = typer.Option(..., "--concept", "-c", help="Short story brief/concept"),
+    title: str = typer.Option(None, "--title", help="Project title (default: slugified)"),
     render: bool = typer.Option(False, "--render", help="Immediately run rendering"),
 ) -> None:
     """Automated movie production (Zero to Finished)."""
@@ -141,12 +136,8 @@ def produce(
 @app.command("create-style")
 def create_style(
     style_name: str = typer.Argument(..., help="Name of the new style"),
-    project: Optional[str] = typer.Argument(
-        None, help="Source project slug (default: current directory)"
-    ),
-    description: Optional[str] = typer.Argument(
-        None, help="Optional description of the style"
-    ),
+    project: Optional[str] = typer.Argument(None, help="Source project slug (default: current directory)"),
+    description: Optional[str] = typer.Argument(None, help="Optional description of the style"),
 ) -> None:
     """
     Extract a reusable style style from an existing project.
@@ -161,15 +152,11 @@ def create_style(
     out_path = mgr.save_style(style_name, proj.root, description=description)
 
     rich_print(f"[green]Style '{style_name}' saved to {out_path}[/green]")
-    rich_print(
-        f'Use it in a new proposal: vtx create-movie new_movie "[{style_name}] my movie idea..."'
-    )
+    rich_print(f'Use it in a new proposal: vtx create-movie new_movie "[{style_name}] my movie idea..."')
 
 
 @app.command("delete-style")
-def delete_style(
-    style_name: str = typer.Argument(..., help="Name of style to delete")
-) -> None:
+def delete_style(style_name: str = typer.Argument(..., help="Name of style to delete")) -> None:
     """Deletes a style from the global style registry."""
     mgr = StyleManager()
     if mgr.delete_style(style_name):
@@ -230,9 +217,7 @@ def render_reviews(
 
         rich_print(f"Rendering {cid}...")
         try:
-            controller.render_clip(
-                clip_id=cid, resolution_scale=0.5, output_dir=out_dir
-            )
+            controller.render_clip(clip_id=cid, resolution_scale=0.5, output_dir=out_dir)
         except Exception as e:
             rich_print(f"[red]Failed to render {cid}: {e}[/red]")
 
@@ -257,9 +242,7 @@ def render_review(
 
     rich_print(f"Rendering {clip_name} for review...")
     try:
-        controller.render_clip(
-            clip_id=clip_name, resolution_scale=0.5, output_dir=out_dir
-        )
+        controller.render_clip(clip_id=clip_name, resolution_scale=0.5, output_dir=out_dir)
     except Exception as e:
         rich_print(f"[red]Failed to render {clip_name}: {e}[/red]")
 
@@ -293,9 +276,7 @@ def render_full(
 
         rich_print(f"Rendering {cid}...")
         try:
-            controller.render_clip(
-                clip_id=cid, preset="final", resolution_scale=1.0, output_dir=out_dir
-            )
+            controller.render_clip(clip_id=cid, preset="final", resolution_scale=1.0, output_dir=out_dir)
         except Exception as e:
             print(f"[red]Failed to render {cid}: {e}[/red]")
 
@@ -316,9 +297,7 @@ def assemble(
         rich_print(f"Assembling from {high_res}...")
         asm.assemble(clips_dir=high_res)
     else:
-        rich_print(
-            "[yellow]High-res folder not found, assembling available clips...[/yellow]"
-        )
+        rich_print("[yellow]High-res folder not found, assembling available clips...[/yellow]")
         asm.assemble()
 
 
@@ -549,9 +528,7 @@ def create_movie_all(
 
         rich_print(f"Rendering {cid} (Full Res)...")
         try:
-            controller.render_clip(
-                clip_id=cid, preset="final", resolution_scale=1.0, output_dir=out_dir
-            )
+            controller.render_clip(clip_id=cid, preset="final", resolution_scale=1.0, output_dir=out_dir)
         except Exception as e:
             rich_print(f"[red]Failed to render {cid}: {e}[/red]")
 
@@ -562,9 +539,7 @@ def create_movie_all(
     if out_dir.exists():
         asm.assemble(clips_dir=out_dir)
     else:
-        rich_print(
-            "[yellow]High-res folder not found, attempting assembly of any available clips...[/yellow]"
-        )
+        rich_print("[yellow]High-res folder not found, attempting assembly of any available clips...[/yellow]")
         asm.assemble()
 
     rich_print(f"\n[bold green]Movie '{slug}' COMPLETED![/bold green]")
@@ -733,9 +708,7 @@ def project_export(
         shutil.copytree(
             proj.root,
             dest,
-            ignore=shutil.ignore_patterns(
-                ".venv", "__pycache__", ".git", ".DS_Store", "*.pyc"
-            ),
+            ignore=shutil.ignore_patterns(".venv", "__pycache__", ".git", ".DS_Store", "*.pyc"),
         )
 
         archive = shutil.make_archive(
@@ -761,15 +734,11 @@ def _get_slug(slug: str | None) -> str:
         try:
             rel = cwd.relative_to(s.projects_root)
         except ValueError:
-            rich_print(
-                "[red]Missing argument 'SLUG'. Not in a project directory.[/red]"
-            )
+            rich_print("[red]Missing argument 'SLUG'. Not in a project directory.[/red]")
             raise typer.Exit(code=1) from None
 
     if str(rel) == ".":
-        rich_print(
-            "[red]Missing argument 'SLUG'. Cannot infer from project root.[/red]"
-        )
+        rich_print("[red]Missing argument 'SLUG'. Cannot infer from project root.[/red]")
         raise typer.Exit(code=1)
 
     inferred = rel.parts[0]
@@ -918,9 +887,7 @@ def render_status(slug: str) -> None:
 def render_clip(
     slug: str,
     clip_id: str,
-    preset: str = typer.Option(
-        None, "--preset", help="Render profile: low, medium, high"
-    ),
+    preset: str = typer.Option(None, "--preset", help="Render profile: low, medium, high"),
 ) -> None:
     """Render one clip by clip_id."""
     reg = Registry.load()
@@ -962,9 +929,7 @@ def render_approve(
         draft_exists = (proj.root / out_mp4).exists()
 
     if strategy == "v2v" and not draft_exists:
-        rich_print(
-            f"[yellow]Warning: Strategy is v2v but no draft render found at {out_mp4}[/yellow]"
-        )
+        rich_print(f"[yellow]Warning: Strategy is v2v but no draft render found at {out_mp4}[/yellow]")
 
     # Update metadata
     render_config = data.get("render") or {}
@@ -992,9 +957,7 @@ def render_resume(max_jobs: int = typer.Option(1, "--max-jobs")) -> None:
 
 
 @render_app.command("assemble")
-def render_assemble(
-    slug: str, output: str = typer.Option("final_cut.mp4", "--output")
-) -> None:
+def render_assemble(slug: str, output: str = typer.Option("final_cut.mp4", "--output")) -> None:
     """Concatenate all rendered clips into a final movie."""
     reg = Registry.load()
     loader = ProjectLoader(registry=reg)

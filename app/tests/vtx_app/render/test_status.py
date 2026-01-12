@@ -5,7 +5,6 @@ from unittest.mock import patch
 import pytest
 import yaml
 from typer.testing import CliRunner
-
 from vtx_app.cli import app
 from vtx_app.project.loader import Project
 
@@ -32,16 +31,12 @@ def test_render_status(tmp_path, mock_registry_load, mock_project_loader):
     clips_dir.mkdir(parents=True)
 
     # Clip 1: Done
-    (clips_dir / "clip_01.yaml").write_text(
-        yaml.safe_dump({"outputs": {"mp4": "render/clip_01.mp4"}})
-    )
+    (clips_dir / "clip_01.yaml").write_text(yaml.safe_dump({"outputs": {"mp4": "render/clip_01.mp4"}}))
     (proj_dir / "render").mkdir()
     (proj_dir / "render" / "clip_01.mp4").write_text("video content")
 
     # Clip 2: Pending
-    (clips_dir / "clip_02.yaml").write_text(
-        yaml.safe_dump({"outputs": {"mp4": "render/clip_02.mp4"}})
-    )
+    (clips_dir / "clip_02.yaml").write_text(yaml.safe_dump({"outputs": {"mp4": "render/clip_02.mp4"}}))
 
     # Clip 3: Broken
     (clips_dir / "clip_03.yaml").write_text("invalid yaml: {")

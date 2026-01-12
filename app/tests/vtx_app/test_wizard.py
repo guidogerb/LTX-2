@@ -6,7 +6,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 import yaml
 from typer.testing import CliRunner
-
 from vtx_app.cli import app
 from vtx_app.integrations.civitai import CivitAIClient
 from vtx_app.wizards.proposal import ProposalGenerator
@@ -40,7 +39,6 @@ def mock_analyze_concept(monkeypatch):
 
 @pytest.fixture
 def mock_civitai(monkeypatch):
-
     def mock_search(self, query, limit=3):
         return [
             {
@@ -75,9 +73,7 @@ def test_create_from_plan_command(tmp_path):
     plan_data = {
         "meta": {"title": "Real Plan", "slug": "real_plan"},
         "story": {"brief": "Brief content"},
-        "resources": {
-            "suggested_loras": [{"name": "Lora1", "url": "u", "download_url": "d"}]
-        },
+        "resources": {"suggested_loras": [{"name": "Lora1", "url": "u", "download_url": "d"}]},
     }
     plan_file.write_text(yaml.dump(plan_data))
 
@@ -109,9 +105,7 @@ def test_create_from_plan_command(tmp_path):
                 mock_reg = MagicMock()
                 mock_reg_load.return_value = mock_reg
 
-                result = runner.invoke(
-                    app, ["projects", "create-from-plan", str(plan_file)]
-                )
+                result = runner.invoke(app, ["projects", "create-from-plan", str(plan_file)])
                 if result.exit_code != 0:
                     print(result.output)
                 assert result.exit_code == 0, result.stdout

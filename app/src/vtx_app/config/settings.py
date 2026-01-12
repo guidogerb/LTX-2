@@ -51,9 +51,7 @@ class Settings:
             fail_fast=get_bool("VTX_FAIL_FAST", False),
             # OpenAI
             openai_model=os.getenv("VTX_OPENAI_MODEL", "gpt-4o-2024-08-06"),
-            openai_max_output_tokens=int(
-                os.getenv("VTX_OPENAI_MAX_OUTPUT_TOKENS", "4096")
-            ),
+            openai_max_output_tokens=int(os.getenv("VTX_OPENAI_MAX_OUTPUT_TOKENS", "4096")),
             openai_temperature=float(os.getenv("VTX_OPENAI_TEMPERATURE", "0.4")),
             # Shared model locations
             checkpoint_path=os.getenv("LTX_CHECKPOINT_PATH"),

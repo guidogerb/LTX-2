@@ -7,7 +7,6 @@ from typing import Any, Optional
 
 import yaml
 from rich import print
-
 from vtx_app.config.settings import Settings
 
 
@@ -21,13 +20,7 @@ class TagManager:
 
     def list_groups(self) -> list[str]:
         """Returns a list of all tag groups."""
-        return sorted(
-            [
-                d.name
-                for d in self.root.iterdir()
-                if d.is_dir() and not d.name.startswith(".")
-            ]
-        )
+        return sorted([d.name for d in self.root.iterdir() if d.is_dir() and not d.name.startswith(".")])
 
     def list_tags(self, group: str | None = None) -> dict[str, list[str]]:
         """
@@ -103,9 +96,7 @@ class TagManager:
                 # If not found, check if it's a legacy style (style-name) -> style_name
                 # If user typed [style_pixar], group=style, tag=pixar.
                 # If we moved styles to tags/style/pixar.yaml, then load_tag('style', 'pixar') works.
-                print(
-                    f"[yellow]Warning: Tag [{group}_{tag}] not found used in prompt.[/yellow]"
-                )
+                print(f"[yellow]Warning: Tag [{group}_{tag}] not found used in prompt.[/yellow]")
                 return match.group(0)  # Keep original text if fail
 
             # What to return?

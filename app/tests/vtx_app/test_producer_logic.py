@@ -3,7 +3,6 @@ from __future__ import annotations
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from vtx_app.producer import Director
 from vtx_app.project.loader import Project
 
@@ -44,9 +43,7 @@ def test_director_produce_flow(mock_project):
         )
 
         # assertions
-        assert (
-            mock_project.root / "story" / "00_brief.md"
-        ).read_text() == "A brief concept."
+        assert (mock_project.root / "story" / "00_brief.md").read_text() == "A brief concept."
 
         # Verify sequence
         builder_instance.generate_outline.assert_called_once()

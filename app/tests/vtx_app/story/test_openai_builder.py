@@ -2,7 +2,6 @@ from unittest.mock import patch
 
 import pytest
 import yaml
-
 from vtx_app.project.layout import Project
 from vtx_app.story.openai_builder import StoryBuilder
 
@@ -89,9 +88,7 @@ def test_generate_clip_specs_filters(project):
 
 def test_generate_clip_specs_overwrite(project):
     """Test that overwrite flag controls whether we skip generation/writing."""
-    shotlist = {
-        "scenes": [{"act": 1, "scene": 1, "shots": [{"clip_id": "A01_S01_SH001"}]}]
-    }
+    shotlist = {"scenes": [{"act": 1, "scene": 1, "shots": [{"clip_id": "A01_S01_SH001"}]}]}
     (project.root / "story" / "04_shotlist.yaml").write_text(yaml.safe_dump(shotlist))
 
     # Pre-create the clip file. Note: The code searches glob f"{cid}__*.yaml"
@@ -101,9 +98,7 @@ def test_generate_clip_specs_overwrite(project):
     builder = StoryBuilder(project=project)
 
     with patch.object(builder, "_call_structured") as mock_call:
-        mock_call.return_value = {
-            "clips": [{"clip_id": "A01_S01_SH001", "title": "new_title"}]
-        }
+        mock_call.return_value = {"clips": [{"clip_id": "A01_S01_SH001", "title": "new_title"}]}
 
         # Case 1: overwrite=False (default). Should detect existing file and SKIP the API call.
         builder.generate_clip_specs(overwrite=False)

@@ -4,7 +4,6 @@ from unittest.mock import Mock, patch
 
 import httpx
 import pytest
-
 from vtx_app.integrations.civitai import CivitAIClient
 
 
@@ -27,9 +26,7 @@ def test_search_loras_success(client):
 
     with patch("httpx.Client") as MockClient:
         mock_instance = MockClient.return_value
-        mock_instance.__enter__.return_value.get.return_value.json.return_value = (
-            mock_response
-        )
+        mock_instance.__enter__.return_value.get.return_value.json.return_value = mock_response
         mock_instance.__enter__.return_value.get.return_value.status_code = 200
 
         results = client.search_loras("query")
@@ -52,9 +49,7 @@ def test_search_loras_empty_versions(client):
 
     with patch("httpx.Client") as MockClient:
         mock_instance = MockClient.return_value
-        mock_instance.__enter__.return_value.get.return_value.json.return_value = (
-            mock_response
-        )
+        mock_instance.__enter__.return_value.get.return_value.json.return_value = mock_response
 
         results = client.search_loras("query")
 
@@ -66,9 +61,7 @@ def test_search_loras_failure(client):
     with patch("httpx.Client") as MockClient:
         mock_instance = MockClient.return_value
         # mocking get to raise exception
-        mock_instance.__enter__.return_value.get.side_effect = httpx.RequestError(
-            "fail"
-        )
+        mock_instance.__enter__.return_value.get.side_effect = httpx.RequestError("fail")
 
         results = client.search_loras("query")
 
@@ -80,9 +73,7 @@ def test_search_loras_bad_status(client):
         mock_instance = MockClient.return_value
         # raise_for_status might be called
         mock_resp = mock_instance.__enter__.return_value.get.return_value
-        mock_resp.raise_for_status.side_effect = httpx.HTTPStatusError(
-            "500", request=Mock(), response=Mock()
-        )
+        mock_resp.raise_for_status.side_effect = httpx.HTTPStatusError("500", request=Mock(), response=Mock())
 
         results = client.search_loras("query")
         assert results == []

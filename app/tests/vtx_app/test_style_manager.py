@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import pytest
 import yaml
-
 from vtx_app.config.settings import Settings
 from vtx_app.style_manager import StyleManager
 
@@ -35,12 +34,8 @@ def test_save_style(style_manager, tmp_path):
     prompts = project_root / "prompts"
     prompts.mkdir(parents=True)
 
-    (prompts / "style_bible.yaml").write_text(
-        yaml.dump({"StyleBible": {"Format": "Movie"}})
-    )
-    (prompts / "loras.yaml").write_text(
-        yaml.dump({"bundles": {"civitai_candidates": ["lora1"]}})
-    )
+    (prompts / "style_bible.yaml").write_text(yaml.dump({"StyleBible": {"Format": "Movie"}}))
+    (prompts / "loras.yaml").write_text(yaml.dump({"bundles": {"civitai_candidates": ["lora1"]}}))
 
     # Save
     out = style_manager.save_style("mystyle", project_root, "desc")

@@ -5,10 +5,7 @@ from transformers.models.gemma3 import Gemma3ForConditionalGeneration
 
 from ltx_core.loader.sd_ops import SDOps
 from ltx_core.model.model_protocol import ModelConfigurator
-from ltx_core.text_encoders.gemma.embeddings_connector import (
-    Embeddings1DConnector,
-    Embeddings1DConnectorConfigurator,
-)
+from ltx_core.text_encoders.gemma.embeddings_connector import Embeddings1DConnector, Embeddings1DConnectorConfigurator
 from ltx_core.text_encoders.gemma.encoders.base_encoder import GemmaTextEncoderModelBase
 from ltx_core.text_encoders.gemma.feature_extractor import GemmaFeaturesExtractorProjLinear
 from ltx_core.text_encoders.gemma.tokenizer import LTXVGemmaTokenizer

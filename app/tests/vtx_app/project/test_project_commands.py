@@ -6,7 +6,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from typer.testing import CliRunner
-
 from vtx_app.cli import app
 from vtx_app.project.loader import Project
 
@@ -41,9 +40,7 @@ def test_project_export(tmp_path, mock_registry_load, mock_project_loader):
 
     # Execute command
     with runner.isolated_filesystem():
-        result = runner.invoke(
-            app, ["project", "export", "test_project", "--output", "my_export.zip"]
-        )
+        result = runner.invoke(app, ["project", "export", "test_project", "--output", "my_export.zip"])
         assert result.exit_code == 0
         assert "Exported" in result.stdout
 

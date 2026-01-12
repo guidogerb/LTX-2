@@ -1,7 +1,6 @@
 from pathlib import Path
 
 from typer.testing import CliRunner
-
 from vtx_app.cli import app
 
 runner = CliRunner()

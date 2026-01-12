@@ -33,31 +33,17 @@ def compile_prompt(*, project_root: Path, clip_spec: dict[str, Any]) -> PromptPa
     The clip's prompt should *not* restate the global style bible; keep it shot-specific.
     """
     bible = _load_yaml(project_root / "prompts" / "style_bible.yaml")
-    profile_name = (
-        (clip_spec.get("continuity") or {}).get("shared_prompt_profile")
-    ) or "default"
+    profile_name = ((clip_spec.get("continuity") or {}).get("shared_prompt_profile")) or "default"
     prof = (bible.get("profiles", {}) or {}).get(profile_name, {}) or {}
 
-    prefix = (
-        str(bible.get("global_prefix", "")) + "\n" + str(prof.get("prefix", ""))
-    ).strip()
-    neg = (
-        str(bible.get("global_negative", "")) + "\n" + str(prof.get("negative", ""))
-    ).strip()
+    prefix = (str(bible.get("global_prefix", "")) + "\n" + str(prof.get("prefix", ""))).strip()
+    neg = (str(bible.get("global_negative", "")) + "\n" + str(prof.get("negative", ""))).strip()
 
     # Character/location inserts (keeps identity + setting consistent without repeating in every clip prompt)
     chars_doc = _load_yaml(project_root / "prompts" / "characters.yaml")
     locs_doc = _load_yaml(project_root / "prompts" / "locations.yaml")
-    chars = (
-        chars_doc.get("characters", {})
-        if isinstance(chars_doc.get("characters", {}), dict)
-        else {}
-    )
-    locs = (
-        locs_doc.get("locations", {})
-        if isinstance(locs_doc.get("locations", {}), dict)
-        else {}
-    )
+    chars = chars_doc.get("characters", {}) if isinstance(chars_doc.get("characters", {}), dict) else {}
+    locs = locs_doc.get("locations", {}) if isinstance(locs_doc.get("locations", {}), dict) else {}
 
     continuity = clip_spec.get("continuity") or {}
     char_keys = continuity.get("characters") or []

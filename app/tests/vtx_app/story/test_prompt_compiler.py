@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import pytest
 import yaml
-
 from vtx_app.story.prompt_compiler import compile_prompt
 
 

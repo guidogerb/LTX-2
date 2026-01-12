@@ -23,25 +23,21 @@ from contextlib import contextmanager
 from functools import partial
 
 import torch
-import torch.cuda.amp as amp
 import torch.distributed as dist
+from PIL import Image, ImageOps
+from torch.cuda import amp
+from torchvision.transforms import Compose, Normalize
 from tqdm import tqdm
-import torchvision.transforms.functional as TF
 
 from .distributed.fsdp import shard_model
 from .modules.model import WanModel
 from .modules.t5 import T5EncoderModel
 from .modules.vae import WanVAE
-from .utils.fm_solvers import (FlowDPMSolverMultistepScheduler,
-                               get_sampling_sigmas, retrieve_timesteps)
 from .utils.fm_solvers_unipc import FlowUniPCMultistepScheduler
-from .utils.na_resize import NaResize, DivisibleCrop, Rearrange
-from torchvision.transforms import ToTensor,Normalize,Compose
-import math
-from PIL import Image, ImageOps
+from .utils.na_resize import DivisibleCrop, NaResize, Rearrange
+
 
 class DreamIDV:
-
     def __init__(
         self,
         config,
@@ -89,34 +85,34 @@ class DreamIDV:
         self.text_encoder = T5EncoderModel(
             text_len=config.text_len,
             dtype=config.t5_dtype,
-            device=torch.device('cpu'),
+            device=torch.device("cpu"),
             checkpoint_path=os.path.join(checkpoint_dir, config.t5_checkpoint),
             tokenizer_path=os.path.join(checkpoint_dir, config.t5_tokenizer),
-            shard_fn=shard_fn if t5_fsdp else None)
+            shard_fn=shard_fn if t5_fsdp else None,
+        )
 
         self.vae_stride = config.vae_stride
         self.patch_size = config.patch_size
-        self.vae = WanVAE(
-            vae_pth=os.path.join(checkpoint_dir, config.vae_checkpoint),
-            device=self.device)
+        self.vae = WanVAE(vae_pth=os.path.join(checkpoint_dir, config.vae_checkpoint), device=self.device)
 
         logging.info(f"Creating WanModel from {dreamidv_ckpt}")
         self.model = WanModel(
-                             model_type=config.model_type,
-                             dim=config.dim, 
-                             ffn_dim=config.ffn_dim,
-                             freq_dim=config.freq_dim,
-                             in_dim=config.in_dim,
-                             num_heads=config.num_heads,
-                             num_layers=config.num_layers,
-                             window_size=config.window_size,
-                             qk_norm=config.qk_norm,
-                             cross_attn_norm=config.cross_attn_norm,
-                             eps=config.eps)
-    
-        logging.info(f"loading ckpt.")
+            model_type=config.model_type,
+            dim=config.dim,
+            ffn_dim=config.ffn_dim,
+            freq_dim=config.freq_dim,
+            in_dim=config.in_dim,
+            num_heads=config.num_heads,
+            num_layers=config.num_layers,
+            window_size=config.window_size,
+            qk_norm=config.qk_norm,
+            cross_attn_norm=config.cross_attn_norm,
+            eps=config.eps,
+        )
+
+        logging.info("loading ckpt.")
         state = torch.load(dreamidv_ckpt, map_location=self.device)
-        logging.info(f"loading state dict.")
+        logging.info("loading state dict.")
         missing_keys, unexpected_keys = self.model.load_state_dict(state, strict=False)
         logging.info(f"len missing_keys: {len(missing_keys)}")
         logging.info(f"len unexpected_keys: {len(unexpected_keys)}")
@@ -124,14 +120,12 @@ class DreamIDV:
         self.model.eval().requires_grad_(False)
 
         if use_usp:
-            from xfuser.core.distributed import \
-                get_sequence_parallel_world_size
+            from xfuser.core.distributed import get_sequence_parallel_world_size
 
-            from .distributed.xdit_context_parallel import (usp_attn_forward,
-                                                            usp_dit_forward)
+            from .distributed.xdit_context_parallel import usp_attn_forward, usp_dit_forward
+
             for block in self.model.blocks:
-                block.self_attn.forward = types.MethodType(
-                    usp_attn_forward, block.self_attn)
+                block.self_attn.forward = types.MethodType(usp_attn_forward, block.self_attn)
             self.model.forward = types.MethodType(usp_dit_forward, self.model)
             self.sp_size = get_sequence_parallel_world_size()
         else:
@@ -144,8 +138,7 @@ class DreamIDV:
         else:
             self.model.to(self.device)
 
-
-    def load_image_latent_ref_ip_video(self,paths: str, size, device, frame_num):
+    def load_image_latent_ref_ip_video(self, paths: str, size, device, frame_num):
         # Load size.
         patch_size = self.patch_size
         vae_stride = self.vae_stride
@@ -153,7 +146,7 @@ class DreamIDV:
         def is_image_or_video_by_extension(file_path):
             image_exts = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"}
             video_exts = {".mp4", ".avi", ".mov", ".mkv", ".flv", ".webm"}
-            
+
             ext = os.path.splitext(file_path)[1].lower()
             if ext in image_exts:
                 return "image"
@@ -164,19 +157,14 @@ class DreamIDV:
 
         # import pdb; pdb.set_trace()
         # Load image and video.
-        ref_vae_latents = {
-            "image": [],
-            "video": [],
-            "mask": [],
-            'pose_embedding':[]
-        }
+        ref_vae_latents = {"image": [], "video": [], "mask": [], "pose_embedding": []}
         video_h = 0
         video_w = 0
         from decord import VideoReader
+
         for i, path in enumerate(paths):
-            
             if is_image_or_video_by_extension(path) == "video" and i == 0:
-                print('ori_path', path)
+                print("ori_path", path)
                 vr = VideoReader(path)
                 frames = []
 
@@ -186,16 +174,16 @@ class DreamIDV:
                     frames.append(frame)
                 video_w = frames[0].size[0]
                 video_h = frames[0].size[1]
-            
+
                 frames = frames[:frame_num]
 
-                frames_num = (len(frames)-1)//4*4 +1
+                frames_num = (len(frames) - 1) // 4 * 4 + 1
                 frames = frames[:frames_num]
 
-                video_transform=Compose(
+                video_transform = Compose(
                     [
                         NaResize(
-                            resolution=math.sqrt(size[0] * size[1]), 
+                            resolution=math.sqrt(size[0] * size[1]),
                             downsample_only=True,
                         ),
                         DivisibleCrop((vae_stride[1] * patch_size[1], vae_stride[2] * patch_size[2])),
@@ -203,16 +191,14 @@ class DreamIDV:
                         Rearrange("t c h w -> c t h w"),
                     ]
                 )
-                
+
                 video_frames = video_transform(frames)
                 video_vae_latent = self.vae.encode([video_frames], device)[0]
-            
+
                 ref_vae_latents["video"].append(video_vae_latent)
 
-                
-
             elif is_image_or_video_by_extension(path) == "video" and i == 1:
-                print('mask_path', path)
+                print("mask_path", path)
                 vr = VideoReader(path)
                 frames = []
                 for idx in range(vr.__len__()):
@@ -221,15 +207,15 @@ class DreamIDV:
                     frames.append(frame)
                 video_w = frames[0].size[0]
                 video_h = frames[0].size[1]
-                
+
                 frames = frames[:frame_num]
 
-                frames_num = (len(frames)-1)//4*4 +1
+                frames_num = (len(frames) - 1) // 4 * 4 + 1
                 frames = frames[:frames_num]
-                video_mask_transform=Compose(
+                video_mask_transform = Compose(
                     [
                         NaResize(
-                            resolution=math.sqrt(size[0] * size[1]), # 256*448, 480*832
+                            resolution=math.sqrt(size[0] * size[1]),  # 256*448, 480*832
                             downsample_only=True,
                         ),
                         DivisibleCrop((vae_stride[1] * patch_size[1], vae_stride[2] * patch_size[2])),
@@ -237,14 +223,14 @@ class DreamIDV:
                         Rearrange("t c h w -> c t h w"),
                     ]
                 )
-                
-                video_frames = video_mask_transform(frames) 
+
+                video_frames = video_mask_transform(frames)
                 video_vae_latent = self.vae.encode([video_frames], device)[0]
-                video_vae_latent = video_vae_latent 
+                video_vae_latent = video_vae_latent
                 ref_vae_latents["mask"].append(video_vae_latent)
 
             elif is_image_or_video_by_extension(path) == "video" and i == 3:
-                print('pose_path', path)
+                print("pose_path", path)
                 vr = VideoReader(path)
                 frames = []
                 for idx in range(vr.__len__()):
@@ -253,33 +239,32 @@ class DreamIDV:
                     frames.append(frame)
 
                 frames = frames[:frame_num]
-                frames_num = (len(frames)-1)//4*4 +1
+                frames_num = (len(frames) - 1) // 4 * 4 + 1
                 frames = frames[:frames_num]
-                video_mask_transform=Compose(
+                video_mask_transform = Compose(
                     [
                         NaResize(
-                            resolution=math.sqrt(size[0] * size[1]), 
-                            downsample_only=True,   
+                            resolution=math.sqrt(size[0] * size[1]),
+                            downsample_only=True,
                         ),
                         DivisibleCrop((vae_stride[1] * patch_size[1], vae_stride[2] * patch_size[2])),
                         Rearrange("t c h w -> c t h w"),
                     ]
                 )
-                
-                video_frames = video_mask_transform(frames) 
+
+                video_frames = video_mask_transform(frames)
                 ref_vae_latents["pose_embedding"].append(video_frames)
 
             elif is_image_or_video_by_extension(path) == "image" and i == 2:
-
                 with Image.open(path) as img:
                     img = img.convert("RGB")
                     img_ratio = img.width / img.height
                     target_ratio = video_w / video_h
-                    
-                    if img_ratio > target_ratio: 
+
+                    if img_ratio > target_ratio:
                         new_width = video_w
                         new_height = int(new_width / img_ratio)
-                    else:  
+                    else:
                         new_height = video_h
                         new_width = int(new_height * img_ratio)
 
@@ -290,10 +275,10 @@ class DreamIDV:
                     new_img = ImageOps.expand(img, padding, fill=(255, 255, 255))
 
                 # Transform to tensor and normalize.
-                image_transform=Compose(
+                image_transform = Compose(
                     [
                         NaResize(
-                            resolution=math.sqrt(size[0] * size[1]), 
+                            resolution=math.sqrt(size[0] * size[1]),
                             downsample_only=True,
                         ),
                         DivisibleCrop((vae_stride[1] * patch_size[1], vae_stride[2] * patch_size[2])),
@@ -306,28 +291,28 @@ class DreamIDV:
                 ref_vae_latents["image"].append(img_vae_latent)
             else:
                 print("Unknown file type.")
-       
+
         ref_vae_latents["image"] = torch.cat(ref_vae_latents["image"], dim=0)
         ref_vae_latents["video"] = torch.cat(ref_vae_latents["video"], dim=0)
         ref_vae_latents["mask"] = torch.cat(ref_vae_latents["mask"], dim=0)
         ref_vae_latents["pose_embedding"] = torch.cat(ref_vae_latents["pose_embedding"], dim=0)
-        
+
         return ref_vae_latents
 
-
-        
-    def generate(self,
-                 input_prompt,
-                 paths,
-                 size=(1280, 720),
-                 frame_num=81,
-                 shift=5.0,
-                 sample_solver='unipc',
-                 sampling_steps=50,
-                 guide_scale_img=5.0,
-                 n_prompt="",
-                 seed=-1,
-                 offload_model=True):
+    def generate(
+        self,
+        input_prompt,
+        paths,
+        size=(1280, 720),
+        frame_num=81,
+        shift=5.0,
+        sample_solver="unipc",
+        sampling_steps=50,
+        guide_scale_img=5.0,
+        n_prompt="",
+        seed=-1,
+        offload_model=True,
+    ):
         r"""
         Generates video frames from text prompt using diffusion process.
 
@@ -364,32 +349,42 @@ class DreamIDV:
                 - W: Frame width from size)
         """
         # preprocess
-        device = self.device   
+        device = self.device
         dtype = self.param_dtype
-        
-        latents_ref = self.load_image_latent_ref_ip_video(paths, 
-                                                          size, 
-                                                          device,
-                                                          frame_num,
-                                                        )
 
-        latents_ref_video = latents_ref["video"].to(device,dtype)
+        latents_ref = self.load_image_latent_ref_ip_video(
+            paths,
+            size,
+            device,
+            frame_num,
+        )
 
-        latents_ref_image = latents_ref["image"].to(device,dtype)
-        pose_embedding = latents_ref["pose_embedding"].to(device,dtype) 
-   
+        latents_ref_video = latents_ref["video"].to(device, dtype)
+
+        latents_ref_image = latents_ref["image"].to(device, dtype)
+        pose_embedding = latents_ref["pose_embedding"].to(device, dtype)
+
         pose_embedding = pose_embedding.unsqueeze(0)
-        
-        msk = latents_ref["mask"].to(device,dtype)
+
+        msk = latents_ref["mask"].to(device, dtype)
 
         F = frame_num
-        target_shape = (self.vae.model.z_dim, latents_ref_video.shape[1],
-                        latents_ref_video.shape[2],
-                        latents_ref_video.shape[3])
+        target_shape = (
+            self.vae.model.z_dim,
+            latents_ref_video.shape[1],
+            latents_ref_video.shape[2],
+            latents_ref_video.shape[3],
+        )
 
-        seq_len = math.ceil((target_shape[2] * target_shape[3]) /
-                            (self.patch_size[1] * self.patch_size[2]) *
-                            target_shape[1] / self.sp_size) * self.sp_size
+        seq_len = (
+            math.ceil(
+                (target_shape[2] * target_shape[3])
+                / (self.patch_size[1] * self.patch_size[2])
+                * target_shape[1]
+                / self.sp_size
+            )
+            * self.sp_size
+        )
 
         seed = seed if seed >= 0 else random.randint(0, sys.maxsize)
         seed_g = torch.Generator(device=self.device)
@@ -401,29 +396,27 @@ class DreamIDV:
             if offload_model:
                 self.text_encoder.model.cpu()
         else:
-            context = self.text_encoder([input_prompt], torch.device('cpu'))
+            context = self.text_encoder([input_prompt], torch.device("cpu"))
             context = [t.to(self.device) for t in context]
-        
-        y_i_v = latents_ref_video 
+
+        y_i_v = latents_ref_video
         img_ref = latents_ref_image
 
         arg_tiv = {
-            'context': context, 
-            'seq_len': seq_len,
-            'y': [torch.concat([y_i_v, msk])],
-            'pose_embedding': pose_embedding,
-            'img_ref': [img_ref]
-            }
+            "context": context,
+            "seq_len": seq_len,
+            "y": [torch.concat([y_i_v, msk])],
+            "pose_embedding": pose_embedding,
+            "img_ref": [img_ref],
+        }
 
-        
         arg_tv = {
-            'context': context,
-            'seq_len': seq_len, 
-            'y': [torch.concat([y_i_v, msk])],
-            'pose_embedding': pose_embedding,
-            'img_ref': [torch.zeros_like(img_ref)]
-            }
-
+            "context": context,
+            "seq_len": seq_len,
+            "y": [torch.concat([y_i_v, msk])],
+            "pose_embedding": pose_embedding,
+            "img_ref": [torch.zeros_like(img_ref)],
+        }
 
         noise = [
             torch.randn(
@@ -433,25 +426,23 @@ class DreamIDV:
                 target_shape[3],
                 dtype=torch.float32,
                 device=self.device,
-                generator=seed_g)
+                generator=seed_g,
+            )
         ]
 
         @contextmanager
         def noop_no_sync():
             yield
 
-        no_sync = getattr(self.model, 'no_sync', noop_no_sync)
+        no_sync = getattr(self.model, "no_sync", noop_no_sync)
 
         # evaluation mode
         with amp.autocast(dtype=self.param_dtype), torch.no_grad(), no_sync():
-
-            if sample_solver == 'unipc':
+            if sample_solver == "unipc":
                 sample_scheduler = FlowUniPCMultistepScheduler(
-                    num_train_timesteps=self.num_train_timesteps,
-                    shift=1,
-                    use_dynamic_shifting=False)
-                sample_scheduler.set_timesteps(
-                    sampling_steps, device=self.device, shift=shift)
+                    num_train_timesteps=self.num_train_timesteps, shift=1, use_dynamic_shifting=False
+                )
+                sample_scheduler.set_timesteps(sampling_steps, device=self.device, shift=shift)
                 timesteps = sample_scheduler.timesteps
             else:
                 raise NotImplementedError("Unsupported solver.")
@@ -460,22 +451,18 @@ class DreamIDV:
             latents = noise
 
             for _, t in enumerate(tqdm(timesteps)):
-                
                 timestep = [t]
                 timestep = torch.stack(timestep)
 
                 self.model.to(self.device)
                 pos_tiv = self.model(latents, t=timestep, **arg_tiv)[0]
                 pos_tv = self.model(latents, t=timestep, **arg_tv)[0]
-                
+
                 noise_pred = pos_tiv
-                noise_pred += guide_scale_img * (pos_tiv - pos_tv) 
+                noise_pred += guide_scale_img * (pos_tiv - pos_tv)
                 temp_x0 = sample_scheduler.step(
-                    noise_pred.unsqueeze(0),
-                    t,
-                    latents[0].unsqueeze(0),
-                    return_dict=False,
-                    generator=seed_g)[0]
+                    noise_pred.unsqueeze(0), t, latents[0].unsqueeze(0), return_dict=False, generator=seed_g
+                )[0]
                 latents = [temp_x0.squeeze(0)]
 
             x0 = latents

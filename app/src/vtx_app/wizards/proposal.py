@@ -7,7 +7,6 @@ from typing import Any
 
 from openai import OpenAI
 from rich import print as rich_print
-
 from vtx_app.config.settings import Settings
 from vtx_app.integrations.civitai import CivitAIClient
 from vtx_app.style_manager import StyleManager
@@ -36,9 +35,7 @@ class ProposalGenerator:
                 "visual_style_keywords": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": (
-                        "Keywords for finding LoRAs (e.g. 'anime', 'cyberpunk', 'claymation')"
-                    ),
+                    "description": ("Keywords for finding LoRAs (e.g. 'anime', 'cyberpunk', 'claymation')"),
                 },
                 "synopsis": {"type": "string", "description": "Expanded plot summary"},
             },
@@ -65,9 +62,7 @@ class ProposalGenerator:
                     },
                     {
                         "role": "user",
-                        "content": (
-                            f"Idea: {text}\n\nExtract title, slug, visual style keywords, and synopsis."
-                        ),
+                        "content": (f"Idea: {text}\n\nExtract title, slug, visual style keywords, and synopsis."),
                     },
                 ],
                 response_format={
@@ -98,7 +93,6 @@ class ProposalGenerator:
             }
 
     def create_proposal(self, concept_text: str) -> dict[str, Any]:
-
         # 1. Expand Tags
         # This replaces [group_tag] with the content from the yaml 'prompt' field.
         tm = TagManager()
@@ -110,9 +104,7 @@ class ProposalGenerator:
 
         # Regex to find [style_SOMETHING] or [movie-style_SOMETHING] anywhere
         # These tags might remain if they had no 'prompt' content in the YAML.
-        style_matches = list(
-            re.finditer(r"\[(?:movie-)?style_([\w\-]+)\]", concept_text)
-        )
+        style_matches = list(re.finditer(r"\[(?:movie-)?style_([\w\-]+)\]", concept_text))
 
         if style_matches:
             # Take the first one as the primary preset
@@ -121,9 +113,7 @@ class ProposalGenerator:
             rich_print(f"[blue]Detected style preset:[/blue] {style_name}")
 
             # Remove all style tags from text so they don't pollute the story analysis
-            concept_text = re.sub(
-                r"\[(?:movie-)?style_[\w\-]+\]", "", concept_text
-            ).strip()
+            concept_text = re.sub(r"\[(?:movie-)?style_[\w\-]+\]", "", concept_text).strip()
 
         # Legacy fallback: check for [style] at start of string if no style found yet
         if not style_name:
@@ -135,9 +125,7 @@ class ProposalGenerator:
                 if mgr.load_style(potential_name):
                     style_name = potential_name
                     concept_text = style_match.group(2)
-                    rich_print(
-                        f"[blue]Detected legacy style preset:[/blue] {style_name}"
-                    )
+                    rich_print(f"[blue]Detected legacy style preset:[/blue] {style_name}")
 
         rich_print("[blue]Analyzing concept...[/blue]")
         analysis = self.analyze_concept(concept_text)
@@ -149,17 +137,13 @@ class ProposalGenerator:
             keywords = mgr.get_style_keywords(style_name)
             if keywords:
                 rich_print(f"[dim]Injecting style keywords: {keywords}[/dim]")
-                analysis["visual_style_keywords"] = (
-                    keywords + analysis["visual_style_keywords"]
-                )
+                analysis["visual_style_keywords"] = keywords + analysis["visual_style_keywords"]
 
             # Load style-specific LoRAs to suggest
             style_data = mgr.load_style(style_name) or {}
             extra_loras = style_data.get("resources", {}).get("bundles", [])
 
-        rich_print(
-            f"[blue]Searching CivitAI for styles: {analysis['visual_style_keywords']}...[/blue]"
-        )
+        rich_print(f"[blue]Searching CivitAI for styles: {analysis['visual_style_keywords']}...[/blue]")
         civitai = CivitAIClient()
         suggested_loras = []
         # Search for first few keywords
@@ -179,9 +163,7 @@ class ProposalGenerator:
             },
             "story": {"brief": analysis["synopsis"]},
             "resources": {"suggested_loras": suggested_loras},
-            "instructions": (
-                "Review this file. To create project, run: vtx projects create-from-plan proposal.yaml"
-            ),
+            "instructions": ("Review this file. To create project, run: vtx projects create-from-plan proposal.yaml"),
         }
 
         if style_name:

@@ -1,7 +1,6 @@
 import typer
 from rich import print
 from rich.table import Table
-
 from vtx_app.tags_manager import TagManager
 
 tags_app = typer.Typer(no_args_is_help=True)

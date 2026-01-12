@@ -1,12 +1,12 @@
-from typing import Literal
-from torchvision.transforms import CenterCrop, Compose, InterpolationMode, Resize
 import math
 from typing import List, Union
+
 import torch
+from einops import rearrange
 from PIL import Image
+from torchvision.transforms import InterpolationMode
 from torchvision.transforms import functional as TVF
 from torchvision.transforms.functional import InterpolationMode, to_tensor
-from einops import rearrange
 
 
 class Rearrange:
@@ -16,6 +16,7 @@ class Rearrange:
 
     def __call__(self, x):
         return rearrange(x, self.pattern, **self.kwargs)
+
 
 class DivisibleCrop:
     def __init__(self, factor):
@@ -51,7 +52,6 @@ class AreaResize:
         self.interpolation = interpolation
 
     def __call__(self, image: Union[torch.Tensor, Image.Image, List[Image.Image]]):
-
         if isinstance(image, torch.Tensor):
             height, width = image.shape[-2:]
         elif isinstance(image, Image.Image):
@@ -91,12 +91,12 @@ class AreaResize:
                 image = to_tensor(image)
         return image
 
+
 def NaResize(
-    resolution, # int or list
+    resolution,  # int or list
     downsample_only: bool,
     interpolation: InterpolationMode = InterpolationMode.BICUBIC,
 ):
-
     return AreaResize(
         max_area=resolution**2,
         downsample_only=downsample_only,

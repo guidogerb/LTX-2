@@ -4,7 +4,6 @@ import json
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from vtx_app.wizards.proposal import ProposalGenerator
 
 
@@ -44,9 +43,7 @@ def test_analyze_concept_success(generator):
         # Verify schema passed
         call_kwargs = mock_client.chat.completions.create.call_args.kwargs
         assert "response_format" in call_kwargs
-        assert (
-            call_kwargs["response_format"]["json_schema"]["name"] == "proposal_metadata"
-        )
+        assert call_kwargs["response_format"]["json_schema"]["name"] == "proposal_metadata"
 
 
 def test_analyze_concept_failure_openai(generator):
@@ -77,14 +74,12 @@ def test_analyze_concept_empty_response(generator):
 
 def test_create_proposal_flow(generator):
     # Mock dependencies using patches on the imported symbols in proposal.py
-    with patch("vtx_app.wizards.proposal.TagManager") as MockTM, patch(
-        "vtx_app.wizards.proposal.StyleManager"
-    ) as MockSM, patch(
-        "vtx_app.wizards.proposal.CivitAIClient"
-    ) as MockCivit, patch.object(
-        generator, "analyze_concept"
-    ) as mock_analyze:
-
+    with (
+        patch("vtx_app.wizards.proposal.TagManager") as MockTM,
+        patch("vtx_app.wizards.proposal.StyleManager") as MockSM,
+        patch("vtx_app.wizards.proposal.CivitAIClient") as MockCivit,
+        patch.object(generator, "analyze_concept") as mock_analyze,
+    ):
         # Setup mocks
         mock_tm = MockTM.return_value
         # This simulates that process_prompt just returns the text as is,
@@ -100,9 +95,7 @@ def test_create_proposal_flow(generator):
         }
 
         mock_sm = MockSM.return_value
-        mock_sm.load_style.return_value = {
-            "resources": {"bundles": [{"name": "StyleLora"}]}
-        }
+        mock_sm.load_style.return_value = {"resources": {"bundles": [{"name": "StyleLora"}]}}
         mock_sm.get_style_keywords.return_value = ["style_kw"]
 
         mock_civit = MockCivit.return_value
@@ -120,23 +113,19 @@ def test_create_proposal_flow(generator):
         assert "suggested_loras" in proposal["resources"]
         loras = proposal["resources"]["suggested_loras"]
         # Expected: StyleLora (extra) + SearchLora (search result)
-        assert any(
-            item["name"] == "StyleLora" for item in loras
-        ), f"Loras found: {loras}"
+        assert any(item["name"] == "StyleLora" for item in loras), f"Loras found: {loras}"
 
         # NOTE: mock civitai result list order is appended after extra_loras
-        assert any(
-            item["name"] == "SearchLora" for item in loras
-        ), f"Loras found: {loras}"
+        assert any(item["name"] == "SearchLora" for item in loras), f"Loras found: {loras}"
 
 
 def test_create_proposal_legacy_style(generator):
-    with patch("vtx_app.wizards.proposal.TagManager") as MockTM, patch(
-        "vtx_app.wizards.proposal.StyleManager"
-    ) as MockSM, patch("vtx_app.wizards.proposal.CivitAIClient"), patch.object(
-        generator, "analyze_concept"
-    ) as mock_analyze:
-
+    with (
+        patch("vtx_app.wizards.proposal.TagManager") as MockTM,
+        patch("vtx_app.wizards.proposal.StyleManager") as MockSM,
+        patch("vtx_app.wizards.proposal.CivitAIClient"),
+        patch.object(generator, "analyze_concept") as mock_analyze,
+    ):
         mock_tm = MockTM.return_value
         mock_tm.process_prompt.side_effect = lambda x: x
         mock_analyze.return_value = {
@@ -149,9 +138,7 @@ def test_create_proposal_legacy_style(generator):
 
         mock_sm = MockSM.return_value
         # load_style returns dict if exists, None if not. Dict must be not empty to be True.
-        mock_sm.load_style.side_effect = lambda x: (
-            {"foo": "bar"} if x == "legacy" else None
-        )
+        mock_sm.load_style.side_effect = lambda x: ({"foo": "bar"} if x == "legacy" else None)
         mock_sm.get_style_keywords.return_value = []
 
         # Legacy format: [style] at start
@@ -162,12 +149,12 @@ def test_create_proposal_legacy_style(generator):
 
 
 def test_create_proposal_no_style(generator):
-    with patch("vtx_app.wizards.proposal.TagManager") as MockTM, patch(
-        "vtx_app.wizards.proposal.StyleManager"
-    ), patch("vtx_app.wizards.proposal.CivitAIClient"), patch.object(
-        generator, "analyze_concept"
-    ) as mock_analyze:
-
+    with (
+        patch("vtx_app.wizards.proposal.TagManager") as MockTM,
+        patch("vtx_app.wizards.proposal.StyleManager"),
+        patch("vtx_app.wizards.proposal.CivitAIClient"),
+        patch.object(generator, "analyze_concept") as mock_analyze,
+    ):
         mock_tm = MockTM.return_value
         mock_tm.process_prompt.side_effect = lambda x: x
         mock_analyze.return_value = {

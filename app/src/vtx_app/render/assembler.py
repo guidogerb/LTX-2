@@ -4,7 +4,6 @@ from pathlib import Path
 
 import yaml
 from rich import print
-
 from vtx_app.project.layout import Project
 from vtx_app.render.ffmpeg import concat_videos
 
@@ -13,9 +12,7 @@ class Assembler:
     def __init__(self, project: Project):
         self.project = project
 
-    def assemble(
-        self, output_name: str = "final_cut.mp4", clips_dir: Path | None = None
-    ) -> None:
+    def assemble(self, output_name: str = "final_cut.mp4", clips_dir: Path | None = None) -> None:
         """
         Scans story/04_shotlist.yaml, finds rendered clips, and concatenates them.
         """
@@ -42,9 +39,7 @@ class Assembler:
                 # Convention: prompts/clips/{cid}__*.yaml -> renders/clips/{cid}__*.mp4
 
                 # Let's look up the clip spec to be sure
-                matches = list(
-                    (self.project.root / "prompts" / "clips").glob(f"{cid}__*.yaml")
-                )
+                matches = list((self.project.root / "prompts" / "clips").glob(f"{cid}__*.yaml"))
                 if not matches:
                     missing_clips.append(f"{cid} (spec missing)")
                     continue
@@ -70,9 +65,7 @@ class Assembler:
                     missing_clips.append(f"{cid} (no output path)")
 
         if missing_clips:
-            print(
-                "[yellow]Warning: The following clips are missing and will be skipped:[/yellow]"
-            )
+            print("[yellow]Warning: The following clips are missing and will be skipped:[/yellow]")
             for m in missing_clips:
                 print(f"  - {m}")
 

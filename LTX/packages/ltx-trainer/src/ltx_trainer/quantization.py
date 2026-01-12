@@ -61,13 +61,7 @@ def _quanto_type_map(precision: QuantizationOptions) -> torch.dtype | qtype | No
     if precision == "no_change":
         return None
 
-    from optimum.quanto import (  # noqa: PLC0415
-        qfloat8,
-        qfloat8_e4m3fnuz,
-        qint2,
-        qint4,
-        qint8,
-    )
+    from optimum.quanto import qfloat8, qfloat8_e4m3fnuz, qint2, qint4, qint8  # noqa: PLC0415
 
     if precision == "int2-quanto":
         return qint2

@@ -2,7 +2,6 @@ from unittest.mock import patch
 
 import pytest
 import yaml
-
 from vtx_app.project.layout import Project
 from vtx_app.render.assembler import Assembler
 

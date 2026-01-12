@@ -1,7 +1,6 @@
 import sqlite3
 
 import pytest
-
 from vtx_app.registry.db import SCHEMA, Registry
 
 

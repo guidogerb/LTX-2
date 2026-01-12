@@ -6,7 +6,6 @@ from pathlib import Path
 
 import yaml
 from rich import print
-
 from vtx_app.pipelines.base import PipelineCommand
 from vtx_app.pipelines.capabilities import detect_capabilities, first_supported
 from vtx_app.pipelines.runner_subprocess import run
@@ -94,21 +93,10 @@ class RenderController:
 
         # Resolution / fps defaults
         fps = int(
-            preset_cfg.get("fps")
-            or (clip.get("render") or {}).get("fps")
-            or os.getenv("PROJECT_FPS")
-            or s.default_fps
+            preset_cfg.get("fps") or (clip.get("render") or {}).get("fps") or os.getenv("PROJECT_FPS") or s.default_fps
         )
-        base_width = int(
-            (clip.get("render") or {}).get("width")
-            or os.getenv("PROJECT_WIDTH")
-            or s.default_width
-        )
-        base_height = int(
-            (clip.get("render") or {}).get("height")
-            or os.getenv("PROJECT_HEIGHT")
-            or s.default_height
-        )
+        base_width = int((clip.get("render") or {}).get("width") or os.getenv("PROJECT_WIDTH") or s.default_width)
+        base_height = int((clip.get("render") or {}).get("height") or os.getenv("PROJECT_HEIGHT") or s.default_height)
 
         # Scaling logic
         width = int(base_width * resolution_scale)
@@ -181,9 +169,7 @@ class RenderController:
                 pass
 
             # Add input video arg (ic_lora usually takes --input-video-path or similar)
-            iv_flag = first_supported(
-                cap, "--input-video-path", "--input_video_path", "--input-video"
-            )
+            iv_flag = first_supported(cap, "--input-video-path", "--input_video_path", "--input-video")
             if iv_flag and draft_input.exists():
                 args += [iv_flag, str(draft_input)]
                 # Also likely need conditioning strength?
@@ -265,9 +251,7 @@ class RenderController:
             if not fpath.exists():
                 print(f"[yellow]Warning: Input video not found: {fpath}[/yellow]")
 
-            vid_flag = first_supported(
-                cap, "--video-conditioning", "--video_conditioning"
-            )
+            vid_flag = first_supported(cap, "--video-conditioning", "--video_conditioning")
             if vid_flag:
                 # Default strength 1.0
                 args += [vid_flag, str(fpath), "1.0"]
@@ -314,9 +298,7 @@ class RenderController:
                 updated_at=now_iso(),
                 last_error=None,
             )
-            print(
-                f"[green]Rendered[/green] {clip_id} -> {out_rel}  ({seconds:.1f}s @ {fps}fps = {num_frames} frames)"
-            )
+            print(f"[green]Rendered[/green] {clip_id} -> {out_rel}  ({seconds:.1f}s @ {fps}fps = {num_frames} frames)")
         except Exception as e:
             self.registry.upsert_clip(
                 project_id=project_id,
@@ -341,9 +323,7 @@ class RenderController:
             print("[green]No unfinished clips.[/green]")
             return
 
-        proj_map = {
-            p["project_id"]: Path(p["path"]) for p in self.registry.list_projects()
-        }
+        proj_map = {p["project_id"]: Path(p["path"]) for p in self.registry.list_projects()}
 
         count = 0
         for item in unfinished:

@@ -4,7 +4,6 @@ from unittest.mock import patch
 
 import pytest
 import yaml
-
 from vtx_app.project.loader import Project
 from vtx_app.story.openai_builder import StoryBuilder
 
@@ -23,12 +22,8 @@ def mock_project(tmp_path):
 
 
 def test_generate_screenplay(mock_project):
-    with patch(
-        "vtx_app.story.openai_builder.StoryBuilder._call_structured"
-    ) as mock_call:
-        mock_call.return_value = {
-            "screenplay": [{"slug": "INT. ROOM", "text": "Hello"}]
-        }
+    with patch("vtx_app.story.openai_builder.StoryBuilder._call_structured") as mock_call:
+        mock_call.return_value = {"screenplay": [{"slug": "INT. ROOM", "text": "Hello"}]}
 
         builder = StoryBuilder(project=mock_project)
         builder.generate_screenplay()
@@ -42,13 +37,9 @@ def test_generate_screenplay(mock_project):
 
 
 def test_generate_characters(mock_project):
-    with patch(
-        "vtx_app.story.openai_builder.StoryBuilder._call_structured"
-    ) as mock_call:
+    with patch("vtx_app.story.openai_builder.StoryBuilder._call_structured") as mock_call:
         # Strict schema returns list of objects
-        mock_call.return_value = {
-            "characters": [{"name": "Alice", "description": "A girl"}]
-        }
+        mock_call.return_value = {"characters": [{"name": "Alice", "description": "A girl"}]}
 
         builder = StoryBuilder(project=mock_project)
         builder.generate_characters()
@@ -63,13 +54,9 @@ def test_generate_characters(mock_project):
 
 
 def test_generate_locations(mock_project):
-    with patch(
-        "vtx_app.story.openai_builder.StoryBuilder._call_structured"
-    ) as mock_call:
+    with patch("vtx_app.story.openai_builder.StoryBuilder._call_structured") as mock_call:
         # Strict schema returns list of objects
-        mock_call.return_value = {
-            "locations": [{"name": "Park", "description": "Green trees"}]
-        }
+        mock_call.return_value = {"locations": [{"name": "Park", "description": "Green trees"}]}
 
         builder = StoryBuilder(project=mock_project)
         builder.generate_locations()
@@ -83,9 +70,7 @@ def test_generate_locations(mock_project):
 
 
 def test_generate_treatment(mock_project):
-    with patch(
-        "vtx_app.story.openai_builder.StoryBuilder._call_structured"
-    ) as mock_call:
+    with patch("vtx_app.story.openai_builder.StoryBuilder._call_structured") as mock_call:
         mock_call.return_value = {
             "title": "My Movie",
             "content": "The story begins...",

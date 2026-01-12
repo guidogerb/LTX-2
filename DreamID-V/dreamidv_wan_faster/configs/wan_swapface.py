@@ -16,22 +16,22 @@ from easydict import EasyDict
 
 from .shared_config import wan_shared_cfg
 
-#------------------------ Wan T2V 1.3B ------------------------#
+# ------------------------ Wan T2V 1.3B ------------------------#
 
-swapface = EasyDict(__name__='Config: DreamidV Swapface')
+swapface = EasyDict(__name__="Config: DreamidV Swapface")
 swapface.update(wan_shared_cfg)
 
 # t5
-swapface.t5_checkpoint = 'models_t5_umt5-xxl-enc-bf16.pth'
-swapface.t5_tokenizer = 'google/umt5-xxl'
+swapface.t5_checkpoint = "models_t5_umt5-xxl-enc-bf16.pth"
+swapface.t5_tokenizer = "google/umt5-xxl"
 
 # vae
-swapface.vae_checkpoint = 'Wan2.1_VAE.pth'
+swapface.vae_checkpoint = "Wan2.1_VAE.pth"
 swapface.vae_stride = (4, 8, 8)
 
 
 # transformer
-swapface.model_type = 'i2v'
+swapface.model_type = "i2v"
 swapface.patch_size = (1, 2, 2)
 swapface.dim = 1536
 swapface.ffn_dim = 8960

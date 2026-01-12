@@ -12,13 +12,11 @@
 # limitations under the License.
 from typing import Tuple
 
-import torch.nn as nn
 import torch.nn.functional as F
 from diffusers.models.modeling_utils import ModelMixin
+from torch import nn
+from utils import InflatedConv3d, zero_module
 
-from utils import zero_module, InflatedConv3d
-
-import numpy as np
 
 class Guider(ModelMixin):
     def __init__(
@@ -28,23 +26,15 @@ class Guider(ModelMixin):
         block_out_channels: Tuple[int] = (16, 32, 64, 128),
     ):
         super().__init__()
-        self.conv_in = InflatedConv3d(
-            conditioning_channels, block_out_channels[0], kernel_size=3, padding=1
-        )
+        self.conv_in = InflatedConv3d(conditioning_channels, block_out_channels[0], kernel_size=3, padding=1)
 
         self.blocks = nn.ModuleList([])
 
         for i in range(len(block_out_channels) - 1):
             channel_in = block_out_channels[i]
             channel_out = block_out_channels[i + 1]
-            self.blocks.append(
-                InflatedConv3d(channel_in, channel_in, kernel_size=3, padding=1)
-            )
-            self.blocks.append(
-                InflatedConv3d(
-                    channel_in, channel_out, kernel_size=3, padding=1, stride=2
-                )
-            )
+            self.blocks.append(InflatedConv3d(channel_in, channel_in, kernel_size=3, padding=1))
+            self.blocks.append(InflatedConv3d(channel_in, channel_out, kernel_size=3, padding=1, stride=2))
 
         self.conv_out = zero_module(
             InflatedConv3d(

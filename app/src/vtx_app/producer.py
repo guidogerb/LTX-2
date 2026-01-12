@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import Callable
 
 from rich import print
-
 from vtx_app.project.layout import Project
 from vtx_app.project.loader import ProjectLoader
 from vtx_app.registry.db import Registry
@@ -77,7 +76,6 @@ class Director:
 
         # 5. Auto Render?
         if auto_render:
-
             print("[bold red]🚀 Launching Render Sequence...[/bold red]")
             subprocess.run(["bash", str(script_path)], check=True)
 

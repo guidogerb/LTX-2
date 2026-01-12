@@ -3,7 +3,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 import yaml
 from jsonschema.exceptions import ValidationError
-
 from vtx_app.project.layout import Project
 from vtx_app.render.renderer import RenderController
 
@@ -60,9 +59,7 @@ def test_render_clip_inputs(mock_val, mock_compile, mock_run, mock_downloader, p
         "inputs": {"reference_image": "assets/ref.png"},
         "outputs": {"mp4": "out.mp4"},
     }
-    (project.root / "prompts" / "clips" / f"{clip_id}.yaml").write_text(
-        yaml.safe_dump(clip_data)
-    )
+    (project.root / "prompts" / "clips" / f"{clip_id}.yaml").write_text(yaml.safe_dump(clip_data))
 
     # Setup compile return
     mock_compile.return_value = MagicMock(positive="foo", negative=None)
@@ -73,9 +70,7 @@ def test_render_clip_inputs(mock_val, mock_compile, mock_run, mock_downloader, p
     # Need to mock capabilities because first_supported detects flags
     with patch("vtx_app.render.renderer.detect_capabilities") as mock_cap:
         # Mock cap to return flags
-        mock_cap.return_value = MagicMock(
-            flags={"--image", "--prompt", "--output-path"}
-        )
+        mock_cap.return_value = MagicMock(flags={"--image", "--prompt", "--output-path"})
 
         controller.render_clip(clip_id=clip_id)
 

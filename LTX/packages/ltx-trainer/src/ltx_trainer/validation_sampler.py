@@ -13,11 +13,7 @@ from torch import Tensor
 from ltx_core.components.diffusion_steps import EulerDiffusionStep
 from ltx_core.components.guiders import CFGGuider, STGGuider
 from ltx_core.components.noisers import GaussianNoiser
-from ltx_core.components.patchifiers import (
-    AudioPatchifier,
-    VideoLatentPatchifier,
-    get_pixel_coords,
-)
+from ltx_core.components.patchifiers import AudioPatchifier, VideoLatentPatchifier, get_pixel_coords
 from ltx_core.components.schedulers import LTX2Scheduler
 from ltx_core.guidance.perturbations import (
     BatchedPerturbationConfig,

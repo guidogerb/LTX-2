@@ -10,10 +10,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
 from einops import rearrange
+from torch import nn
 
 
 class InflatedConv3d(nn.Conv2d):
@@ -25,6 +23,7 @@ class InflatedConv3d(nn.Conv2d):
         x = rearrange(x, "(b f) c h w -> b c f h w", f=video_length)
 
         return x
+
 
 def zero_module(module):
     # Zero out the parameters of a module and return it.
